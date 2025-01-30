@@ -1,0 +1,18 @@
+@import url(https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200);
+@import url(https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200);
+@import url(https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200);
+@import url(https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp);
+.search-bar {
+  width: 240px;
+  height: 40px;
+}
+.searchbar-icon {
+  z-index: 1000;
+  position: absolute;
+  left: calc(0% + 12px);
+  font-weight: 300;
+}
+.avatar {
+  width: 40px;
+  height: 40px;
+}
