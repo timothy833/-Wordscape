@@ -72,7 +72,6 @@ const Header = () => {
           </div>
         </div>
         {/* 使用者選單-mobile */}
-
         <div className="d-lg-none">
           <a
             className="me-4"
@@ -96,7 +95,7 @@ const Header = () => {
             </span>
           </a>
           <div
-            className="collapse position-absolute w-100 start-0"
+            className="collapse position-absolute bg-light w-100 start-0"
             id="collapseUserMenu"
           >
             <ul
