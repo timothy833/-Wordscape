@@ -12,15 +12,15 @@ const Header = () => {
             <picture>
               <source
                 media="(min-width: 992px)"
-                src={logo}
+                srcSet={logo}
                 width="192px"
                 height="auto"
               />
               <img
-                srcSet={logo_sm}
+                src={logo_sm}
+                alt="wordspace-logo"
                 width="60px"
                 height="auto"
-                alt="wordspace-logo"
               />
             </picture>
           </a>
