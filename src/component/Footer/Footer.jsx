@@ -1,4 +1,4 @@
-import logo_light from "../assets/images/logo-light.svg";
+import logo_light from "../../assets/images/logo-light.svg";
 
 const Footer = () => {
   return (

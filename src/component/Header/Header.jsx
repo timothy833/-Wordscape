@@ -1,7 +1,7 @@
 import { Dropdown } from "bootstrap";
-import logo from "../assets/images/logo.svg";
-import logo_sm from "../assets/images/logo-sm.svg";
-import avatar from "../assets/images/avatar-1.png";
+import logo from "../../assets/images/logo.svg";
+import logo_sm from "../../assets/images/logo-sm.svg";
+import avatar from "../../assets/images/avatar-1.png";
 
 const Header = () => {
   return (
