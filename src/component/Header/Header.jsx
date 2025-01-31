@@ -1,4 +1,3 @@
-import "./Header.scss";
 import { Dropdown } from "bootstrap";
 import logo from "../assets/images/logo.svg";
 import logo_sm from "../assets/images/logo-sm.svg";
