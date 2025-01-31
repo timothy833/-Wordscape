@@ -11,16 +11,16 @@ const Header = () => {
           <a href="#">
             <picture>
               <source
-                media="(max-width: 991px)"
-                srcSet={logo_sm}
-                width="60px"
+                media="(min-width: 992px)"
+                src={logo}
+                width="192px"
                 height="auto"
               />
               <img
-                src={logo}
-                alt="wordspace-logo"
-                width="192px"
+                srcSet={logo_sm}
+                width="60px"
                 height="auto"
+                alt="wordspace-logo"
               />
             </picture>
           </a>
