@@ -101,7 +101,7 @@ const Header = () => {
               </span>
             </a>
             <div
-              className="collapse position-absolute bg-light w-100 start-0"
+              className="collapse position-absolute bg-light w-100 start-0 z-3"
               id="collapseUserMenu"
             >
               <ul

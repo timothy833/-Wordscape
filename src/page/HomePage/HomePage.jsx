@@ -1,17 +1,20 @@
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination, Navigation,Autoplay} from "swiper/modules";
+import { Pagination, Navigation, Autoplay } from "swiper/modules";
+import Marquee from "react-fast-marquee";
 import "swiper/scss/pagination";
 import "swiper/css/navigation";
 import "swiper/css/autoplay";
 import Header from "../../component/Header/Header";
 import Footer from "../../component/Footer/Footer";
+import ReviewCard from "../../component/ReviewCard/ReviewCard";
 import banner_1 from "../../assets/images/banner/banner-1.png";
 import banner_2 from "../../assets/images/banner/banner-2.png";
 import banner_3 from "../../assets/images/banner/banner-3.png";
 import banner_1_sm from "../../assets/images/banner/banner-1-sm.png";
 import banner_2_sm from "../../assets/images/banner/banner-2-sm.png";
 import banner_3_sm from "../../assets/images/banner/banner-3-sm.png";
+import avatar from "../../assets/images/avatar-1.png";
 const HomePage = () => {
   return (
     <>
@@ -22,10 +25,10 @@ const HomePage = () => {
             "--swiper-pagination-color": "#FFFDFB",
             "--swiper-pagination-bullet-inactive-color": "#838383",
           }}
-          modules={[Pagination, Navigation ,Autoplay]}
+          modules={[Pagination, Navigation, Autoplay]}
           navigation={{ nextEl: ".swiperNextEl", prevEl: ".swiperPrebEl" }}
           pagination={{ clickable: true }}
-          autoplay={{delay:5000}}
+          autoplay={{ delay: 5000 }}
           loop={true}
         >
           <SwiperSlide>
@@ -102,7 +105,56 @@ const HomePage = () => {
           </div>
         </Swiper>
       </section>
-      
+      <section className="homepage-section bg-secondary">
+        <div className="container mb-lg-8">
+          <h2 className="fw-bold fs-5 fs-lg-3 text-primary">好評推薦</h2>
+          <span className="fs-7 fw-bold">快來看看大家怎麼說！</span>
+          <div className="d-block d-lg-none d-flex flex-column align-items-center mt-10 gap-5">
+            {Array.from({ length: 3 }).map((item, index) => {
+              return (
+                <ReviewCard
+                  reviewStar={(index % 3) + 2}
+                  avatar={avatar}
+                  style={{ width: "100%", height: "148px" }}
+                />
+              );
+            })}
+            <button type="button" class="btn btn-lg btn-primary fw-bold lh-sm">
+              載入更多
+            </button>
+          </div>
+        </div>
+        <div className="d-none d-lg-block">
+          <Marquee className="reviewMarquee pt-2 pb-3">
+            {Array.from({ length: 10 }).map((item, index) => {
+              return (
+                <ReviewCard
+                  reviewStar={(index % 3) + 2}
+                  avatar={avatar}
+                  style={{ width: "306px", height: "148px" }}
+                />
+              );
+            })}
+          </Marquee>
+          <Marquee className="reviewMarquee py-2" speed={70}>
+            {Array.from({ length: 10 }).map((item, index) => {
+              return (
+                <ReviewCard
+                  reviewStar={(index % 3) + 2}
+                  avatar={avatar}
+                  style={{ width: "306px", height: "148px" }}
+                />
+              );
+            })}
+          </Marquee>
+        </div>
+      </section>
+      <section className="homepage-section">
+        <div className="container mb-lg-8">
+          <h2 className="fw-bold fs-5 fs-lg-3 text-primary">推薦好文</h2>
+          <span className="fs-7 fw-bold">精選文章，趕快來發掘！</span>
+        </div>
+      </section>
       <Footer />
     </>
   );
