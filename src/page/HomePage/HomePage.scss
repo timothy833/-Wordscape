@@ -1,0 +1,52 @@
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0&icon_names=arrow_forward_ios");
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0&icon_names=arrow_back_ios");
+.banner-content {
+  position: absolute;
+  bottom: 0%;
+  width: 100%;
+
+  padding: 20px 12px 48px;
+  background: linear-gradient(rgba(231, 118, 5, 0), rgba(231, 118, 5, 0.7));
+
+  @include media-breakpoint-up(lg) {
+    //內容置中
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    //位置
+    bottom: calc(0% + 88px);
+    left: calc(50% - 468px);
+    //區塊大小
+    width: 632px;
+    height: 198px;
+    //樣式
+    padding: 0px 28px;
+    border-radius: 8px;
+    background-color: rgba(231, 118, 5, 0.6);
+  }
+  @include media-breakpoint-up(xl) {
+    left: calc(50% - 558px);
+  }
+  @include media-breakpoint-up(xxl) {
+    left: calc(50% - 648px);
+  }
+}
+
+.swiper-pagination {
+  @include media-breakpoint-up(lg) {
+    z-index: 1000;
+    position: absolute;
+    bottom: calc(0% + 84px);
+    right: calc(50% - 468px);
+  }
+  @include media-breakpoint-up(xl) {
+    right: calc(50% - 558px);
+  }
+  @include media-breakpoint-up(xxl) {
+    right: calc(50% - 648px);
+  }
+  a {
+    width: 40px;
+    height: 40px;
+  }
+}
