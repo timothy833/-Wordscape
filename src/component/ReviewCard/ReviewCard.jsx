@@ -18,7 +18,7 @@ const ReviewCard = ({ reviewStar, avatar, style }) => {
             {Array.from({ length: reviewStar }).map((item, index) => {
               return (
                 <span
-                  class="material-symbols-outlined text-primary icon-fill fs-7"
+                  className="material-symbols-outlined text-primary icon-fill fs-7"
                   key={index}
                 >
                   grade
@@ -28,7 +28,7 @@ const ReviewCard = ({ reviewStar, avatar, style }) => {
             {Array.from({ length: 5 - reviewStar }).map((item, index) => {
               return (
                 <span
-                  class="material-symbols-outlined text-gray icon-fill fs-7"
+                  className="material-symbols-outlined text-gray icon-fill fs-7"
                   key={index}
                 >
                   grade
