@@ -1,4 +1,3 @@
-import "./ArticleCard.scss";
 import articleImg from "../../assets/images/article/article-thumbnail-1.jpeg";
 import avartar from "../../assets/images/avatar-1.png";
 const ArticleCard = () => {
