@@ -8,6 +8,7 @@ import "swiper/css/autoplay";
 import Header from "../../component/Header/Header";
 import Footer from "../../component/Footer/Footer";
 import ReviewCard from "../../component/ReviewCard/ReviewCard";
+import ArticleCard from "../../component/ArticleCard/ArticleCard";
 import banner_1 from "../../assets/images/banner/banner-1.png";
 import banner_2 from "../../assets/images/banner/banner-2.png";
 import banner_3 from "../../assets/images/banner/banner-3.png";
@@ -24,10 +25,15 @@ const HomePage = () => {
           style={{
             "--swiper-pagination-color": "#FFFDFB",
             "--swiper-pagination-bullet-inactive-color": "#838383",
+            "--swiper-pagination-bullet-inactive-opacity": "1"
           }}
           modules={[Pagination, Navigation, Autoplay]}
           navigation={{ nextEl: ".swiperNextEl", prevEl: ".swiperPrebEl" }}
-          pagination={{ clickable: true }}
+          pagination={{
+            clickable: true,
+            bulletClass:
+              "swiper-pagination-bullet swiper-pagination-bullet-mx-6",
+          }}
           autoplay={{ delay: 5000 }}
           loop={true}
         >
@@ -116,10 +122,14 @@ const HomePage = () => {
                   reviewStar={(index % 3) + 2}
                   avatar={avatar}
                   style={{ width: "100%", height: "148px" }}
+                  key={index}
                 />
               );
             })}
-            <button type="button" class="btn btn-lg btn-primary fw-bold lh-sm">
+            <button
+              type="button"
+              className="btn btn-lg btn-primary fw-bold lh-sm"
+            >
               載入更多
             </button>
           </div>
@@ -132,6 +142,7 @@ const HomePage = () => {
                   reviewStar={(index % 3) + 2}
                   avatar={avatar}
                   style={{ width: "306px", height: "148px" }}
+                  key={index}
                 />
               );
             })}
@@ -143,6 +154,7 @@ const HomePage = () => {
                   reviewStar={(index % 3) + 2}
                   avatar={avatar}
                   style={{ width: "306px", height: "148px" }}
+                  key={index}
                 />
               );
             })}
@@ -152,7 +164,61 @@ const HomePage = () => {
       <section className="homepage-section">
         <div className="container mb-lg-8">
           <h2 className="fw-bold fs-5 fs-lg-3 text-primary">推薦好文</h2>
-          <span className="fs-7 fw-bold">精選文章，趕快來發掘！</span>
+          <span className="d-block fs-7 fw-bold mb-10">
+            精選文章，趕快來發掘！
+          </span>
+          <div className="d-none d-md-flex row row-cols-2 row-cols-xl-4 g-lg-6 g-3">
+            <div className="col">
+              <ArticleCard />
+            </div>
+            <div className="col">
+              <ArticleCard />
+            </div>
+            <div className="col">
+              <ArticleCard />
+            </div>
+            <div className="col">
+              <ArticleCard />
+            </div>
+          </div>
+          <div className="d-block d-md-none text-center">
+            <Swiper
+              style={{
+                "--swiper-pagination-color": "#E77605",
+                "--swiper-pagination-bullet-inactive-color": "#EAEAEA",
+                "--swiper-pagination-bullet-inactive-opacity": "1",
+                paddingBottom: "44px",
+                marginBottom: "24px",
+              }}
+              modules={[Pagination, Navigation]}
+              pagination={{
+                clickable: true,
+                bulletClass:
+                  "swiper-pagination-bullet swiper-pagination-bullet-mx-6",
+              }}
+              loop={true}
+            >
+              <SwiperSlide>
+                <ArticleCard />
+              </SwiperSlide>
+              <SwiperSlide>
+                <ArticleCard />
+              </SwiperSlide>
+              <SwiperSlide>
+                <ArticleCard />
+              </SwiperSlide>
+              <SwiperSlide>
+                <ArticleCard />
+              </SwiperSlide>
+            </Swiper>
+
+            <button
+              type="button"
+              className="btn btn-lg btn-primary fw-bold lh-sm"
+            >
+              點我看更多
+            </button>
+          </div>
         </div>
       </section>
       <Footer />
