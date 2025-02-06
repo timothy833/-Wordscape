@@ -16,6 +16,7 @@ import banner_1_sm from "../../assets/images/banner/banner-1-sm.png";
 import banner_2_sm from "../../assets/images/banner/banner-2-sm.png";
 import banner_3_sm from "../../assets/images/banner/banner-3-sm.png";
 import avatar from "../../assets/images/avatar-1.png";
+import about_us from "../../assets/images/about-us.png";
 const HomePage = () => {
   return (
     <>
@@ -220,6 +221,33 @@ const HomePage = () => {
             >
               點我看更多
             </button>
+          </div>
+        </div>
+      </section>
+      <section className="homepage-section">
+        <div className="container">
+          <div className="d-flex align-items-center flex-column flex-lg-row gap-5 gap-lg-6">
+            <div className="w-lg-50">
+              <h2 className="text-primary fw-bold mb-5 mb-lg-10 fs-5 fs-lg-3">關於我們</h2>
+              <p className="mb-3">
+                我們是一個充滿熱情與創意的團隊<br />
+                致力於透過有價值的内容啟發每一位訪客
+              </p>
+              <p className="mb-3">
+                我們的目標是為你帶來多元化的觀點<br />
+                無論是生活靈感、個人成長、還是最新的趨勢資訊，<br className="d-none d-lg-block" />
+                都能在這裡找到適合你的閱讀體驗
+              </p>
+              <p className="mb-3">
+                我們相信，每一篇文章都是一扇窗，帶領你探索未知的世界，激發無限可能。
+              </p>
+              <p>
+                加入我們的旅程，讓知識興靈感成為你生活的一部分，共同創造一个更美好的未来!
+              </p>
+            </div>
+            <div className="w-lg-50">
+              <img src={about_us} className="img-fluid" alt="logo" />
+            </div>
           </div>
         </div>
       </section>
