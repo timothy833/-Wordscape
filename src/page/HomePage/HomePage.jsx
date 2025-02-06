@@ -169,12 +169,12 @@ const HomePage = () => {
         </div>
       </section>
       <section className="homepage-section">
-        <div className="container mb-lg-8">
+        <div className="container mb-lg-8 d-flex flex-column">
           <h2 className="fw-bold fs-5 fs-lg-3 text-primary">推薦好文</h2>
           <span className="d-block fs-7 fw-bold mb-10">
             精選文章，趕快來發掘！
           </span>
-          <div className="d-none d-md-flex row row-cols-2 row-cols-xl-4 g-lg-6 g-3">
+          <div className="d-none d-md-flex row row-cols-2 row-cols-xl-4 g-lg-6 g-3 mb-10">
             <div className="col">
               <ArticleCard />
             </div>
@@ -188,7 +188,7 @@ const HomePage = () => {
               <ArticleCard />
             </div>
           </div>
-          <div className="d-block d-md-none text-center">
+          <div className="d-block d-md-none">
             <Swiper
               style={{
                 "--swiper-pagination-color": "#E77605",
@@ -218,14 +218,13 @@ const HomePage = () => {
                 <ArticleCard />
               </SwiperSlide>
             </Swiper>
-
-            <button
-              type="button"
-              className="btn btn-lg btn-primary fw-bold lh-sm"
-            >
-              點我看更多
-            </button>
           </div>
+          <button
+            type="button"
+            className="btn btn-lg btn-primary fw-bold lh-sm mx-auto"
+          >
+            點我看更多
+          </button>
         </div>
       </section>
       <section className="homepage-section">
