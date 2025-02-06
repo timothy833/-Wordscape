@@ -194,9 +194,10 @@ const HomePage = () => {
                 "--swiper-pagination-color": "#E77605",
                 "--swiper-pagination-bullet-inactive-color": "#EAEAEA",
                 "--swiper-pagination-bullet-inactive-opacity": "1",
-                paddingBottom: "44px",
-                marginBottom: "24px",
+                margin: "-12px",
+                padding: "12px",
               }}
+              className="mb-6 pb-11"
               modules={[Pagination, Navigation]}
               pagination={{
                 clickable: true,
@@ -204,6 +205,7 @@ const HomePage = () => {
                   "swiper-pagination-bullet swiper-pagination-bullet-mx-6",
               }}
               loop={true}
+              spaceBetween={"24px"}
             >
               <SwiperSlide>
                 <ArticleCard />
