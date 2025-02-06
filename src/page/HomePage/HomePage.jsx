@@ -124,7 +124,7 @@ const HomePage = () => {
                 <ReviewCard
                   reviewStar={(index % 3) + 2}
                   avatar={avatar}
-                  style={{ width: "100%", height: "148px" }}
+                  width="100%"
                   key={index}
                 />
               );
@@ -144,19 +144,23 @@ const HomePage = () => {
                 <ReviewCard
                   reviewStar={(index % 3) + 2}
                   avatar={avatar}
-                  style={{ width: "306px", height: "148px" }}
+                  width="306px"
                   key={index}
                 />
               );
             })}
           </Marquee>
-          <Marquee className="reviewMarquee py-2" speed={35} direction={"right"}>
+          <Marquee
+            className="reviewMarquee py-2"
+            speed={35}
+            direction={"right"}
+          >
             {Array.from({ length: 10 }).map((item, index) => {
               return (
                 <ReviewCard
                   reviewStar={(index % 3) + 2}
                   avatar={avatar}
-                  style={{ width: "306px", height: "148px" }}
+                  width="306px"
                   key={index}
                 />
               );
@@ -228,14 +232,19 @@ const HomePage = () => {
         <div className="container">
           <div className="d-flex align-items-center flex-column flex-lg-row gap-5 gap-lg-6">
             <div className="w-lg-50">
-              <h2 className="text-primary fw-bold mb-5 mb-lg-10 fs-5 fs-lg-3">關於我們</h2>
+              <h2 className="text-primary fw-bold mb-5 mb-lg-10 fs-5 fs-lg-3">
+                關於我們
+              </h2>
               <p className="mb-3">
-                我們是一個充滿熱情與創意的團隊<br />
+                我們是一個充滿熱情與創意的團隊
+                <br />
                 致力於透過有價值的内容啟發每一位訪客
               </p>
               <p className="mb-3">
-                我們的目標是為你帶來多元化的觀點<br />
-                無論是生活靈感、個人成長、還是最新的趨勢資訊，<br className="d-none d-lg-block" />
+                我們的目標是為你帶來多元化的觀點
+                <br />
+                無論是生活靈感、個人成長、還是最新的趨勢資訊，
+                <br className="d-none d-lg-block" />
                 都能在這裡找到適合你的閱讀體驗
               </p>
               <p className="mb-3">

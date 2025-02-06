@@ -1,8 +1,8 @@
 import "./ReviewCard.scss";
-const ReviewCard = ({ reviewStar, avatar, style }) => {
+const ReviewCard = ({ reviewStar, avatar, width }) => {
   return (
-    <div className="card border-0 shadow-sm" style={style}>
-      <div className="card-body p-3">
+    <div className="card border-0 shadow-sm" style={{width:{width}}}>
+      <div className="card-body p-3 pb-4">
         <div className="d-flex align-items-center justify-content-between mb-2">
           <div className="d-flex align-items-center">
             <img
@@ -37,7 +37,7 @@ const ReviewCard = ({ reviewStar, avatar, style }) => {
             })}
           </div>
         </div>
-        <p className="card-text">
+        <p className="card-text reviewCard-text">
           優質社群氛圍，作者專業且互動友善，讓學習變得輕鬆又有趣！
         </p>
       </div>
