@@ -5,9 +5,9 @@ import avatar from "../../assets/images/avatar-1.png";
 
 const Navbar = () => {
   return (
-    <section>
-      <div className="container">
-        <div className="d-flex justify-content-between align-items-center">
+    <section className="pt-19 pt-lg-20">
+      <div className="fixed-top bg-light">
+        <div className="container navbar d-flex justify-content-between align-items-center">
           <a href="#">
             <picture>
               <source
