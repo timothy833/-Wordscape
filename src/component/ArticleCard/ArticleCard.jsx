@@ -3,7 +3,7 @@ import avartar from "../../assets/images/avatar-1.png";
 const ArticleCard = () => {
   return (
     <>
-      <div className="card p-3 shadow-sm border-0 rounded-3">
+      <div className="article-card card p-3 shadow rounded-3">
         <img
           src={articleImg}
           className="card-img-top rounded-1 mb-5"
