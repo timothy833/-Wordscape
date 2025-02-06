@@ -59,9 +59,15 @@
   }
 }
 
-.swiper-pagination-bullet-mx-6{
+.swiper-pagination-bullet-mx-6 {
   margin-left: 6px;
   margin-right: 6px;
+}
+
+.swiperPrebEl,
+.swiperNextEl {
+  cursor: pointer;
+  user-select: none;
 }
 
 .reviewMarquee .rfm-child {
