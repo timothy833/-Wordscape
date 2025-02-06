@@ -3,9 +3,9 @@ import logo from "../../assets/images/logo.svg";
 import logo_sm from "../../assets/images/logo-sm.svg";
 import avatar from "../../assets/images/avatar-1.png";
 
-const Header = () => {
+const Navbar = () => {
   return (
-    <header>
+    <section>
       <div className="container">
         <div className="d-flex justify-content-between align-items-center">
           <a href="#">
@@ -147,8 +147,8 @@ const Header = () => {
           </div>
         </div>
       </div>
-    </header>
+    </section>
   );
 };
 
-export default Header;
+export default Navbar;
