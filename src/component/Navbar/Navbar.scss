@@ -22,7 +22,14 @@
   li:not(:last-child){
     margin-bottom: 16px;
   }
-  .dropdown-item:hover{
+  .dropdown-item:hover,.dropdown-item:active{
+    background-color: $light;
+    color: $primary;
+  }
+}
+.homepage-collapse{
+  .dropdown-item:hover,.dropdown-item:active{
+    background-color: $light;
     color: $primary;
   }
 }
