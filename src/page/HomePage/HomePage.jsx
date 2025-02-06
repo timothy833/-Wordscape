@@ -138,7 +138,7 @@ const HomePage = () => {
           </div>
         </div>
         <div className="d-none d-lg-block">
-          <Marquee className="reviewMarquee pt-2 pb-3">
+          <Marquee className="reviewMarquee pt-2 pb-3" speed={30}>
             {Array.from({ length: 10 }).map((item, index) => {
               return (
                 <ReviewCard
@@ -150,7 +150,7 @@ const HomePage = () => {
               );
             })}
           </Marquee>
-          <Marquee className="reviewMarquee py-2" speed={70}>
+          <Marquee className="reviewMarquee py-2" speed={35} direction={"right"}>
             {Array.from({ length: 10 }).map((item, index) => {
               return (
                 <ReviewCard
