@@ -16,6 +16,16 @@
   left: calc(0% + 12px);
   font-weight: 300;
 }
+.homepage-dropdown{
+  transform: translate(-48px,38px);
+  min-width: 152px;
+  li:not(:last-child){
+    margin-bottom: 16px;
+  }
+  .dropdown-item:hover{
+    color: $primary;
+  }
+}
 .avatar {
   width: 40px;
   height: 40px;

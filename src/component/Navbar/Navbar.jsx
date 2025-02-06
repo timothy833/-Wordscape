@@ -46,7 +46,6 @@ const Navbar = () => {
                   id="dropdownUserMenu"
                   className="d-flex"
                   data-bs-toggle="dropdown"
-                  data-bs-offset="-60,38"
                   href="#"
                 >
                   super123
@@ -55,21 +54,21 @@ const Navbar = () => {
                   </span>
                 </a>
                 <ul
-                  className="dropdown-menu text-center py-3"
+                  className="dropdown-menu homepage-dropdown text-center py-3 px-5 border-0"
                   aria-labelledby="dropdownUserMenu"
                 >
                   <li>
-                    <a className="dropdown-item py-2 px-5" href="#">
+                    <a className="dropdown-item p-0" href="#">
                       追蹤部落格
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item py-2 px-5" href="#">
+                    <a className="dropdown-item p-0" href="#">
                       會員中心
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item py-2 px-5" href="#">
+                    <a className="dropdown-item p-0" href="#">
                       登出
                     </a>
                   </li>
