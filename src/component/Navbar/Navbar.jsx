@@ -33,7 +33,7 @@ const Navbar = () => {
                 </span>
                 <input
                   type="text"
-                  className="search-bar form-control ps-11"
+                  className="search-bar form-control ps-11 fs-8"
                   placeholder="搜尋..."
                 />
               </div>
@@ -146,6 +146,48 @@ const Navbar = () => {
               </a>
             </li>
           </ul>
+        </div>
+        <div
+          className="collapse homepage-collapse position-absolute bg-light start-0 w-100 z-3 d-lg-none  border-top"
+          id="collapseSearch"
+        >
+          <div className="container">
+            <ul
+              className="text-left list-unstyled mb-0"
+              aria-labelledby="dropdownUserMenu"
+            >
+              <li className="input-group input-group-sm py-3">
+                <span className="material-symbols-outlined searchbar-icon text-gray fs-6">
+                  search
+                </span>
+                <input
+                  type="text"
+                  className="search-bar form-control fs-8 ps-11 w-100"
+                  placeholder="搜尋..."
+                />
+              </li>
+              <li>
+                <a className="dropdown-item py-1 px-3 text-gray" href="#">
+                  熱門關鍵字
+                </a>
+              </li>
+              <li>
+                <a className="dropdown-item py-2 px-3" href="#">
+                  拾字間
+                </a>
+              </li>
+              <li>
+                <a className="dropdown-item py-2 px-3" href="#">
+                  專注閱讀
+                </a>
+              </li>
+              <li>
+                <a className="dropdown-item py-2 px-3" href="#">
+                  閱讀體驗
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </section>
