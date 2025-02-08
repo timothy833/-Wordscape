@@ -300,12 +300,12 @@ $cyans: (
 // scss-docs-start theme-color-variables
 $primary:      #E77605; //$primary:       $blue !default;
 $primary_hover:#FB9A39; //$primary:       $blue !default;
-$secondary:    #FFF9ED; //$secondary:     $gray-600 !default;
+$secondary:    #FFF9ED; //$secondary:  #fcf4e4;   $gray-600 !default;
 $success:        $green !default;
 $info:           $cyan !default;
 $warning:        $yellow !default;
 $danger:         $red !default;
-$light:        #F9F9F9 !default; //$light:         $gray-100 !default;
+$light:        #fdfbf5 !default; //$light:    #F9F9F9   #fdfbf5  $gray-100 !default;
 $dark:         #3A3A3A !default; //$dark:          $gray-900 !default;
 
 $gray:         #838383; // NEW
@@ -585,7 +585,7 @@ $border-radius-2xl:           $border-radius-xxl !default; // Deprecated in v5.3
 // fusv-enable
 
 // scss-docs-start box-shadow-variables
-$box-shadow:                  0 .125rem 1rem rgba($black, .15) !default;//0 .5rem 1rem rgba($black, .15) !default;
+$box-shadow:                  .2rem .2rem .75rem rgba(#c18700, .15) !default;//0 .5rem 1rem rgba($black, .15) !default;
 $box-shadow-sm:               0 .125rem .25rem rgba($black, .075) !default;
 $box-shadow-lg:               0 1rem 3rem rgba($black, .175) !default;
 $box-shadow-inset:            inset 0 1px 2px rgba($black, .075) !default;
@@ -1275,7 +1275,7 @@ $navbar-dark-brand-hover-color:     $navbar-dark-active-color !default;
 // scss-docs-start dropdown-variables
 $dropdown-min-width:                10rem !default;
 $dropdown-padding-x:                0 !default;
-$dropdown-padding-y:                .5rem !default;
+$dropdown-padding-y:                0!default;
 $dropdown-spacer:                   .125rem !default;
 $dropdown-font-size:                $font-size-base !default;
 $dropdown-color:                    var(--#{$prefix}body-color) !default;

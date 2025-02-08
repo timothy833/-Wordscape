@@ -8,13 +8,29 @@
     padding-bottom: 100px;
   }
 }
+
+.banner-img-container {
+  position: relative;
+  display: inline-block;
+}
+
+.banner-img-container::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.15); /* 半透明黑色 */
+}
+
 .banner-content {
   position: absolute;
   bottom: 0%;
   width: 100%;
 
-  padding: 20px 12px 48px;
-  background: linear-gradient(rgba(231, 118, 5, 0), rgba(231, 118, 5, 0.7));
+  // padding: 20px 12px 48px 0px;
+  background: linear-gradient(rgba(231, 118, 5, 0), rgba(231, 118, 5, 0.6));
 
   @include media-breakpoint-up(lg) {
     //內容置中
@@ -28,7 +44,7 @@
     width: 632px;
     height: 198px;
     //樣式
-    padding: 0px 28px;
+    padding: 0px 40px;
     border-radius: 8px;
     background-color: rgba(231, 118, 5, 0.6);
   }
@@ -73,4 +89,10 @@
 .reviewMarquee .rfm-child {
   margin-left: 12px;
   margin-right: 12px;
+}
+
+.hover-shadow:hover {
+  transform: translateY(-1px);
+  box-shadow: .2rem .2rem .75rem rgba(#c18700, .15) ;
+  transition: all 0.2s ease-in-out;
 }

@@ -5,8 +5,8 @@ import avatar from "../../assets/images/avatar-1.png";
 
 const Navbar = () => {
   return (
-    <section className="pt-19 pt-lg-20">
-      <div className="fixed-top bg-light">
+    <section className="pt-19 pt-lg-20 ">
+      <div className="fixed-top bg-light shadow-sm">
         <div className="container">
           <div className=" navbar d-flex justify-content-between align-items-center">
             <a href="#">
@@ -14,7 +14,7 @@ const Navbar = () => {
                 <source
                   media="(min-width: 992px)"
                   srcSet={logo}
-                  width="192px"
+                  width="180px"
                   height="auto"
                 />
                 <img
@@ -33,7 +33,7 @@ const Navbar = () => {
                 </span>
                 <input
                   type="text"
-                  className="search-bar form-control ps-11 fs-8"
+                  className="search-bar form-control ps-11 fs-8 rounded"
                   placeholder="搜尋..."
                 />
               </div>
@@ -55,21 +55,21 @@ const Navbar = () => {
                     </span>
                   </a>
                   <ul
-                    className="dropdown-menu homepage-dropdown text-center py-3 px-5 border-0"
+                    className="dropdown-menu homepage-dropdown text-center border-1 border-primary-subtle"
                     aria-labelledby="dropdownUserMenu"
                   >
                     <li>
-                      <a className="dropdown-item p-0" href="#">
+                      <a className="dropdown-item py-3 px-5" href="#">
                         追蹤部落格
                       </a>
                     </li>
                     <li>
-                      <a className="dropdown-item p-0" href="#">
+                      <a className="dropdown-item py-3 px-5" href="#">
                         會員中心
                       </a>
                     </li>
                     <li>
-                      <a className="dropdown-item p-0" href="#">
+                      <a className="dropdown-item py-3 px-5" href="#">
                         登出
                       </a>
                     </li>
