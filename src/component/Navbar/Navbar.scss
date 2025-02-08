@@ -1,0 +1,46 @@
+.navbar {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  @include media-breakpoint-up(lg) {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+}
+.search-bar {
+  width: 240px;
+  height: 40px;
+}
+.searchbar-icon {
+  z-index: 1000;
+  position: absolute;
+  left: calc(0% + 12px);
+  top:  calc(0% + 20px);;
+  @include media-breakpoint-up(lg) {
+    top:  calc(0% + 8px);
+    left: calc(0% + 12px);
+    font-weight: 300;
+  }
+}
+.homepage-dropdown {
+  transform: translate(-48px, 38px);
+  min-width: 152px;
+  li:not(:last-child) {
+    margin-bottom: 16px;
+  }
+  .dropdown-item:hover,
+  .dropdown-item:active {
+    background-color: $primary;
+    color: $light;
+  }
+}
+.homepage-collapse {
+  .dropdown-item:hover,
+  .dropdown-item:active {
+    background-color: $primary;
+    color: $light;
+  }
+}
+.avatar {
+  width: 40px;
+  height: 40px;
+}

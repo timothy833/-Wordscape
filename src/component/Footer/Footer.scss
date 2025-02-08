@@ -1,0 +1,19 @@
+.footer-linklist .list-item{
+  &:not(:last-child):not(:nth-child(3))::after{
+    content: "|";
+    color: $light;
+    margin-left: 8px;
+    margin-right: 8px;
+  }
+  @include media-breakpoint-up(lg) {
+    &:nth-child(3)::after{
+      content: "|";
+      color: $light;
+      margin-left: 8px;
+      margin-right: 8px;
+    }
+  }
+  a{
+    color: $light;
+  }
+} 

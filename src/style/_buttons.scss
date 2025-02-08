@@ -1,0 +1,14 @@
+.btn-primary{
+  color: $light;
+}
+.btn-primary:hover,.btn-primary:active.btn-primary{
+  color: $light;
+  background-color: $primary_hover;
+  border-color: $primary_hover;
+}
+
+.btn-outline-primary:hover,.btn-outline-primary:active.btn-outline-primary {
+  color: $light;
+  background-color: $primary_hover;
+  border-color: $primary_hover;
+}

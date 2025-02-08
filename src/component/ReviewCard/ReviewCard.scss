@@ -1,0 +1,13 @@
+.material-symbols-outlined.icon-fill {
+  font-variation-settings:
+    'FILL' 1,
+}
+.reviewCard-text{
+  display: -webkit-box;
+  -webkit-box-orient: vertical; 
+  overflow: hidden;             
+  -webkit-line-clamp: 3;  
+  line-clamp: 3;       
+  line-height: 1.5;             
+  height: 5rem;
+}
