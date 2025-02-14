@@ -10,8 +10,8 @@ const ArticlePage = () => {
     <>
       <Navbar />
       <section>
-        <div className="container py-15 border-bottom">
-          <h3 className="fs-3 text-primary fw-bold mb-5">快來分享你的想法</h3>
+        <div className="container py-10 py-lg-15 border-bottom">
+          <h3 className="fs-5 fs-lg-3 text-primary fw-bold mb-5">快來分享你的想法</h3>
           <CommentBox>
             <CommentReply />
             <CommentReply />
@@ -39,8 +39,8 @@ const ArticlePage = () => {
         </div>
       </section>
       <section>
-        <div className="container py-15">
-          <h3 className="fs-3 text-primary fw-bold mb-5">相關文章</h3>
+        <div className="container py-10 py-lg-15">
+          <h3 className="fs-5 fs-lg-3 text-primary fw-bold mb-5">相關文章</h3>
           <nav class="related-articles nav mb-5 gap-5">
             <a class="nav-link p-0 active" aria-current="page" href="#">
               數位時代
