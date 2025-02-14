@@ -1,0 +1,9 @@
+.related-articles.nav{
+  .nav-link{
+    color: $gray;
+  }
+  .nav-link.active{
+    color: $primary;
+    border-bottom: 2px solid $primary;
+  }
+}
