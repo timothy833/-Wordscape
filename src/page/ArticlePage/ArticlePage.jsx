@@ -6,19 +6,35 @@ const ArticlePage = () => {
     <>
       <Navbar />
       <section>
-        <div className="container py-15 ">
+        <div className="container py-15 border-bottom">
           <h3 className="fs-3 text-primary fw-bold mb-5">快來分享你的想法</h3>
           <CommentBox>
-            <CommentReply/>
-            <CommentReply/>
-            <CommentReply/>
+            <CommentReply />
+            <CommentReply />
+            <CommentReply />
           </CommentBox>
           <CommentBox>
-            <CommentReply/>
-            <CommentReply/>
+            <CommentReply />
+            <CommentReply />
           </CommentBox>
+          <form>
+            <label className="d-none" htmlFor="comment">
+              留言
+            </label>
+            <textarea
+              name="comment"
+              id="comment"
+              className="form-control mb-5"
+              style={{ resize: "none", height: "120px" }}
+              placeholder="我想說......"
+            ></textarea>
+            <button type="submit" class="btn btn-lg btn-primary">
+              送出
+            </button>
+          </form>
         </div>
       </section>
+
     </>
   );
 };
