@@ -125,7 +125,7 @@ const ArticlePage = () => {
               style={{ resize: "none", height: "120px" }}
               placeholder="我想說......"
             ></textarea>
-            <button type="submit" class="btn btn-lg btn-primary">
+            <button type="submit" class="btn btn-lg btn-primary lh-sm fw-bold ls-0">
               送出
             </button>
           </form>
