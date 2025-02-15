@@ -38,21 +38,25 @@ const ArticlePage = () => {
             <h1 className="text-primary fs-4 fs-lg-1 fw-bold mb-5">
               2024：數位世界裡的真實感，虛實交錯的我們
             </h1>
-            <div className="d-flex align-items-center gap-5">
-              <div className="d-flex align-items-center">
-                <img className="avatar me-2" src={avatar} alt="avatar" />
-                <span>宋書遠</span>
+            <div className="d-flex gap-5 flex-column flex-lg-row">
+              <div className="d-flex align-items-center gap-5">
+                <div className="d-flex align-items-center">
+                  <img className="avatar me-2" src={avatar} alt="avatar" />
+                  <span>宋書遠</span>
+                </div>
+                <a className="text-gray" href="#">
+                  追蹤
+                </a>
               </div>
-              <a className="text-gray" href="#">
-                追蹤
-              </a>
-              <span className=" d-flex align-items-center gap-1 text-primary ">
-                <span className="material-symbols-outlined icon-fill">
-                  favorite
+              <div className="d-flex align-items-center gap-5">
+                <span className=" d-flex align-items-center gap-1 text-primary ">
+                  <span className="material-symbols-outlined icon-fill">
+                    favorite
+                  </span>
+                  143
                 </span>
-                143
-              </span>
-              <span className="text-gray">發佈於 2024/11/22</span>
+                <span className="text-gray">發佈於 2024/11/22</span>
+              </div>
             </div>
           </div>
         </div>
