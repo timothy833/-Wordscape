@@ -62,13 +62,12 @@ const ArticlePage = () => {
         </div>
         <img
           src={banner}
-          className="w-100 object-fit-cover"
-          height={"600px"}
+          className="w-100 object-fit-cover article-banner"
           alt="banner"
         />
       </header>
       <section>
-        <div className="container d-flex flex-column gap-5 gap-lg-7 border-bottom pt-lg-10 pb-10 pb-lg-15">
+        <div className="container d-flex flex-column gap-5 gap-lg-7 border-bottom pt-5 pt-lg-10 pb-10 pb-lg-15">
           <h2 className="fw-bold fs-5 fs-lg-3">回望今年的熱潮</h2>
           <p>
             在2024年，「AI生成內容」這個詞不再只是技術愛好者的專屬，而成為日常生活中不可忽略的一部分。從生成圖片、文本到深度學習技術的應用，我們看見許多人不斷嘗試用科技重塑創作的可能。然而，在這片技術浪潮中，一個有趣的現象正在悄然浮現：我們開始更熱衷於追求真實感。

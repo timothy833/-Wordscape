@@ -7,3 +7,10 @@
     border-bottom: 2px solid $primary;
   }
 }
+
+.article-banner{
+  height: 400px;
+  @include media-breakpoint-up(lg) {
+    height: 600px;
+  }
+}
