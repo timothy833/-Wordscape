@@ -1,6 +1,6 @@
 import HomePage from "../page/HomePage/HomePage";
 import ArticlePage from "../page/ArticlePage/ArticlePage";
-
+import ArticleListPage from "../page/ArticleListPage/ArticleListPage";
 const router = [
   {
     path: "/",
@@ -8,6 +8,9 @@ const router = [
   },
   { path: "/article", 
     element: <ArticlePage /> 
+  },
+  { path: "/articleList", 
+    element: <ArticleListPage /> 
   },
 ];
 
