@@ -52,7 +52,15 @@ const ArticleListPage = () => {
           </ul>
         </div>
       </section>
-      
+      <section
+        style={{
+          paddingTop: "84px",
+          paddingBottom: "84px",
+          backgroundColor: "rgba(251, 164, 77, 0.33)",
+        }}
+      >
+        <div className="container"></div>
+      </section>
     </>
   );
 };
