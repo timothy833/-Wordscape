@@ -1,5 +1,5 @@
 import Navbar from "../../component/Navbar/Navbar";
-import Footer from "../../component/Footer/Footer"
+import Footer from "../../component/Footer/Footer";
 const ArticleListPage = () => {
   return (
     <>
@@ -141,23 +141,26 @@ const ArticleListPage = () => {
               <ul className="list-unstyled d-flex flex-column gap-6">
                 {Array.from({ length: 5 }).map(() => {
                   return (
-                    <li className="d-flex py-7 px-9 bg-light rounded-2 border-bottom border-4 border-primary">
-                      <img
-                        className="me-6 object-fit-cover"
-                        src="https://github.com/wfox5510/wordSapve-imgRepo/blob/main/articleList-recommend1.png?raw=true"
-                        alt=""
-                        height={"131px"}
-                        width={"131px"}
-                      />
-                      <div className="d-flex flex-column gap-3">
-                        <h3 className="fs-8 fw-bold">【程式設計的美感】</h3>
-                        <h4 className="text-primary fs-7 fw-bold text-truncate-2lines lh-sm">
-                          設計師與工程師的橋樑：讓 UI/UX 更直覺的 7個程式技巧！
-                        </h4>
-                        <p className="text-truncate-2lines ">
-                          結合設計與開發，談如何讓網站既有視覺美感，又兼具良好使用者體驗。
-                        </p>
-                      </div>
+                    <li className="bg-light rounded-2 border-bottom border-4 border-primary">
+                      <a href="#" className="d-flex py-7 px-9">
+                        <img
+                          className="me-6 object-fit-cover"
+                          src="https://github.com/wfox5510/wordSapve-imgRepo/blob/main/articleList-recommend1.png?raw=true"
+                          alt=""
+                          height={"131px"}
+                          width={"131px"}
+                        />
+                        <div className="d-flex flex-column gap-3">
+                          <h3 className="fs-8 fw-bold">【程式設計的美感】</h3>
+                          <h4 className="text-primary fs-7 fw-bold text-truncate-2lines lh-sm">
+                            設計師與工程師的橋樑：讓 UI/UX 更直覺的
+                            7個程式技巧！
+                          </h4>
+                          <p className="text-truncate-2lines ">
+                            結合設計與開發，談如何讓網站既有視覺美感，又兼具良好使用者體驗。
+                          </p>
+                        </div>
+                      </a>
                     </li>
                   );
                 })}
@@ -233,7 +236,7 @@ const ArticleListPage = () => {
           </ul>
         </div>
       </section>
-      <Footer/>
+      <Footer />
     </>
   );
 };
