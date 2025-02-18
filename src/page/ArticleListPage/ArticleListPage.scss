@@ -51,18 +51,19 @@
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    &:focus-visible{
-      outline:none;
+    &:focus-visible {
+      outline: none;
     }
   }
   &::after {
     content: "\e313";
-    color: $primary;
     position: absolute;
-    font-size: 24px;
     right: 12px;
     top: 50%;
     transform: translateY(-50%);
+    pointer-events: none;
+    color: $primary;
+    font-size: 24px;
     font-family: "Material Symbols Outlined";
   }
 }
