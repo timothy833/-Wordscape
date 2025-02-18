@@ -12,6 +12,7 @@
 }
 .hot-article-pagination{
   .page-link{
+    user-select: none;
     border: 1px solid #DFE3E8;
     display: flex;
     align-items: center;
