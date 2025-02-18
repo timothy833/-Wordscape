@@ -59,7 +59,115 @@ const ArticleListPage = () => {
           backgroundColor: "rgba(251, 164, 77, 0.33)",
         }}
       >
-        <div className="container"></div>
+        <div className="container">
+          <div className="row">
+            <div className="col-7">
+              <h2 className="text-primary fw-bold mb-7 p-2">熱門文章</h2>
+              <ul className="list-unstyled mb-6 d-flex flex-column gap-6">
+                {Array.from({ length: 3 }).map(() => {
+                  return (
+                    <li>
+                      <a href="#" className="card border-0 p-5">
+                        <img
+                          src="https://github.com/wfox5510/wordSapve-imgRepo/blob/main/articleList-hot1.png?raw=true"
+                          className="card-img-top mb-2"
+                          alt="..."
+                        />
+                        <div className="card-body p-0">
+                          <h3 className="card-title fs-7 fw-bold">
+                            為什麼拖延症不是你的錯？心理學揭密拖延的真正原因！
+                          </h3>
+                          <p className="card-text text-truncate mb-2">
+                            你可能認為自己只是懶惰或缺乏自制力，但心理學研究顯示，拖延的真正原因並非如此簡單...
+                          </p>
+                          <div>
+                            <span className="me-2">陳奕文 |</span>
+                            <span>心理學作家</span>
+                          </div>
+                        </div>
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+              <nav aria-label="Page navigation">
+                <ul class="hot-article-pagination pagination justify-content-center gap-2 mb-0">
+                  <li class="page-item" disable={true}>
+                    <a
+                      class="page-link material-symbols-outlined p-0 ps-1 pt-1 rounded-1"
+                      style={{ color: "#C4CDD5" }}
+                    >
+                      arrow_back_ios
+                    </a>
+                  </li>
+                  {Array.from({ length: 10 }).map((item, index) => {
+                    if (index === 0) {
+                      return (
+                        <li class="page-item">
+                          <a class="page-link rounded-1 active p-0" href="#">
+                            {index + 1}
+                          </a>
+                        </li>
+                      );
+                    } else if (index + 1 <= 2 || 10 - (index + 1) < 2)
+                      return (
+                        <li class="page-item">
+                          <a class="page-link rounded-1 p-0" href="#">
+                            {index + 1}
+                          </a>
+                        </li>
+                      );
+                    else if (index + 1 === 3) {
+                      return (
+                        <li class="page-item">
+                          <a class="page-link rounded-1 p-0" href="#">
+                            ...
+                          </a>
+                        </li>
+                      );
+                    }
+                  })}
+                  <li class="page-item">
+                    <a
+                      class="page-link material-symbols-outlined rounded-1 p-0"
+                      href="#"
+                      style={{ color: "#C4CDD5" }}
+                    >
+                      arrow_forward_ios
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+            <div className="col-5">
+              <h2 className="text-primary fw-bold mb-7 p-2">推薦專欄</h2>
+              <ul className="list-unstyled d-flex flex-column gap-6">
+                {Array.from({ length: 5 }).map(() => {
+                  return (
+                    <li className="d-flex py-7 px-9 bg-light rounded-2 border-bottom border-4 border-primary">
+                      <img
+                        className="me-6 object-fit-cover"
+                        src="https://github.com/wfox5510/wordSapve-imgRepo/blob/main/articleList-recommend1.png?raw=true"
+                        alt=""
+                        height={"131px"}
+                        width={"131px"}
+                      />
+                      <div className="d-flex flex-column gap-3">
+                        <h3 className="fs-8 fw-bold">【程式設計的美感】</h3>
+                        <h4 className="text-primary fs-7 fw-bold text-truncate-2lines lh-sm">
+                          設計師與工程師的橋樑：讓 UI/UX 更直覺的 7個程式技巧！
+                        </h4>
+                        <p className="text-truncate-2lines ">
+                          結合設計與開發，談如何讓網站既有視覺美感，又兼具良好使用者體驗。
+                        </p>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </div>
+        </div>
       </section>
     </>
   );
