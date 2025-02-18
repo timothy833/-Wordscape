@@ -3,7 +3,8 @@
     color: $dark;
     background-color: #fffaef;
     border: 0.5px solid $primary;
-    &.active {
+    user-select: none;
+    &.active,&:hover,&:focus {
       color: $light;
       background-color: $primary_hover;
       border: 0.5px solid $primary_hover;
