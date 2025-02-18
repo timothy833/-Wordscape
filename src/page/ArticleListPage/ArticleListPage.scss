@@ -10,13 +10,13 @@
     }
   }
 }
-.hot-article-pagination{
-  .page-link.material-symbols-outlined{
-    color: #C4CDD5;
+.hot-article-pagination {
+  .page-link.material-symbols-outlined {
+    color: #c4cdd5;
   }
-  .page-link{
+  .page-link {
     user-select: none;
-    border: 1px solid #DFE3E8;
+    border: 1px solid #dfe3e8;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -24,15 +24,45 @@
     font-weight: bold;
     width: 32px;
     height: 32px;
-    &.active{
+    &.active {
       background-color: $light;
       color: $primary;
       border: 1px solid $primary;
     }
-    &:hover,:focus{
+    &:hover,
+    :focus {
       background-color: $primary;
       color: $light;
       border: 1px solid $primary;
     }
+  }
+}
+
+.article-list-section {
+  padding-top: 100px;
+  padding-bottom: 100px;
+  background-color: #fffaef;
+}
+.article-list-select-wrap {
+  position: relative;
+  select {
+    width: 176px;
+    background-color: #fffdfb;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    &:focus-visible{
+      outline:none;
+    }
+  }
+  &::after {
+    content: "\e313";
+    color: $primary;
+    position: absolute;
+    font-size: 24px;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: "Material Symbols Outlined";
   }
 }

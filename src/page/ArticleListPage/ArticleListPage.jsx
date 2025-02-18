@@ -1,4 +1,5 @@
 import Navbar from "../../component/Navbar/Navbar";
+
 const ArticleListPage = () => {
   return (
     <>
@@ -161,6 +162,23 @@ const ArticleListPage = () => {
                   );
                 })}
               </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section className="article-list-section">
+        <div
+          className="container py-10 px-5 border"
+          style={{ backgroundColor: "#FFFDFB" }}
+        >
+          <h2 className="text-primary fw-bold">文章列表</h2>
+          <div className="d-flex justify-content-between">
+            <div className="article-list-select-wrap">
+              <select className="text-dark p-3 border" name="article-list-class" id="article-list-class">
+                <option value="allArticle">全部內容</option>
+                <option value="opinionsSharing">心得分享</option>
+                <option value="bookReport">書籍評論</option>
+              </select>
             </div>
           </div>
         </div>
