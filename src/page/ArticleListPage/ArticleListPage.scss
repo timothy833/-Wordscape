@@ -11,6 +11,9 @@
   }
 }
 .hot-article-pagination{
+  .page-link.material-symbols-outlined{
+    color: #C4CDD5;
+  }
   .page-link{
     user-select: none;
     border: 1px solid #DFE3E8;
@@ -24,6 +27,11 @@
     &.active{
       background-color: $light;
       color: $primary;
+      border: 1px solid $primary;
+    }
+    &:hover,:focus{
+      background-color: $primary;
+      color: $light;
       border: 1px solid $primary;
     }
   }

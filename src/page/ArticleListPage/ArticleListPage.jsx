@@ -93,10 +93,7 @@ const ArticleListPage = () => {
               <nav aria-label="Page navigation">
                 <ul class="hot-article-pagination pagination justify-content-center gap-2 mb-0">
                   <li class="page-item" disable={true}>
-                    <a
-                      class="page-link material-symbols-outlined p-0 ps-1 pt-1 rounded-1"
-                      style={{ color: "#C4CDD5" }}
-                    >
+                    <a class="page-link material-symbols-outlined p-0 ps-1 pt-1 rounded-1">
                       arrow_back_ios
                     </a>
                   </li>
@@ -131,7 +128,6 @@ const ArticleListPage = () => {
                     <a
                       class="page-link material-symbols-outlined rounded-1 p-0"
                       href="#"
-                      style={{ color: "#C4CDD5" }}
                     >
                       arrow_forward_ios
                     </a>
