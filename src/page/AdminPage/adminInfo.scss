@@ -1,3 +1,8 @@
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@24,300,0,0&icon_names=close");
+
+.rotate-45 {
+  transform: rotate(45deg);
+}
 .admin-avatar {
   width: 80px;
   height: 80px;
@@ -10,5 +15,10 @@
     font-weight: 700 !important;
     color: #e77605 !important;
     border-bottom: solid 2px #e77605;
+  }
+}
+.admin-form_checked {
+  &:checked {
+    border-color: #e77605 !important;
   }
 }
