@@ -2,6 +2,7 @@ import Navbar from "../../component/Navbar/Navbar";
 import Footer from "../../component/Footer/Footer";
 import AdminPcSidebar from "../../component/AdminPcSidebar/AdminPcSidebar";
 import AdminMobileHeader from "../../component/AdminMobileHeader/AdminMobileHeader";
+import AdminRevenueChart from "../../component/AdminRevenueChart/AdminRevenueChart";
 
 const AdminBackground = () => {
   return (
@@ -22,7 +23,7 @@ const AdminBackground = () => {
                   <div className="d-flex align-items-center mb-5">
                     <p className="me-5">1,184,013</p>
                     <span className="text-data_font text-gray me-1">本月減少 15,382 訂閱數</span>
-                    <span class="material-symbols-sharp text-primary">
+                    <span className="material-symbols-sharp text-primary">
                       trending_down
                     </span>
                   </div>
@@ -30,7 +31,7 @@ const AdminBackground = () => {
                   <div className="d-flex align-items-center mb-5">
                     <p className="me-5">983,293,012</p>
                     <span className="text-data_font text-gray me-1">本月增加 5,382 點閱數</span>
-                    <span class="material-symbols-sharp text-primary">
+                    <span className="material-symbols-sharp text-primary">
                       trending_up
                     </span>
                   </div>
@@ -38,6 +39,54 @@ const AdminBackground = () => {
                   <div className="d-flex align-items-center mb-5">
                     <p className="me-5">$1,562,098</p>
                     <span className="text-data_font text-gray me-1">本月收益為 32,000</span>
+                  </div>
+                </div>
+                <div className="admin_background_dashboard">
+                  <div className="card border-gray_light mb-5">
+                    <div className="card-body text-center py-5">
+                      <div className="d-flex gap-3 align-items-center mb-5">
+                        <select className="form-select admin-background_dashboard py-1" defaultValue="12月">
+                          <option value="12月">12月</option>
+                          <option value="11月">11月</option>
+                          <option value="10月">10月</option>
+                        </select>
+                        <h5 className="card-title fs-8 text-gray">月總點閱量</h5>
+                      </div>
+                      <p className="fs-7 text-primary fw-bolder">10,078次</p>
+                    </div>
+                  </div>
+                  <div className="card border-gray_light mb-5">
+                    <div className="card-body text-center py-5">
+                      <div className="d-flex gap-3 align-items-center mb-5">
+                        <select className="form-select admin-background_dashboard py-1" defaultValue="12月">
+                          <option value="12月">12月</option>
+                          <option value="11月">11月</option>
+                          <option value="10月">10月</option>
+                        </select>
+                        <h5 className="card-title fs-8 text-gray">月最多點閱文章</h5>
+                      </div>
+                      <p className="fs-7 text-primary fw-bolder mb-5">2,234次</p>
+                      <div className="d-flex">
+                        <p className="me-2 text-gray">文章：</p>
+                        <p className="text-primary">提升專注力的五個簡單方法...</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="card border-gray_light mb-5">
+                    <div className="card-body text-center py-5">
+                      <div className="d-flex gap-3 align-items-center mb-5">
+                        <select className="form-select admin-background_dashboard py-1" defaultValue="2024">
+                          <option value="2024">2024</option>
+                          <option value="2023">2023</option>
+                          <option value="2022">2022</option>
+                        </select>
+                        <h5 className="card-title fs-8 text-gray">營收數據</h5>
+                      </div>
+                      <div className="chart-wrapper">
+                        <AdminRevenueChart />
+                      </div>
+
+                    </div>
                   </div>
                 </div>
               </div>

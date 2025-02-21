@@ -6,3 +6,19 @@
 .text-data_font {
   font-size: 14px;
 }
+.admin-background_dashboard {
+  width: 88px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='16' height='16' fill='%23E77605'%3E%3Cpath d='M7 10l5 5 5-5H7z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 20px;
+}
+.chart-wrapper {
+  overflow-x: auto; // ✅ 讓行動版支援橫向滾動
+  width: 100%;
+}
+
+.chart-container {
+  min-width: 500px; // ✅ 避免圖表在小螢幕變形，讓它超出容器後可橫向捲動
+}
