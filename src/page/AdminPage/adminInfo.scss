@@ -1,0 +1,14 @@
+.admin-avatar {
+  width: 80px;
+  height: 80px;
+}
+.admin_wrap {
+  background: #fdfbf5;
+}
+.admin-mobile-header_nav a {
+  &:hover {
+    font-weight: 700 !important;
+    color: #e77605 !important;
+    border-bottom: solid 2px #e77605;
+  }
+}

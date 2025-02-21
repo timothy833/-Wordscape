@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200");
 @import url("https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp");
 
@@ -17,4 +17,5 @@
 @import "../page/HomePage/HomePage.scss";
 @import "../component/Footer/Footer.scss";
 @import "../component/Navbar/Navbar.scss";
-@import "../component/ArticleCard/ArticleCard.scss"; 
+@import "../component/ArticleCard/ArticleCard.scss";
+@import "../page/AdminPage/adminInfo.scss";
