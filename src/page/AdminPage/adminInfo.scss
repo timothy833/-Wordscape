@@ -3,23 +3,9 @@
 .rotate-45 {
   transform: rotate(45deg);
 }
-.admin-avatar {
-  width: 80px;
-  height: 80px;
-}
+
 .admin_wrap {
   background: #fdfbf5;
-}
-.admin-header_nav a {
-  &:hover {
-    font-weight: 700 !important;
-    color: #e77605 !important;
-    border-bottom: solid 2px #e77605;
-    @media (min-width: 768px) {
-      font-weight: 400 !important;
-      border: none;
-    }
-  }
 }
 .admin-form_checked {
   &:checked {
