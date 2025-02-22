@@ -7,6 +7,10 @@
 .admin_wrap {
   background: #fdfbf5;
 }
+.admin-avatar {
+  width: 80px;
+  height: 80px;
+}
 .admin-form_checked {
   &:checked {
     border-color: #e77605 !important;

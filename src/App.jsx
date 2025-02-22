@@ -6,6 +6,7 @@ import HomePage from "./page/HomePage/HomePage";
 function App() {
   return (
     <>
+      {/* <AdminInfo /> */}
       <AdminBackground />
     </>
   );
