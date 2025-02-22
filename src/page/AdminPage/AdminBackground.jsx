@@ -41,11 +41,11 @@ const AdminBackground = () => {
                     <span className="text-data_font text-gray me-1">本月收益為 32,000</span>
                   </div>
                 </div>
-                <div className="admin_background_dashboard">
+                <div className="admin_background_dashboard pb-5 mb-10 border-bottom border-gray_light">
                   <div className="card border-gray_light mb-5">
                     <div className="card-body text-center py-5">
                       <div className="d-flex gap-3 align-items-center mb-5">
-                        <select className="form-select admin-background_dashboard py-1" defaultValue="12月">
+                        <select className="form-select admin-background_dashboardSelect py-1" defaultValue="12月">
                           <option value="12月">12月</option>
                           <option value="11月">11月</option>
                           <option value="10月">10月</option>
@@ -58,7 +58,7 @@ const AdminBackground = () => {
                   <div className="card border-gray_light mb-5">
                     <div className="card-body text-center py-5">
                       <div className="d-flex gap-3 align-items-center mb-5">
-                        <select className="form-select admin-background_dashboard py-1" defaultValue="12月">
+                        <select className="form-select admin-background_dashboardSelect py-1" defaultValue="12月">
                           <option value="12月">12月</option>
                           <option value="11月">11月</option>
                           <option value="10月">10月</option>
@@ -72,10 +72,10 @@ const AdminBackground = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="card border-gray_light mb-5">
+                  <div className="card border-gray_light">
                     <div className="card-body text-center py-5">
                       <div className="d-flex gap-3 align-items-center mb-5">
-                        <select className="form-select admin-background_dashboard py-1" defaultValue="2024">
+                        <select className="form-select admin-background_dashboardSelect py-1" defaultValue="2024">
                           <option value="2024">2024</option>
                           <option value="2023">2023</option>
                           <option value="2022">2022</option>
@@ -85,9 +85,104 @@ const AdminBackground = () => {
                       <div className="chart-wrapper">
                         <AdminRevenueChart />
                       </div>
-
                     </div>
                   </div>
+                </div>
+                <h2 className="text-primary fs-5 mb-5">所有文章點閱量</h2>
+                <div className="admin-background_clickCount p-5 rounded-3 border border-gray_light">
+                  <div className="clickCount_header d-flex justify-content-between mb-5">
+                    <div className="d-flex">
+                      <p className="text-gray">標題/</p>
+                      <div className="d-flex">
+                        <p>日期</p>
+                        <span className="material-symbols-sharp">
+                          swap_vert
+                        </span>
+                      </div>
+                    </div>
+                    <div className="d-flex">
+                      <p className="text-gray">觀看量</p>
+                      <span className="text-gray material-symbols-sharp">
+                        swap_vert
+                      </span>
+                    </div>
+                  </div>
+                  <ul className="clickCount_body list-unstyled">
+                    <li className="mb-5">
+                      <div className="d-flex mb-2">
+                        <p className="clickCount_body-title">提升專注力的五個簡單方法，讓你事半功倍</p>
+                        <p>12K</p>
+                      </div>
+                      <p className="text-gray">2024-01-01</p>
+                    </li>
+                    <li className="mb-5">
+                      <div className="d-flex mb-2">
+                        <p className="clickCount_body-title">提升專注力的五個簡單方法，讓你事半功倍</p>
+                        <p>12K</p>
+                      </div>
+                      <p className="text-gray">2024-01-01</p>
+                    </li>
+                    <li className="mb-5">
+                      <div className="d-flex mb-2">
+                        <p className="clickCount_body-title">提升專注力的五個簡單方法，讓你事半功倍</p>
+                        <p>12K</p>
+                      </div>
+                      <p className="text-gray">2024-01-01</p>
+                    </li>
+                    <li className="mb-5">
+                      <div className="d-flex mb-2">
+                        <p className="clickCount_body-title">提升專注力的五個簡單方法，讓你事半功倍</p>
+                        <p>12K</p>
+                      </div>
+                      <p className="text-gray">2024-01-01</p>
+                    </li>
+                    <li className="mb-5">
+                      <div className="d-flex mb-2">
+                        <p className="clickCount_body-title">提升專注力的五個簡單方法，讓你事半功倍</p>
+                        <p>12K</p>
+                      </div>
+                      <p className="text-gray">2024-01-01</p>
+                    </li>
+                    <li className="mb-5">
+                      <div className="d-flex mb-2">
+                        <p className="clickCount_body-title">提升專注力的五個簡單方法，讓你事半功倍</p>
+                        <p>12K</p>
+                      </div>
+                      <p className="text-gray">2024-01-01</p>
+                    </li>
+                    <li className="mb-5">
+                      <div className="d-flex mb-2">
+                        <p className="clickCount_body-title">提升專注力的五個簡單方法，讓你事半功倍</p>
+                        <p>12K</p>
+                      </div>
+                      <p className="text-gray">2024-01-01</p>
+                    </li>
+                    <li className="mb-5">
+                      <div className="d-flex mb-2">
+                        <p className="clickCount_body-title">提升專注力的五個簡單方法，讓你事半功倍</p>
+                        <p>12K</p>
+                      </div>
+                      <p className="text-gray">2024-01-01</p>
+                    </li>
+                    <li className="mb-5">
+                      <div className="d-flex mb-2">
+                        <p className="clickCount_body-title">提升專注力的五個簡單方法，讓你事半功倍</p>
+                        <p>12K</p>
+                      </div>
+                      <p className="text-gray">2024-01-01</p>
+                    </li>
+                    <li className="mb-5">
+                      <div className="d-flex mb-2">
+                        <p className="clickCount_body-title">提升專注力的五個簡單方法，讓你事半功倍</p>
+                        <p>12K</p>
+                      </div>
+                      <p className="text-gray">2024-01-01</p>
+                    </li>
+                  </ul>
+                  <ul className="admin-background_pagination list-unstyled d-flex justify-content-center gap-5">
+                    <li className="text-primary">1</li>
+                    <li>2</li>
+                  </ul>
                 </div>
               </div>
             </div>
