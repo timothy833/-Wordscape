@@ -41,7 +41,7 @@ const HomePage = () => {
           >
             <SwiperSlide>
               <div className="position-relative">
-                <picture className="banner-img-container">
+                <picture className="banner-img-container w-100">
                   <source media="(min-width:768px)" srcSet={banner_1} />
                   <img
                     src={banner_1_sm}
@@ -61,7 +61,7 @@ const HomePage = () => {
             </SwiperSlide>
             <SwiperSlide>
               <div className="position-relative">
-                <picture className="banner-img-container">
+                <picture className="banner-img-container w-100">
                   <source media="(min-width:768px)" srcSet={banner_2} />
                   <img
                     src={banner_2_sm}
@@ -81,7 +81,7 @@ const HomePage = () => {
             </SwiperSlide>
             <SwiperSlide>
               <div className="position-relative">
-                <picture className="banner-img-container">
+                <picture className="banner-img-container w-100">
                   <source media="(min-width:768px)" srcSet={banner_3} />
                   <img
                     src={banner_3_sm}
