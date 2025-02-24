@@ -5,24 +5,24 @@ const ArticleListPage = () => {
     <>
       <Navbar />
       <section>
-        <div className="container pt-17 pb-10">
-          <h2 className="fs-7 fw-bold text-dark mb-3">類別選擇</h2>
-          <ul className="article-taglist list-unstyled d-flex flex-wrap gap-2 mb-3">
+        <div className="container pt-6 pb-3 pt-lg-17 pb-lg-10">
+          <h2 className="fs-8 fs-lg-7 fw-bold text-dark mb-3">類別選擇</h2>
+          <ul className="article-taglist list-unstyled d-flex flex-wrap gap-1 gap-lg-2 mb-2 mb-lg-3">
             {Array.from({ length: 3 }).map(() => {
               return (
                 <>
                   <li>
-                    <a className="article-tag active py-1 px-4 lh-lg fs-8 rounded-pill">
+                    <a className="article-tag active lh-lg fs-9 fs-lg-8 rounded-pill">
                       生活隨筆
                     </a>
                   </li>
                   <li>
-                    <a className="article-tag py-1 px-4 lh-lg fs-8 rounded-pill">
+                    <a className="article-tag lh-lg fs-9 fs-lg-8 rounded-pill">
                       心得分享
                     </a>
                   </li>
                   <li>
-                    <a className="article-tag py-1 px-4 lh-lg fs-8 rounded-pill">
+                    <a className="article-tag lh-lg fs-9 fs-lg-8 rounded-pill">
                       書籍評論
                     </a>
                   </li>
@@ -33,17 +33,17 @@ const ArticleListPage = () => {
               return (
                 <>
                   <li>
-                    <a className="article-tag py-1 px-4 lh-lg fs-8 rounded-pill">
+                    <a className="article-tag lh-lg fs-9 fs-lg-8 rounded-pill">
                       創業心得
                     </a>
                   </li>
                   <li>
-                    <a className="article-tag py-1 px-4 lh-lg fs-8 rounded-pill">
+                    <a className="article-tag lh-lg fs-9 fs-lg-8 rounded-pill">
                       工作職場
                     </a>
                   </li>
                   <li>
-                    <a className="article-tag py-1 px-4 lh-lg fs-8 rounded-pill">
+                    <a className="article-tag lh-lg fs-9 fs-lg-8 rounded-pill">
                       學習筆記
                     </a>
                   </li>
@@ -53,45 +53,41 @@ const ArticleListPage = () => {
           </ul>
         </div>
       </section>
-      <section
-        style={{
-          paddingTop: "84px",
-          paddingBottom: "84px",
-          backgroundColor: "rgba(251, 164, 77, 0.33)",
-        }}
-      >
+      <section className="recommend-article-section">
         <div className="container">
           <div className="row">
-            <div className="col-7">
-              <h2 className="text-primary fw-bold mb-7 p-2">熱門文章</h2>
-              <ul className="list-unstyled mb-6 d-flex flex-column gap-6">
+            <div className="col-12 col-lg-7">
+              <h2 className="text-primary fs-6 fs-lg-3 fw-bold mb-3 mb-lg-7 p-0 p-lg-2">
+                熱門文章
+              </h2>
+              <ul className="list-unstyled mb-6 d-flex flex-column gap-3 gap-lg-6 ">
                 {Array.from({ length: 3 }).map(() => {
                   return (
-                    <li>
-                      <a href="#" className="card border-0 p-5">
+                    <li className="hot-article-card">
+                      <a href="#" className="card border-0 gap-1 gap-lg-2">
                         <img
                           src="https://github.com/wfox5510/wordSapce-imgRepo/blob/main/articleList-hot1.png?raw=true"
-                          className="card-img-top mb-2"
+                          className="card-img-top object-fit-cover"
                           alt="..."
                         />
                         <div className="card-body p-0">
-                          <h3 className="card-title fs-7 fw-bold">
+                          <h3 className="card-title fw-bold text-truncate">
                             為什麼拖延症不是你的錯？心理學揭密拖延的真正原因！
                           </h3>
-                          <p className="card-text text-truncate mb-2">
+                          <p className="card-text text-truncate fs-9 fs-lg-8">
                             你可能認為自己只是懶惰或缺乏自制力，但心理學研究顯示，拖延的真正原因並非如此簡單...
                           </p>
-                          <div>
-                            <span className="me-2">陳奕文 |</span>
-                            <span>心理學作家</span>
-                          </div>
+                        </div>
+                        <div className="card-footer border-0 p-0 bg-light">
+                          <span className="me-2">陳奕文 |</span>
+                          <span>心理學作家</span>
                         </div>
                       </a>
                     </li>
                   );
                 })}
               </ul>
-              <nav aria-label="Page navigation">
+              <nav className="d-none d-lg-block" aria-label="Page navigation">
                 <ul class="hot-article-pagination pagination justify-content-center gap-2 mb-0">
                   <li class="page-item" disable={true}>
                     <a class="page-link material-symbols-outlined p-0 ps-1 pt-1 rounded-1">
@@ -136,27 +132,29 @@ const ArticleListPage = () => {
                 </ul>
               </nav>
             </div>
-            <div className="col-5">
-              <h2 className="text-primary fw-bold mb-7 p-2">推薦專欄</h2>
+            <div className="col-12 col-lg-5">
+              <h2 className="text-primary fs-6 fs-lg-3 fw-bold mb-3 mb-lg-7 p-0 p-lg-2">
+                推薦專欄
+              </h2>
               <ul className="list-unstyled d-flex flex-column gap-6">
                 {Array.from({ length: 5 }).map(() => {
                   return (
-                    <li className="bg-light rounded-2 border-bottom border-4 border-primary">
-                      <a href="#" className="d-flex py-7 px-9">
+                    <li className="recommend-article-card bg-light rounded-2 border-bottom border-2 border-lg-4 border-primary">
+                      <a href="#" className="d-flex py-4 px-5 py-lg-7 px-lg-9">
                         <img
-                          className="me-6 object-fit-cover"
+                          className="card-img me-3 me-lg-6 object-fit-cover"
                           src="https://github.com/wfox5510/wordSapve-imgRepo/blob/main/articleList-recommend1.png?raw=true"
                           alt=""
-                          height={"131px"}
-                          width={"131px"}
                         />
-                        <div className="d-flex flex-column gap-3">
-                          <h3 className="fs-8 fw-bold">【程式設計的美感】</h3>
-                          <h4 className="text-primary fs-7 fw-bold text-truncate-2lines lh-sm">
+                        <div className="card-body d-flex flex-column gap-2 gap-lg-3">
+                          <h3 className="fs-9 fs-lg-8 fw-bold">
+                            【程式設計的美感】
+                          </h3>
+                          <h4 className="card-title text-primary fw-bold text-truncate-2lines lh-sm">
                             設計師與工程師的橋樑：讓 UI/UX 更直覺的
                             7個程式技巧！
                           </h4>
-                          <p className="text-truncate-2lines ">
+                          <p className="card-text text-truncate-2lines fs-9 fs-lg-8">
                             結合設計與開發，談如何讓網站既有視覺美感，又兼具良好使用者體驗。
                           </p>
                         </div>
@@ -171,11 +169,13 @@ const ArticleListPage = () => {
       </section>
       <section className="article-list-section">
         <div
-          className="container py-10 px-5 border"
+          className="article-list-wrap container py-8 py-lg-10 px-lg-5 rounded-2"
           style={{ backgroundColor: "#FFFDFB" }}
         >
-          <h2 className="text-primary fw-bold mb-5">文章列表</h2>
-          <div className="d-flex justify-content-between mb-5">
+          <h2 className="text-primary fs-6 fs-lg-3 fw-bold mb-3 mb-lg-7 p-0 p-lg-2">
+            文章列表
+          </h2>
+          <div className="d-none d-lg-flex justify-content-between mb-5">
             <div className="article-list-select-wrap">
               <select
                 className="text-dark p-3 border"
@@ -191,12 +191,15 @@ const ArticleListPage = () => {
               新增文章
             </button>
           </div>
-          <ul className="list-unstyled d-flex flex-column gap-5">
+          <ul className="list-unstyled d-flex flex-column gap-5 px-4 px-lg-0">
             {Array.from({ length: 10 }).map(() => {
               return (
                 <li className="rounded-2 border">
-                  <a className="d-flex justify-content-between p-5" href="#">
-                    <div className="d-flex flex-column gap-5 me-6">
+                  <a
+                    className="article-list-card d-flex flex-column-reverse flex-md-row justify-content-between p-5"
+                    href="#"
+                  >
+                    <div className="d-flex flex-column gap-5 me-md-6">
                       <h3 className="text-primary fs-7 fw-bold text-truncate-2lines lh-sm">
                         提升專注力的五個簡單方法，讓你事半功倍
                       </h3>
@@ -223,11 +226,9 @@ const ArticleListPage = () => {
                       </div>
                     </div>
                     <img
-                      className="object-fit-cover"
+                      className="card-img object-fit-cover mb-5 mb-md-0"
                       src="https://github.com/wfox5510/wordSapce-imgRepo/blob/main/articleList-article1.png?raw=true"
                       alt=""
-                      height={"100%"}
-                      width={"266px"}
                     />
                   </a>
                 </li>

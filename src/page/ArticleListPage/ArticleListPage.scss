@@ -1,13 +1,64 @@
 .article-taglist {
+  overflow: hidden;
+  max-height: 86px;
+  padding-top: 0.5px;
+  padding-bottom: 1px;
   .article-tag {
+    padding: 2.5px 10px;
     color: $dark;
     background-color: #fffaef;
     border: 0.5px solid $primary;
     user-select: none;
-    &.active,&:hover,&:focus {
+    &.active,
+    &:hover,
+    &:focus {
       color: $light;
       background-color: $primary_hover;
       border: 0.5px solid $primary_hover;
+    }
+    @include media-breakpoint-up(lg) {
+      padding: 4px 16px;
+    }
+  }
+  @include media-breakpoint-up(lg) {
+    max-height: none;
+  }
+}
+.recommend-article-section {
+  padding-top: 30px;
+  padding-bottom: 54px;
+  background-color: rgba(251, 164, 77, 0.33);
+  @include media-breakpoint-up(lg) {
+    padding-top: 84px;
+    padding-bottom: 84px;
+  }
+}
+.hot-article-card {
+  .card {
+    padding: 10px;
+    @include media-breakpoint-up(md) {
+      padding: 20px;
+    }
+  }
+  .card-img-top {
+    height: 86px;
+    @include media-breakpoint-up(md) {
+      height: 120px;
+    }
+    @include media-breakpoint-up(lg) {
+      height: 185px;
+    }
+  }
+  .card-title {
+    font-size: 14px;
+    @include media-breakpoint-up(lg) {
+      font-size: 22px;
+    }
+  }
+  .card-footer {
+    font-size: 8px;
+    @include media-breakpoint-up(lg) {
+      font-size: 16px;
     }
   }
 }
@@ -38,11 +89,41 @@
     }
   }
 }
-
+.recommend-article-card {
+  .card-img {
+    height: 84px;
+    width: 84px;
+    @include media-breakpoint-up(lg) {
+      height: 131px;
+      width: 131px;
+    }
+  }
+  .card-title {
+    font-size: 12px;
+    @include media-breakpoint-up(lg) {
+      font-size: 20px;
+    }
+  }
+  .card-body {
+    height: 86px;
+    @include media-breakpoint-up(lg) {
+      height: 140px;
+    }
+  }
+}
 .article-list-section {
-  padding-top: 100px;
-  padding-bottom: 224px;
-  background-color: #fffaef;
+  background-color: #fffdfb;
+  @include media-breakpoint-up(lg) {
+    background-color: #fffaef;
+    padding-top: 100px;
+    padding-bottom: 224px;
+  }
+}
+.article-list-wrap {
+  border: 0px;
+  @include media-breakpoint-up(lg) {
+    border: 1px solid $gray_light;
+  }
 }
 .article-list-select-wrap {
   position: relative;
@@ -66,5 +147,13 @@
     color: $primary;
     font-size: 24px;
     font-family: "Material Symbols Outlined";
+  }
+}
+.article-list-card {
+  .card-img {
+    @include media-breakpoint-up(md) {
+      height: 100%;
+      width: 266px;
+    }
   }
 }
