@@ -31,12 +31,12 @@ const BlogHome = () => {
       </header>
       <main className="bg-secondary py-10">
         <div className="container">
-          <div className="row">
-            <div className="col-md-3 mb-5">
+          <div className="row flex-md-row-reverse">
+            <div className="col-xl-3 col-md-4 mb-5">
               <div className="blog-home_header d-flex flex-column align-items-center py-10 px-5 rounded-3 border border-gray_light" style={{ backgroundColor: "#FDFBF5" }}>
                 <img className="admin-avatar mb-2" src={avatar} alt="avatar" />
                 <p className="mb-5">super123</p>
-                <ul className="list-unstyled d-flex gap-5 mb-5">
+                <ul className="list-unstyled d-flex gap-5 gap-md-3 gap-lg-5 mb-5">
                   <li><FontAwesomeIcon icon={faEnvelope} size="lg" style={{ color: "#e77605", }} /></li>
                   <li><FontAwesomeIcon icon={faPodcast} size="lg" style={{ color: "#e77605", }} /></li>
                   <li><FontAwesomeIcon icon={faUserGroup} size="lg" style={{ color: "#e77605", }} /></li>
@@ -55,15 +55,15 @@ const BlogHome = () => {
                 </ul>
               </div>
             </div>
-            <div className="col-md-9">
-              <section className="blog-home_mainBanner py-10 rounded-3 mb-5" style={{ backgroundImage: `url(${blogBannerMain})`, backgroundSize: "cover", backgroundPosition: "center" }}>
-                <div className="d-flex flex-column align-items-center">
-                  <h2 className="fs-5 text-light mb-5" style={{ zIndex: "99" }}>Timo奇幻旅程書房</h2>
+            <div className="col-xl-9 col-md-8">
+              <section className="blog-home_mainBanner py-10 ps-lg-10  rounded-3 mb-5" style={{ backgroundImage: `url(${blogBannerMain})`, backgroundSize: "cover", backgroundPosition: "center" }}>
+                <div className="d-flex flex-column align-items-center align-items-lg-start">
+                  <h2 className="fs-5 fs-md-3 text-light mb-5" style={{ zIndex: "99" }}>Timo奇幻旅程書房</h2>
                   <h4 className="mb-5 text-light" style={{ zIndex: "99" }}>旅遊x學習 手札</h4>
                   <button type="button" className="btn btn-primary btn-lg" style={{ zIndex: "99" }}>編輯</button>
                 </div>
               </section>
-              <section className="position-relative">
+              <section className="position-relative mb-5">
                 <Swiper className="blog_swiper rounded-3"
                   style={{
                     "--swiper-pagination-color": "#e77605",
@@ -91,7 +91,7 @@ const BlogHome = () => {
                         />
                       </picture>
                       <div className="blog-banner_content text-light">
-                        <h2 className="fw-bold fs-5 mb-8">
+                        <h2 className="fw-bold fs-5 fs-md-4 mb-8 mb-md-12 ms-md-5">
                           漫遊歐洲之旅實戰分享線下講座
                         </h2>
                       </div>
@@ -108,7 +108,7 @@ const BlogHome = () => {
                         />
                       </picture>
                       <div className="blog-banner_content text-light">
-                        <h2 className="fw-bold fs-5 mb-8">
+                        <h2 className="fw-bold fs-5 fs-md-4 mb-8 mb-md-12 ms-md-5">
                           持續學習四種心法
                         </h2>
                       </div>
@@ -125,13 +125,13 @@ const BlogHome = () => {
                         />
                       </picture>
                       <div className="blog-banner_content text-light">
-                        <h2 className="fw-bold fs-5 mb-8">
+                        <h2 className="fw-bold fs-5 fs-md-4 mb-8 mb-md-12 ms-md-5">
                           日本秘境深度攻略分享
                         </h2>
                       </div>
                     </div>
                   </SwiperSlide>
-                  <div className="swiper-pagination d-none d-lg-flex gap-7">
+                  <div className="blog-swiper-pagination d-none d-lg-flex gap-7">
                     <a className="swiperPrebEl bg-light rounded-pill d-block d-flex align-items-center justify-content-center">
                       <span className="material-symbols-outlined text-primary ms-2">
                         arrow_back_ios
@@ -145,6 +145,7 @@ const BlogHome = () => {
                   </div>
                 </Swiper>
               </section>
+              <h1>文章列表</h1>
             </div>
           </div>
         </div>
