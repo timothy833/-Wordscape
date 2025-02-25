@@ -6,6 +6,8 @@ import { faFacebookF, faInstagram, faYoutube } from "@fortawesome/free-brands-sv
 
 import Navbar from "../../component/Navbar/Navbar";
 import Footer from "../../component/Footer/Footer";
+import Blog_ArticleCard from "../../component/BlogPageArticleCard/Blog_ArticleCard";
+import Blog_CommentReply from "../../component/BlogPageCommentReply/Blog_CommentReply";
 
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -29,7 +31,7 @@ const BlogHome = () => {
       <header>
         <Navbar />
       </header>
-      <main className="bg-secondary py-10">
+      <main className="bg-secondary pt-10 pb-5">
         <div className="container">
           <div className="row flex-md-row-reverse">
             <div className="col-xl-3 col-md-4 mb-5">
@@ -145,7 +147,29 @@ const BlogHome = () => {
                   </div>
                 </Swiper>
               </section>
-              <h1>文章列表</h1>
+              <div className="blog-home_articleList rounded-3 border border-gray_light py-10 px-5" style={{ backgroundColor: "#FDFBF5" }}>
+                <div className="articleList_header">
+                  <h1 className="text-primary fs-4 fs-md-3 mb-5">文章列表</h1>
+                  <div className="d-block d-md-flex justify-content-between align-items-center">
+                    <select className="form-select blog-home_articleSelect py-3 mb-6" defaultValue="全部內容">
+                      <option value="全部內容">全部內容</option>
+                      <option value="已發佈">已發佈</option>
+                      <option value="取消發佈">取消發佈</option>
+                    </select>
+                    <button type="button" className="btn btn-primary btn-lg mb-5">新增文章</button>
+                  </div>
+                </div>
+                <div className="articleList_content">
+                  <Blog_ArticleCard>
+                    <Blog_CommentReply />
+                  </Blog_ArticleCard>
+                  <Blog_ArticleCard>
+                  </Blog_ArticleCard>
+                  <Blog_ArticleCard>
+                    <Blog_CommentReply />
+                  </Blog_ArticleCard>
+                </div>
+              </div>
             </div>
           </div>
         </div>
