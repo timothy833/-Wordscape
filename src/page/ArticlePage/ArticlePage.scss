@@ -14,3 +14,17 @@
     height: 600px;
   }
 }
+
+.article-wrap{
+  h2{
+    font-weight: bold;
+    font-size: 28px;
+    @include media-breakpoint-up(lg){
+      font-size: 36px;
+    };
+  }
+  img{
+    width: 100%;
+    height: auto;
+  }
+}
