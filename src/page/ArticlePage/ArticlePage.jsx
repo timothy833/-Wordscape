@@ -13,6 +13,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ArticlePage = () => {
   const [articleData, setArticleData] = useState(null);
+  const [commentData, setCommentData] = useState(null);
   const getArticle = async () => {
     try {
       const res = await axios.get(
@@ -23,9 +24,19 @@ const ArticlePage = () => {
       console.log(error);
     }
   };
-
+  const getComment = async () => {
+    try {
+      const res = await axios.get(
+        `${API_BASE_URL}/comments/5a6e6bb9-c9b7-4e6a-bcbc-f6dbec3d74b8`
+      );
+      setCommentData(res.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
     getArticle();
+    getComment();
   }, []);
   useEffect(() => {
     console.log(articleData);
@@ -42,6 +53,7 @@ const ArticlePage = () => {
                   <a
                     className="badge rounded-pill bg-primary-hover lh-base"
                     href="#"
+                    key={tagItem.id}
                   >
                     #{tagItem.name}
                   </a>
@@ -101,15 +113,13 @@ const ArticlePage = () => {
           <h3 className="fs-5 fs-lg-3 text-primary fw-bold mb-5">
             快來分享你的想法
           </h3>
-          <CommentBox>
-            <CommentReply />
-            <CommentReply />
-            <CommentReply />
-          </CommentBox>
-          <CommentBox>
-            <CommentReply />
-            <CommentReply />
-          </CommentBox>
+          {commentData?.map((commentItem)=>{
+            return(<CommentBox content={commentItem.content}>
+              {commentItem.replies.map((replieItem)=>{
+                return(<CommentReply content={replieItem.content} />)
+              })}
+            </CommentBox>)
+          })}
           <form>
             <label className="d-none" htmlFor="comment">
               留言

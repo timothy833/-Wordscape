@@ -1,5 +1,5 @@
 import avatar from "../../assets/images/avatar-1.png";
-const CommentReply = () => {
+const CommentReply = ({content}) => {
   return (
     <div className="d-flex flex-column gap-3">
       <div className="d-flex">
@@ -14,7 +14,7 @@ const CommentReply = () => {
           </span>
         </a>
       </div>
-      <p>很高興您喜歡這篇文章，希望能引發更多思考</p>
+      <p>{content}</p>
     </div>
   );
 };

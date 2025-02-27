@@ -1,5 +1,5 @@
 import avatar from "../../assets/images/avatar-1.png";
-const CommentBox = ({ children }) => {
+const CommentBox = ({children,content}) => {
   return (
     <>
       <div className="d-flex flex-column gap-3 mb-5">
@@ -7,7 +7,7 @@ const CommentBox = ({ children }) => {
           <img className="avatar" src={avatar} alt="avatar" />
           <a href="#">張語森</a>
         </div>
-        <p>AI生成的未來，我們需要更多溫度。</p>
+        <p>{content}</p>
         <div className="d-flex gap-5">
           <a href="#" className="d-flex align-items-center text-primary gap-1">
             <span className="material-symbols-outlined icon-fill fs-6">
