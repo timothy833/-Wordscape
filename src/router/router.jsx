@@ -3,6 +3,7 @@ import ArticlePage from "../page/ArticlePage/ArticlePage";
 import BlogHome from "../page/BlogPage/BlogHome";
 import AdminBackground from "../page/AdminPage/AdminBackground";
 import AdminInfo from "../page/AdminPage/AdminInfo";
+import AdminCollection from "../page/AdminPage/AdminCollection";
 
 const router = [
   {
@@ -18,12 +19,16 @@ const router = [
     element: <BlogHome />
   },
   {
-    path: "/adminback",
+    path: "/adminbackground",
     element: <AdminBackground />
   },
   {
     path: "/admininfo",
     element: <AdminInfo />
+  },
+  {
+    path: "/admincollection",
+    element: <AdminCollection />
   },
 ];
 

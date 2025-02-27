@@ -5,7 +5,7 @@ const Blog_ArticleCard = ({ children }) => {
     <>
       <div className="container">
         <div className="blog_articleCard card border-gray_light px-3 pt-3 mb-5 rounded-3">
-          <div className="row flex-column-reverse flex-md-row">
+          <div className="row flex-column-reverse flex-lg-row">
             <div className="col-lg-8">
               <div className="card-body p-0">
                 <h5 className="card-title text-truncate-2lines fw-bold mb-3 text-primary">
@@ -28,9 +28,9 @@ const Blog_ArticleCard = ({ children }) => {
                       chat_bubble
                     </span>
                   </div>
-                  <i class="bi bi-pin-fill text-primary fs-6"></i>
+                  <i className="bi bi-pin-fill text-primary fs-6"></i>
                   <div className="btn-group">
-                    <i class="bi bi-three-dots text-gray fs-6" id="dropdownMenuButton1" data-bs-toggle="dropdown" style={{ cursor: "pointer" }}></i>
+                    <i className="bi bi-three-dots text-gray fs-6" id="dropdownMenuButton1" data-bs-toggle="dropdown" style={{ cursor: "pointer" }}></i>
                     <ul className="dropdown-menu dropdown-menu-end py-3 px-5 shadow-sm border-0">
                       <li><a className="dropdown-item" href="#">編輯</a></li>
                       <li><a className="dropdown-item" href="#">取消發布</a></li>
