@@ -4,6 +4,8 @@ import BlogHome from "../page/BlogPage/BlogHome";
 import AdminBackground from "../page/AdminPage/AdminBackground";
 import AdminInfo from "../page/AdminPage/AdminInfo";
 import AdminCollection from "../page/AdminPage/AdminCollection";
+import AdminSubscription from "../page/AdminPage/AdminSubscription";
+
 
 const router = [
   {
@@ -29,6 +31,10 @@ const router = [
   {
     path: "/admincollection",
     element: <AdminCollection />
+  },
+  {
+    path: "/adminsubscription",
+    element: <AdminSubscription />
   },
 ];
 
