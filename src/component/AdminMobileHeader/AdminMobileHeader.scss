@@ -1,12 +1,10 @@
-.admin-mobile-header_nav a {
-  &:hover,
-  &.active {
-    font-weight: 700 !important;
-    color: #e77605 !important;
-    border-bottom: solid 2px #e77605;
-    @media (min-width: 768px) {
-      font-weight: 400 !important;
-      border: none;
-    }
+.admin-mobile-header_nav a:hover,
+.admin-mobile-header_nav .adminLinkActive {
+  font-weight: 700 !important;
+  color: #e77605 !important;
+  border-bottom: solid 2px #e77605;
+  @media (min-width: 768px) {
+    font-weight: 400 !important;
+    border: none;
   }
 }

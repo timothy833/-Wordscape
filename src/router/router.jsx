@@ -8,6 +8,8 @@ import AdminSubscription from "../page/AdminPage/AdminSubscription";
 import BlogPage from "../page/BlogPage/BlogPage";
 import TestLoginPage from "../page/BlogPage/TestLoginPage";
 import TestArticlePage from "../page/BlogPage/TestArticlePage";
+import { element } from "prop-types";
+import AdminLayout from "../page/AdminPage/AdminLayout";
 
 
 const router = [
@@ -24,20 +26,26 @@ const router = [
     element: <BlogHome />
   },
   {
-    path: "/adminbackground",
-    element: <AdminBackground />
-  },
-  {
-    path: "/admininfo",
-    element: <AdminInfo />
-  },
-  {
-    path: "/admincollection",
-    element: <AdminCollection />
-  },
-  {
-    path: "/adminsubscription",
-    element: <AdminSubscription />
+    path: "/admin",
+    element: <AdminLayout />,
+    children: [
+      {
+        path: "info",
+        element: <AdminInfo />
+      },
+      {
+        path: "collection",
+        element: <AdminCollection />
+      },
+      {
+        path: "subscription",
+        element: <AdminSubscription />
+      },
+      {
+        path: "background",
+        element: <AdminBackground />
+      }
+    ]
   },
   {
     path: "/blogpage",
