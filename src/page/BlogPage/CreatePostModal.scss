@@ -1,0 +1,22 @@
+.modal-content {
+    max-height: 90vh; /* 最大高度 90% 視窗 */
+    overflow-y: auto; /* 讓內部文字區域滾動 */
+}
+
+.quill-editor {
+    min-height: 300px;
+    max-height: 350px; /* 限制最大高度 */
+    overflow-y: auto; /* 讓內部文字區域滾動 */
+}
+
+.ql-tooltip {
+    position: relative !important;
+    max-width: 310px !important;  /* 避免 tooltip 過寬被切掉 */
+    left: auto  !important;
+    top: auto !important;
+    
+}
+
+
+
+
