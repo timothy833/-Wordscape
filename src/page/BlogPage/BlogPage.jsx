@@ -6,6 +6,7 @@ import axios from "axios";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+console.log("✅ API_BASE_URL:", API_BASE_URL); // 測試是否成功讀取
 
 const BlogPage = () => {
   const [articles, setArticles] = useState([]);
