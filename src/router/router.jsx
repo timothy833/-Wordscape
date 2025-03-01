@@ -1,3 +1,5 @@
+import { Navigate } from "react-router-dom";
+
 import HomePage from "../page/HomePage/HomePage";
 import ArticlePage from "../page/ArticlePage/ArticlePage";
 import BlogHome from "../page/BlogPage/BlogHome";
@@ -29,6 +31,10 @@ const router = [
     path: "/admin",
     element: <AdminLayout />,
     children: [
+      {
+        index: true,
+        element: <Navigate to="info" replace />
+      },
       {
         path: "info",
         element: <AdminInfo />
