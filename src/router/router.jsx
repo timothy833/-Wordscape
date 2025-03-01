@@ -1,5 +1,7 @@
 import HomePage from "../page/HomePage/HomePage";
 import ArticlePage from "../page/ArticlePage/ArticlePage";
+import LoginPage from "../page/AccessPage/LoginPage";
+import SignupPage from "../page/AccessPage/SignupPage";
 import BlogPage from "../page/BlogPage/BlogPage";
 import TestLoginPage from "../page/BlogPage/TestLoginPage";
 import TestArticlePage from "../page/BlogPage/TestArticlePage";
@@ -14,17 +16,29 @@ const router = [
     element: <ArticlePage /> 
   },
   {
+    path: "/login",
+    element: <LoginPage />
+  },
+  {
+    path: "/signup",
+    element: <SignupPage />
+  },  
+  {
+    path: "/reset-password",
+    element: <SignupPage />
+  },  
+  {
     path: "/blogpage",
     element: <BlogPage />
-  },{
+  },
+  {
     path: "/testlogin",
     element: <TestLoginPage />
-  },{
+  },
+  {
     path: "/testArticle/:id",
     element: <TestArticlePage />
   }
-
-
 ];
 
 export default router;
