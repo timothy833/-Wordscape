@@ -9,7 +9,6 @@ import { Modal } from "bootstrap";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-console.log("✅ API_BASE_URL:", API_BASE_URL); // 測試是否成功讀取
 
 const getCookie = (name) => {
     return document.cookie
@@ -131,14 +130,12 @@ const NewPostModal = ()=> {
         formData.append("cover", selectedFile);
 
         try {
-            console.log("🔍 Token:", token); // **檢查 token 是否有值**
             const res = await axios.post(`${API_BASE_URL}/posts/upload/cover`, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
                 Authorization: `Bearer ${token}`
             },
         });
-        console.log("✅ R2 回傳 URL:", res.data.url);
         return res.data.url; // 存 R2 URL
         } catch (error) {
         console.error("圖片上傳失敗", error);
@@ -159,7 +156,6 @@ const NewPostModal = ()=> {
             const res = await axios.get(`${API_BASE_URL}/categories/get-category/`,  {
                 params: { name }
               });
-            console.log(res.data.data);
             if (res.data.data) return res.data.data.id; // ✅ 若已存在，回傳分類 UUID
 
             // 2️⃣ **若不存在，則建立分類**
@@ -228,7 +224,6 @@ const NewPostModal = ()=> {
                         maxContentLength: 100 * 1024 * 1024, // ✅ 允許最大 100MB
                         maxBodyLength: 100 * 1024 * 1024
                     })
-                    console.log("📌 從後端獲取的圖片 URL:", res.data.urls); // ✅ 檢查這是否是 R2 的 URL
 
                     // 4️⃣ 替換 Quill 內的 Base64 圖片 URL 為 R2 的 URL
                     base64Images.forEach((base64, index)=>{
