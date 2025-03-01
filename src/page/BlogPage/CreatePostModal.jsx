@@ -26,6 +26,7 @@ const NewPostModal = ()=> {
     const [imagePreview, setImagePreview] = useState(null); // ✅ 預覽圖片
     const [externalImage, setExternalImage] = useState(""); // ✅ 外部圖片 URL（手動輸入）
     const [selectedFile, setSelectedFile] = useState(null); // ✅ 暫存本地選擇的圖片
+    const [content, setContent] = useState(""); // ✅ 確保 Quill 內容被更新
 
     const editorRef = useRef(null);
     const fileInputRef = useRef(null); // ✅ 用來清空 file input
@@ -75,6 +76,10 @@ const NewPostModal = ()=> {
                     ["clean"],
                 ],
             },
+        });
+
+        quillInstance.current.on("text-change", () => {
+            setContent(quillInstance.current.root.innerHTML); // ✅ 更新 `content`
         });
     }, []);
 
@@ -188,8 +193,6 @@ const NewPostModal = ()=> {
             let uploadFinalImage = selectedFile ? await uploadImageToR2() : externalImage;
 
             const finalCategoryId = await checkOrCreateCategory(categoryId); // ✅ 確保分類存在，否則傳 `null`
-
-            const content = quillInstance.current?.root.innerHTML || "";
 
             // 創建一個臨時 `div` 來解析 HTML(Quill 內部 Base64 圖片)
             const tempDiv = document.createElement("div");
