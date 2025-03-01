@@ -1,6 +1,7 @@
 import HomePage from "../page/HomePage/HomePage";
 import ArticlePage from "../page/ArticlePage/ArticlePage";
 import BlogHome from "../page/BlogPage/BlogHome";
+import AdminLayout from "../page/AdminPage/AdminLayout/AdminLayout";
 import AdminBackground from "../page/AdminPage/AdminBackground";
 import AdminInfo from "../page/AdminPage/AdminInfo";
 import AdminCollection from "../page/AdminPage/AdminCollection";
@@ -9,7 +10,6 @@ import BlogPage from "../page/BlogPage/BlogPage";
 import TestLoginPage from "../page/BlogPage/TestLoginPage";
 import TestArticlePage from "../page/BlogPage/TestArticlePage";
 import { element } from "prop-types";
-import AdminLayout from "../page/AdminPage/AdminLayout";
 
 
 const router = [
