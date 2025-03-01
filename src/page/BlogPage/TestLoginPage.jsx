@@ -1,6 +1,10 @@
 import { useState } from "react";
 import axios from "axios";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+console.log("✅ API_BASE_URL:", API_BASE_URL); // 測試是否成功讀取
+
 
 const TestLoginPage = () => {
   const [email, setEmail] = useState("");
@@ -11,7 +15,7 @@ const TestLoginPage = () => {
     e.preventDefault();
 
     try {
-      const res = await axios.post("http://localhost:5001/api/users/login", {
+      const res = await axios.post(`${API_BASE_URL}/users/login`, {
         email,
         password,
       });
