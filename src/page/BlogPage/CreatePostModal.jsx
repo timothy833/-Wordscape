@@ -1,12 +1,12 @@
-import { useEffect, useState, useRef, lazy, Suspense, useCallback} from "react";
-import "quill/dist/quill.snow.css";
-import "quill/dist/quill.bubble.css"; // ✅ 確保 Quill 內建樣式加載
-import "highlight.js/styles/github.css"; // ✅ 確保 Syntax 高亮樣式可用
+import { useEffect, useState, useRef} from "react";
+import Quill from "quill";
+import "quill/dist/quill.snow.css"; // ✅ Quill 樣式
+// import "quill/dist/quill.bubble.css"; // ✅ 確保 Quill 內建樣式加載
+// import "highlight.js/styles/github.css"; // ✅ 確保 Syntax 高亮樣式可用
 import axios from "axios";
 import { Modal } from "bootstrap";
 
 
-const LazyQuill = lazy(() => import("react-quilljs")); // ✅ 懶加載 Quill
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 console.log("✅ API_BASE_URL:", API_BASE_URL); // 測試是否成功讀取
@@ -16,34 +16,72 @@ const getCookie = (name) => {
         .split("; ")
         .find(row => row.startsWith(name + "="))
         ?.split("=")[1] || "";
-}; 
+};
 
+
+  
 const NewPostModal = ()=> {
     const [token , setToken] =useState("");
     const [title, setTitle] = useState("");
-    // const [content, setContent] =useState("");
     const [categoryId, setCategoryId] = useState(""); // ✅ 分類
     const [imagePreview, setImagePreview] = useState(null); // ✅ 預覽圖片
     const [externalImage, setExternalImage] = useState(""); // ✅ 外部圖片 URL（手動輸入）
     const [selectedFile, setSelectedFile] = useState(null); // ✅ 暫存本地選擇的圖片
-    const [quillInstance, setQuillInstance] = useState(null); //動態存取quill 模組
-    const [isModalOpen, setIsModalOpen] = useState(false); //動態確認是否啟用懶加載
 
-    const quillRef = useRef(null);
+    const editorRef = useRef(null);
     const fileInputRef = useRef(null); // ✅ 用來清空 file input
     const modalRef = useRef(null); // ✅ 用來控制 Modal 手動開關
     const modalInstance = useRef(null);
+    const quillInstance = useRef(null);
 
 
-    //在元件載入時讀取token 與 modal
+    //在元件載入時讀取token
     useEffect(()=>{
         const storedToken = getCookie("Wordscape");
         setToken(storedToken);
     }, []);
 
+    // ✅ 監聽 Modal 開關，確保關閉時清除內容
+    useEffect(() => {
+        if (!modalRef.current) return;
+
+        const modalElement = modalRef.current; // ✅ 確保引用的是當前 `modalRef`
+        modalInstance.current = new Modal(modalElement);
+
+        const handleHidden = () => handleClose();
+
+        // 監聽 `modal` 開啟關閉事件
+        modalElement.addEventListener("hidden.bs.modal", handleHidden);
+    
+
+        return () => {
+          modalElement.removeEventListener("hidden.bs.modal", handleHidden);
+        };
+    }, []); 
+
+
+    useEffect(() => {
+        if (!editorRef.current) return;
+        quillInstance.current = new Quill(editorRef.current, {
+            theme: "snow",
+            modules: {
+                toolbar: [
+                    [{ font: [] }, { size: [] }],
+                    ["bold", "italic", "underline", "strike"],
+                    [{ color: [] }, { background: [] }],
+                    [{ align: [] }],
+                    [{ list: "ordered" }, { list: "bullet" }],
+                    ["blockquote", "code-block"],
+                    ["link", "image", "video"],
+                    ["clean"],
+                ],
+            },
+        });
+    }, []);
+
+
     // ✅ **手動關閉 Modal，清空所有輸入資料**
-    const handleClose = useCallback(() => {
-        setIsModalOpen(false);
+    const handleClose = () => {
         setTitle(""); 
         setCategoryId("");
         setImagePreview(null); 
@@ -51,8 +89,8 @@ const NewPostModal = ()=> {
         setSelectedFile(null);
             
         // // ✅ 清空 Quill 內容
-        if (quillInstance) {
-            quillInstance.root.innerHTML = "";
+        if (quillInstance.current) {
+            quillInstance.current.root.innerHTML = "";
         }
 
         // ✅ 清空 <input type="file"> 的值
@@ -65,57 +103,7 @@ const NewPostModal = ()=> {
         document.body.focus(); // **強制焦點回到 body**
         // ✅ **手動隱藏 `modal`**
         modalInstance.current.hide();
-    }, [quillInstance, fileInputRef]);
-
-     // ✅ 監聽 Modal 開關，確保關閉時清除內容
-     useEffect(() => {
-        if (!modalRef.current) return;
-        
-        const modalElement = modalRef.current; // ✅ 確保引用的是當前 `modalRef`
-        modalInstance.current = new Modal(modalElement);
-
-        const handleShow = () => setIsModalOpen(true);
-        const handleHidden = () => handleClose();
-    
-        // 監聽 `modal` 開啟關閉事件
-        
-    // ✅ 確保 modalRef.current 存在才綁定事件
-    if (modalElement) {
-        modalElement.addEventListener("show.bs.modal", handleShow);
-        modalElement.addEventListener("hidden.bs.modal", handleHidden);
-    }
-    
-        return () => {
-            if (modalElement) {
-                modalElement.removeEventListener("show.bs.modal", handleShow);
-                modalElement.removeEventListener("hidden.bs.modal", handleHidden);
-            }
-        };
-    }, [modalRef, handleClose]);  // 🚨 這裡只依賴 `modalRef`
-
-    useEffect(() => {
-        if (quillInstance) {
-          quillInstance.setOptions({
-            modules: {
-              toolbar: [
-                [{ font: [] }, { size: [] }],
-                ["bold", "italic", "underline", "strike"],
-                [{ color: [] }, { background: [] }],
-                [{ align: [] }],
-                [{ list: "ordered" }, { list: "bullet" }],
-                ["blockquote", "code-block"],
-                ["link", "image", "video"],
-                ["clean"],
-              ],
-            },
-          });
-        }
-    }, [quillInstance]);
-
-
-    
-
-
+    };
 
     // ✅ 手動輸入封面圖片 URL
     const handleExternalImage = (e) => {
@@ -149,7 +137,6 @@ const NewPostModal = ()=> {
                 "Content-Type": "multipart/form-data",
                 Authorization: `Bearer ${token}`
             },
-            withCredentials: true // ✅ 確保請求攜帶 cookies
         });
         console.log("✅ R2 回傳 URL:", res.data.url);
         return res.data.url; // 存 R2 URL
@@ -177,8 +164,7 @@ const NewPostModal = ()=> {
 
             // 2️⃣ **若不存在，則建立分類**
             const createRes = await axios.post(`${API_BASE_URL}/categories`, { name }, { 
-                headers: { Authorization: `Bearer ${token}` },  
-                withCredentials: true // ✅ 確保請求攜帶 cookies
+                headers: { Authorization: `Bearer ${token}` }
             });
             return createRes.data.data.id;
         } catch (error) {
@@ -201,20 +187,19 @@ const NewPostModal = ()=> {
 
     // **發送文章**
     const handleSubmit = async ()=> {
-        if (!quillInstance) return;
         try {
-
             // 1️⃣ **上傳封面圖到 R2（如果有選擇本地圖片）**
             let uploadFinalImage = selectedFile ? await uploadImageToR2() : externalImage;
 
             const finalCategoryId = await checkOrCreateCategory(categoryId); // ✅ 確保分類存在，否則傳 `null`
 
+            const content = quillInstance.current?.root.innerHTML || "";
+
             // 創建一個臨時 `div` 來解析 HTML(Quill 內部 Base64 圖片)
             const tempDiv = document.createElement("div");
 
             // ✅ **確保 Quill 內容是最新的**
-            tempDiv.innerHTML =  quillInstance.root.innerHTML;
-
+            tempDiv.innerHTML = content;
             // ✅ **處理 Base64 圖片並替換**
             const imgTags = [...tempDiv.getElementsByTagName("img")];
             
@@ -297,23 +282,10 @@ const NewPostModal = ()=> {
                         {imagePreview && <img src={imagePreview} alt="預覽圖片" className="img-fluid mb-3"/>}
                         <input type="text" className="form-control mb-2" placeholder="文章標題" value={title} onChange={(e)=> setTitle(e.target.value)} />
                         <input type="text" className="form-control mb-2" placeholder="文章分類標籤" value={categoryId} onChange={ handleCategoryChange} />
-                       
-                       
-                       {isModalOpen&&  modalRef.current &&(
-                            <Suspense>
-                                <LazyQuill>
-                                    {({quill: newQuill, quillRef: editorRef})=>{
-                                        if(newQuill && editorRef) {
-                                            setQuillInstance(newQuill);
-                                            quillRef.current = editorRef.current;
-                                        }
-
-                                        return <div ref={quillRef} className="quill-editor" />;
-                                    }}                       
-                                </LazyQuill>  
-                            </Suspense>
-                           
-                        )}
+                                     
+                        {/* ✅ 修正 Quill 工具列問題 */}
+                        <div  ref={editorRef}><div/>
+                    </div>
                     </div>
                     <div className="modal-footer">
                         <button className="btn btn-primary" data-bs-dismiss="modal" aria-label="Close" onClick={handleSubmit}>發布文章</button>
