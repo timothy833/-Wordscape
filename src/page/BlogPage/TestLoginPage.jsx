@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const TestLoginPage = () => {
   const [email, setEmail] = useState("");
@@ -11,13 +12,11 @@ const TestLoginPage = () => {
     e.preventDefault();
 
     try {
-      const res = await axios.post("http://localhost:5001/api/users/login", {
+      const res = await axios.post(`${API_BASE_URL}/users/login`, {
         email,
         password,
       });
-      console.log(res);
       const token = res.data.token;
-      console.log(token);
       let expiresDate = new Date();
       expiresDate.setTime(expiresDate.getTime() + (7 * 24 * 60 * 60 * 1000)); // 設定 7 天後過期
 

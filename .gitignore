@@ -7,10 +7,16 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Node.js 相關
 node_modules
 dist
 dist-ssr
 *.local
+
+# 隱私與環境變數
+.env
+.env.local
+.env.*.local
 
 # Editor directories and files
 .vscode/*
