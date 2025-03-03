@@ -1,11 +1,9 @@
 import NewPostModal from "../BlogPage/CreatePostModal";
-import "bootstrap/dist/js/bootstrap.bundle.min.js"; // ✅ 確保 Bootstrap JS 加載
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 
 const BlogPage = () => {
   const [articles, setArticles] = useState([]);

@@ -1,0 +1,40 @@
+.login{
+    background-color: $secondary;
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+    background-image: url('/src/assets/images/AccessPage/img-access.png');
+    background-size: 50%;
+    background-position: bottom left; 
+    background-repeat: no-repeat;
+}
+
+.login-card{
+    padding: 30px 30px 50px 30px;
+
+}
+.mb-10{
+    margin-bottom: 20px;
+}
+/* 修改 floating label 的樣式 */
+.form-floating .form-control {
+    background-color: #fba44d5a;
+    border: none;
+}
+
+.form-floating label {
+    color: #FBA44D;
+}
+
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+    color: #FBA44D;
+}
+
+.login-btn{
+    position: absolute;
+    top: 5%;
+    left: 86%;
+}
+
+  
