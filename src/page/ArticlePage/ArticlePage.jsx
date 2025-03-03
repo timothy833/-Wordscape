@@ -14,12 +14,16 @@ import DOMParserReact from "dom-parser-react";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ArticlePage = () => {
-  const { id } = useParams();
+  const { id: articleId } = useParams();
+  const userId = "2cd3fbcd-b840-4029-846e-8dfd6f97e4a5";
   const [articleData, setArticleData] = useState(null);
   const [commentData, setCommentData] = useState(null);
+  const [isLike, setIsLike] = useState(null);
+  axios.defaults.headers.common["Authorization"] =
+    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJjZDNmYmNkLWI4NDAtNDAyOS04NDZlLThkZmQ2Zjk3ZTRhNSIsInVzZXJuYW1lIjoiaGFwcHlQaWdneSIsImlhdCI6MTc0MDk5MTU5OCwiZXhwIjoxNzQwOTk1MTk4fQ.6LE2NmkU9cK4pzCE5_CV6YBMb0xCp9qwv8dkTDL9LcM";
   const getArticle = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/posts/${id}`);
+      const res = await axios.get(`${API_BASE_URL}/posts/${articleId}`);
       setArticleData(res.data.data);
     } catch (error) {
       console.log(error);
@@ -27,19 +31,38 @@ const ArticlePage = () => {
   };
   const getComment = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/comments/${id}`);
+      const res = await axios.get(`${API_BASE_URL}/comments/${articleId}`);
       setCommentData(res.data.data);
     } catch (error) {
       console.log(error);
     }
   };
-  
+  const postArticleLike = async () => {
+    try { //可以加入動畫增加使用體驗，次要
+      const res = await axios.post(`${API_BASE_URL}/posts/post_likes/${articleId}`);
+      checkIsLikeArticle();
+      getArticle(); //為了取得讚數在進行一次get文章資料，是否可以進行優化
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const checkIsLikeArticle = async () => {
+    try {
+      const res = await axios.get(
+        `${API_BASE_URL}/posts/post_likes/${articleId}`
+      );
+      setIsLike(res.data.data.some((likeData) => likeData.id === userId));
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
     getArticle();
     getComment();
+    checkIsLikeArticle();
   }, []);
   useEffect(() => {
-    console.log(articleData);
+    //console.log(articleData);
   }, [articleData]);
   return (
     <>
@@ -74,7 +97,12 @@ const ArticlePage = () => {
                 </a>
               </div>
               <div className="d-flex align-items-center gap-5">
-                <span className=" d-flex align-items-center gap-1 text-primary ">
+                <span
+                  className={` d-flex align-items-center gap-1 ${
+                    isLike ? "text-primary" : "text-gray"
+                  } `}
+                  onClick={() => postArticleLike()}
+                >
                   <span className="material-symbols-outlined icon-fill">
                     favorite
                   </span>
