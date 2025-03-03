@@ -8,17 +8,18 @@ import Navbar from "../../component/Navbar/Navbar";
 import avatar from "../../assets/images/avatar-1.png";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import DOMParserReact from "dom-parser-react";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ArticlePage = () => {
+  const { id } = useParams();
   const [articleData, setArticleData] = useState(null);
   const [commentData, setCommentData] = useState(null);
   const getArticle = async () => {
     try {
-      const res = await axios.get(
-        `${API_BASE_URL}/posts/5a6e6bb9-c9b7-4e6a-bcbc-f6dbec3d74b8`
-      );
+      const res = await axios.get(`${API_BASE_URL}/posts/${id}`);
       setArticleData(res.data.data);
     } catch (error) {
       console.log(error);
@@ -26,14 +27,13 @@ const ArticlePage = () => {
   };
   const getComment = async () => {
     try {
-      const res = await axios.get(
-        `${API_BASE_URL}/comments/5a6e6bb9-c9b7-4e6a-bcbc-f6dbec3d74b8`
-      );
+      const res = await axios.get(`${API_BASE_URL}/comments/${id}`);
       setCommentData(res.data.data);
     } catch (error) {
       console.log(error);
     }
   };
+  
   useEffect(() => {
     getArticle();
     getComment();
@@ -102,10 +102,9 @@ const ArticlePage = () => {
       </header>
       <section>
         <div className="container">
-          <div
-            className="article-wrap d-flex flex-column gap-5 gap-lg-7 border-bottom pt-5 pt-lg-10 pb-10 pb-lg-15"
-            dangerouslySetInnerHTML={{ __html: articleData?.content }}
-          ></div>
+          <div className="article-wrap d-flex flex-column gap-2 border-bottom pt-5 pt-lg-10 pb-10 pb-lg-15">
+            <DOMParserReact source={articleData?.content} />
+          </div>
         </div>
       </section>
       <section>
@@ -113,12 +112,14 @@ const ArticlePage = () => {
           <h3 className="fs-5 fs-lg-3 text-primary fw-bold mb-5">
             快來分享你的想法
           </h3>
-          {commentData?.map((commentItem)=>{
-            return(<CommentBox content={commentItem.content}>
-              {commentItem.replies.map((replieItem)=>{
-                return(<CommentReply content={replieItem.content} />)
-              })}
-            </CommentBox>)
+          {commentData?.map((commentItem) => {
+            return (
+              <CommentBox content={commentItem.content}>
+                {commentItem.replies.map((replieItem) => {
+                  return <CommentReply content={replieItem.content} />;
+                })}
+              </CommentBox>
+            );
           })}
           <form>
             <label className="d-none" htmlFor="comment">
