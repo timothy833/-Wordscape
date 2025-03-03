@@ -19,8 +19,9 @@ const ArticlePage = () => {
   const [articleData, setArticleData] = useState(null);
   const [commentData, setCommentData] = useState(null);
   const [isLike, setIsLike] = useState(null);
+  const [commentInput, setCommentInput] = useState("");
   axios.defaults.headers.common["Authorization"] =
-    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJjZDNmYmNkLWI4NDAtNDAyOS04NDZlLThkZmQ2Zjk3ZTRhNSIsInVzZXJuYW1lIjoiaGFwcHlQaWdneSIsImlhdCI6MTc0MDk5MTU5OCwiZXhwIjoxNzQwOTk1MTk4fQ.6LE2NmkU9cK4pzCE5_CV6YBMb0xCp9qwv8dkTDL9LcM";
+    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJjZDNmYmNkLWI4NDAtNDAyOS04NDZlLThkZmQ2Zjk3ZTRhNSIsInVzZXJuYW1lIjoiaGFwcHlQaWdneSIsImlhdCI6MTc0MTAxNDY0MiwiZXhwIjoxNzQxMDE4MjQyfQ.qLdl1JaysxzkvmqqipOeG37BXtiTjgj18iACPQ5tWVE";
   const getArticle = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/${articleId}`);
@@ -37,9 +38,24 @@ const ArticlePage = () => {
       console.log(error);
     }
   };
+  const postComment = async () => {
+    try {
+      const res = await axios.post(`${API_BASE_URL}/comments`, {
+        post_id: articleId,
+        content: commentInput,
+      });
+      setCommentInput("");
+      getComment();
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const postArticleLike = async () => {
-    try { //可以加入動畫增加使用體驗，次要
-      const res = await axios.post(`${API_BASE_URL}/posts/post_likes/${articleId}`);
+    try {
+      //可以加入動畫增加使用體驗，次要
+      const res = await axios.post(
+        `${API_BASE_URL}/posts/post_likes/${articleId}`
+      );
       checkIsLikeArticle();
       getArticle(); //為了取得讚數在進行一次get文章資料，是否可以進行優化
     } catch (error) {
@@ -61,9 +77,6 @@ const ArticlePage = () => {
     getComment();
     checkIsLikeArticle();
   }, []);
-  useEffect(() => {
-    //console.log(articleData);
-  }, [articleData]);
   return (
     <>
       <header>
@@ -142,14 +155,34 @@ const ArticlePage = () => {
           </h3>
           {commentData?.map((commentItem) => {
             return (
-              <CommentBox content={commentItem.content}>
+              <CommentBox
+                key={commentItem.id}
+                content={commentItem.content}
+                comment_id={commentItem.id}
+                articleId={articleId}
+                getComment={getComment}
+                user_id={commentItem.user_id}
+                isAuther={commentItem.user_id === articleData?.user_id}
+              >
                 {commentItem.replies.map((replieItem) => {
-                  return <CommentReply content={replieItem.content} />;
+                  return (
+                    <CommentReply
+                      key={replieItem.id}
+                      content={replieItem.content}
+                      user_id={replieItem.user_id}
+                      isAuther={replieItem.user_id === articleData?.user_id}
+                    />
+                  );
                 })}
               </CommentBox>
             );
           })}
-          <form>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              postComment();
+            }}
+          >
             <label className="d-none" htmlFor="comment">
               留言
             </label>
@@ -159,6 +192,10 @@ const ArticlePage = () => {
               className="form-control mb-5"
               style={{ resize: "none", height: "120px" }}
               placeholder="我想說......"
+              value={commentInput}
+              onChange={(e) => {
+                setCommentInput(e.target.value);
+              }}
             ></textarea>
             <button
               type="submit"
