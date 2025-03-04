@@ -14,7 +14,6 @@ import SignupPage from "../page/AccessPage/SignupPage";
 import BlogPage from "../page/BlogPage/BlogPage";
 import TestLoginPage from "../page/BlogPage/TestLoginPage";
 import TestArticlePage from "../page/BlogPage/TestArticlePage";
-import Navber2 from "../component/Navbar/test";
 
 const router = [
   {
@@ -54,10 +53,6 @@ const router = [
         element: <AdminBackground />
       }
     ]
-  },
-  {
-    path: "/test",
-    element: <Navber2 />
   },
   {
     path: "/login",
