@@ -103,7 +103,6 @@ const ArticlePage = () => {
   //判斷訂閱需要取得articleData中作者的資料，用useEffect確保setState的值正確取得
   useEffect(() => {
     checkIsSubscribed();
-    console.log(articleData);
   }, [articleData]);
   return (
     <>
