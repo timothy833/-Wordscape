@@ -1,0 +1,9 @@
+.comment-dropdown{
+  .dropdown-menu{
+    min-width: 70px;
+  }
+  .dropdown-item:hover{
+    background-color: $primary;
+    color: $light;
+  }
+}

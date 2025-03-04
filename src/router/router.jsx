@@ -2,6 +2,7 @@ import { Navigate } from "react-router-dom";
 
 import HomePage from "../page/HomePage/HomePage";
 import ArticlePage from "../page/ArticlePage/ArticlePage";
+import ArticleListPage from "../page/ArticleListPage/ArticleListPage";
 import BlogHome from "../page/BlogPage/BlogHome";
 import AdminLayout from "../page/AdminPage/AdminLayout/AdminLayout";
 import AdminBackground from "../page/AdminPage/AdminBackground";
@@ -21,7 +22,7 @@ const router = [
     element: <HomePage />,
   },
   {
-    path: "/article",
+    path: "/article/:id",
     element: <ArticlePage />
   },
   {
@@ -65,6 +66,9 @@ const router = [
   {
     path: "/reset-password",
     element: <SignupPage />
+  },
+  { path: "/articleList", 
+    element: <ArticleListPage /> 
   },
   {
     path: "/blogpage",

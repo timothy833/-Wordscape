@@ -40,6 +40,7 @@ const TestArticlePage = () => {
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, "text/html");
     
+    console.log(doc);
 
 
     if (!doc.body || doc.body.children.length === 0) {
