@@ -103,6 +103,7 @@ const ArticlePage = () => {
   //判斷訂閱需要取得articleData中作者的資料，用useEffect確保setState的值正確取得
   useEffect(() => {
     checkIsSubscribed();
+    console.log(articleData);
   }, [articleData]);
   return (
     <>
@@ -181,9 +182,9 @@ const ArticlePage = () => {
         </div>
         <img
           src={
-            articleData?.imageUrl === undefined
-              ? "https://github.com/wfox5510/wordSapce-imgRepo/blob/main/banner-1.png?raw=true"
-              : articleData?.imageUrl
+            articleData?.image_url
+              ? articleData?.image_url
+              : "https://github.com/wfox5510/wordSapce-imgRepo/blob/main/banner-1.png?raw=true"
           }
           className="w-100 object-fit-cover article-banner"
           alt="banner"
