@@ -1,0 +1,56 @@
+.blog_swiper {
+  img {
+    height: clamp(226px, 50vw, 400px);
+  }
+  .blog-banner_content {
+    position: absolute;
+    bottom: 0%;
+    padding: 0 12px;
+  }
+}
+.blog-swiper-pagination {
+  position: absolute;
+  z-index: 999;
+  bottom: clamp(16px, 5vw, 48px);
+  right: clamp(16px, 5vw, 48px);
+  @media (max-width: 1200px) {
+    right: 10px;
+  }
+  a {
+    width: 40px;
+    height: 40px;
+  }
+}
+.blog-home_mainBanner {
+  position: relative;
+  &::before {
+    position: absolute;
+    content: "";
+    width: 100%;
+    height: 100%;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #00000026;
+  }
+  @media (min-width: 768px) {
+    padding-top: clamp(40px, 10vw, 205px) !important;
+  }
+}
+.articleList_header button {
+  width: 100%;
+  @media (min-width: 768px) {
+    width: 162px;
+  }
+}
+.blog-home_articleSelect {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='16' height='16' fill='%23E77605'%3E%3Cpath d='M7 10l5 5 5-5H7z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 20px;
+  @media (min-width: 768px) {
+    width: 176px;
+  }
+}

@@ -1,0 +1,43 @@
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@24,300,0,0&icon_names=close");
+
+.rotate-45 {
+  transform: rotate(45deg);
+}
+
+.admin_wrap {
+  background: #fdfbf5;
+}
+.admin-avatar {
+  width: 80px;
+  height: 80px;
+}
+.admin-form_checked {
+  &:checked {
+    border-color: #e77605 !important;
+  }
+}
+.admin-form_group {
+  .form-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='16' height='16' fill='%23E77605'%3E%3Cpath d='M7 10l5 5 5-5H7z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1.1rem center;
+    background-size: 20px;
+  }
+  @media (min-width: 768px) {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    .form-label,
+    p {
+      width: 100px;
+      flex-shrink: 0;
+    }
+  }
+  @media (min-width: 1000px) {
+    .form-label,
+    p {
+      width: 176px;
+    }
+  }
+}

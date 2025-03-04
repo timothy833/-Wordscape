@@ -6,9 +6,105 @@ import CommentReply from "../../component/CommentReply/CommentReply";
 import Footer from "../../component/Footer/Footer";
 import Navbar from "../../component/Navbar/Navbar";
 import avatar from "../../assets/images/avatar-1.png";
-import banner from "../../assets/images/ArticlePage/banner-1.png";
-import articleImg1 from "../../assets/images/ArticlePage/article-img-1.png";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import DOMParserReact from "dom-parser-react";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const ArticlePage = () => {
+  const { id: articleId } = useParams();
+  const userId = "2cd3fbcd-b840-4029-846e-8dfd6f97e4a5";
+  const [articleData, setArticleData] = useState(null);
+  const [commentData, setCommentData] = useState(null);
+  const [isLike, setIsLike] = useState(null);
+  const [isSubscribed, setIsSubscribed] = useState(null);
+  const [commentInput, setCommentInput] = useState("");
+  const [currentEdit,setCurrentEdit] =  useState(null);
+  axios.defaults.headers.common["Authorization"] =
+    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJjZDNmYmNkLWI4NDAtNDAyOS04NDZlLThkZmQ2Zjk3ZTRhNSIsInVzZXJuYW1lIjoiaGFwcHlQaWdneSIsImlhdCI6MTc0MTA5NTk1MywiZXhwIjoxNzQxMDk5NTUzfQ.zQSRLGFgH-eueYkThAhgyv9euHp3ZCkdikZT7UwyYIE";
+  const getArticle = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/posts/${articleId}`);
+      setArticleData(res.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  //留言相關功能
+  const getComment = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/comments/${articleId}`);
+      setCommentData(res.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const postComment = async () => {
+    try {
+      const res = await axios.post(`${API_BASE_URL}/comments`, {
+        post_id: articleId,
+        content: commentInput,
+      });
+      setCommentInput("");
+      getComment();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  //訂閱相關功能
+  const checkIsSubscribed = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/subscriptions`);
+      setIsSubscribed(
+        res.data.data.some(
+          (subscribedData) => subscribedData.user_id === articleData?.user_id
+        )
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const postSubscribed = async () => {
+    try {
+      await axios.post(`${API_BASE_URL}/subscriptions/${articleData.user_id}`);
+      checkIsSubscribed();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  //點讚相關功能
+  const checkIsLikeArticle = async () => {
+    try {
+      const res = await axios.get(
+        `${API_BASE_URL}/posts/post_likes/${articleId}`
+      );
+      setIsLike(res.data.data.some((likeData) => likeData.id === userId));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const postArticleLike = async () => {
+    try {
+      //可以加入動畫增加使用體驗，次要
+      const res = await axios.post(
+        `${API_BASE_URL}/posts/post_likes/${articleId}`
+      );
+      getArticle(); //為了取得讚數在進行一次get文章資料，是否可以進行優化
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getArticle();
+    getComment();
+    checkIsLikeArticle();
+  }, []);
+  //判斷訂閱需要取得articleData中作者的資料，用useEffect確保setState的值正確取得
+  useEffect(() => {
+    checkIsSubscribed();
+  }, [articleData]);
   return (
     <>
       <header>
@@ -16,87 +112,90 @@ const ArticlePage = () => {
           <Navbar />
           <div className="pt-10 pt-lg-15 pb-5 pb-lg-10 z-3">
             <div className="d-flex gap-2 mb-5">
-              <a
-                className="badge rounded-pill bg-primary-hover lh-base"
-                href="#"
-              >
-                #數位時代
-              </a>
-              <a
-                className="badge rounded-pill bg-primary-hover lh-base"
-                href="#"
-              >
-                #AI生成
-              </a>
-              <a
-                className="badge rounded-pill bg-primary-hover lh-base"
-                href="#"
-              >
-                #數位共生
-              </a>
+              {articleData?.tags.map((tagItem) => {
+                return (
+                  <a
+                    className="badge rounded-pill bg-primary-hover lh-base"
+                    href="#"
+                    key={tagItem.id}
+                  >
+                    #{tagItem.name}
+                  </a>
+                );
+              })}
             </div>
             <h1 className="text-primary fs-4 fs-lg-1 fw-bold mb-5">
-              2024：數位世界裡的真實感，虛實交錯的我們
+              {articleData?.title}
             </h1>
             <div className="d-flex gap-5 flex-column flex-lg-row">
               <div className="d-flex align-items-center gap-5">
                 <div className="d-flex align-items-center">
                   <img className="avatar me-2" src={avatar} alt="avatar" />
-                  <span>宋書遠</span>
+                  <span>{articleData?.author_name}</span>
                 </div>
-                <a className="text-gray" href="#">
-                  追蹤
-                </a>
+                {/* 當目前user為作者時，不顯示追蹤按鈕 */}
+                {userId !== articleData?.user_id && (
+                  <a
+                    className={`${
+                      isSubscribed ? "text-primary" : "text-gray"
+                    } d-flex align-items-center`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      postSubscribed();
+                    }}
+                    href="#"
+                  >
+                    {isSubscribed ? (
+                      <>
+                        <span className="material-symbols-outlined">
+                          notifications
+                        </span>
+                        追蹤中
+                      </>
+                    ) : (
+                      <>追蹤</>
+                    )}
+                  </a>
+                )}
               </div>
               <div className="d-flex align-items-center gap-5">
-                <span className=" d-flex align-items-center gap-1 text-primary ">
+                <span
+                  className={` d-flex align-items-center gap-1 ${
+                    isLike ? "text-primary" : "text-gray"
+                  } `}
+                  onClick={() => postArticleLike()}
+                >
                   <span className="material-symbols-outlined icon-fill">
                     favorite
                   </span>
-                  143
+                  {articleData?.likes_count}
                 </span>
-                <span className="text-gray">發佈於 2024/11/22</span>
+                <span className="text-gray">
+                  {articleData?.created_at !== undefined &&
+                    `發佈於 ${new Date(
+                      articleData?.created_at
+                    ).toLocaleDateString()}`}
+                </span>
               </div>
             </div>
           </div>
         </div>
         <img
-          src={banner}
+          src={
+            articleData?.image_url
+              ? articleData?.image_url
+              : "https://github.com/wfox5510/wordSapce-imgRepo/blob/main/banner-1.png?raw=true"
+          }
           className="w-100 object-fit-cover article-banner"
           alt="banner"
         />
       </header>
       <section>
-        <div className="container d-flex flex-column gap-5 gap-lg-7 border-bottom pt-5 pt-lg-10 pb-10 pb-lg-15">
-          <h2 className="fw-bold fs-5 fs-lg-3">回望今年的熱潮</h2>
-          <p>
-            在2024年，「AI生成內容」這個詞不再只是技術愛好者的專屬，而成為日常生活中不可忽略的一部分。從生成圖片、文本到深度學習技術的應用，我們看見許多人不斷嘗試用科技重塑創作的可能。然而，在這片技術浪潮中，一個有趣的現象正在悄然浮現：我們開始更熱衷於追求真實感。
-          </p>
-          <h2 className="fw-bold fs-5 fs-lg-3">虛擬與真實的邊界</h2>
-          <p>
-            今年，許多平台如 Meta 和
-            Apple推出了更高階的虛擬現實設備，希望讓我們在數位世界中體驗前所未有的沉浸感。然而，一個意外的趨勢卻引起討論：越來越多的用戶開始使用這些工具來模擬過去的「真實生活場景」，如手工製作、復古寫作甚至田園生活的虛擬版。
-            <br />
-            這種虛擬復古的風潮，似乎折射出我們對真實感的集體渴望。在一個虛實交錯的時代，我們不僅希望科技能方便生活，更期待它能幫助我們找到「遺失的真實」。
-          </p>
-          <img src={articleImg1} className="w-100" alt="articleImg" />
-          <h2 className="fw-bold fs-5 fs-lg-3">生成內容與人性情感的碰撞</h2>
-          <p>
-            AI生成文章、藝術品和音樂的能力越來越強，但同時我們也看到一股回歸人性化的潮流。今年流行的一句話是：「技術能生成內容，但情感無法生成。」
-            這使得擁有獨特情感觸感的創作變得更加珍貴。
-            <br />
-            像是近期Netflix推出的一部紀錄片《代碼與心》，探討了人類如何與技術共舞，同時警惕我們在技術快速發展中不要忘記原初的創作動機——那份人性深處的觸動
-          </p>
-          <h2 className="fw-bold fs-5 fs-lg-3">科技與我們的共生未來</h2>
-          <p>
-            我們正處在一個微妙的轉折點：科技讓我們更自由地表達，卻也讓我們重新思考何謂「真實」。也許答案並不在於對科技的全然擁抱或拒絕，而在於我們如何找到平衡，讓數位與真實世界能夠相互滋養。
-            <br />
-            比如，你是否可以用虛擬技術重新構建一次難忘的旅行體驗？或者利用AI生成的靈感，進一步深化自己的創作？這是一場我們與技術之間的共生旅程，而我們每個人都有機會成為這場旅程中的創作者。
-          </p>
-          <h2 className="fw-bold fs-5 fs-lg-3">浮生中的選擇</h2>
-          <p>
-            在科技不斷進化的浪潮中，真實感或許是一種選擇，而非結果。我們不妨利用這些工具，重拾生活中的細微感動，將「墨影浮生」的意境融入我們的日常。這場虛實交錯的冒險，或許正是未來最值得期待的風景。
-          </p>
+        <div className="container">
+          {/* DOMParserReact套件用來渲染文章內容，避免XSS攻擊 */}
+          <div className="article-wrap d-flex flex-column gap-2 border-bottom pt-5 pt-lg-10 pb-10 pb-lg-15">
+            <DOMParserReact source={articleData?.content} />
+          </div>
         </div>
       </section>
       <section>
@@ -104,16 +203,44 @@ const ArticlePage = () => {
           <h3 className="fs-5 fs-lg-3 text-primary fw-bold mb-5">
             快來分享你的想法
           </h3>
-          <CommentBox>
-            <CommentReply />
-            <CommentReply />
-            <CommentReply />
-          </CommentBox>
-          <CommentBox>
-            <CommentReply />
-            <CommentReply />
-          </CommentBox>
-          <form>
+          {commentData?.map((commentItem) => {
+            return (
+              <CommentBox
+                key={commentItem.id}
+                content={commentItem.content}
+                comment_id={commentItem.id}
+                articleId={articleId}
+                getComment={getComment}
+                replie_count={commentItem.replies.length}
+                user_id={commentItem.user_id}
+                isAuther={commentItem.user_id === articleData?.user_id}
+                isCurrentUser={commentItem.user_id === userId}
+                hasReplie={commentItem.replies.some(
+                  (repliesItem) => repliesItem.user_id === userId
+                )}
+              >
+                {commentItem.replies.map((replieItem) => {
+                  return (
+                    <CommentReply
+                      key={replieItem.id}
+                      content={replieItem.content}
+                      user_id={replieItem.user_id}
+                      comment_id = {replieItem.id}
+                      getComment={getComment}
+                      isAuther={replieItem.user_id === articleData?.user_id}
+                      isCurrentUser={replieItem.user_id === userId}
+                    />
+                  );
+                })}
+              </CommentBox>
+            );
+          })}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              postComment();
+            }}
+          >
             <label className="d-none" htmlFor="comment">
               留言
             </label>
@@ -123,8 +250,15 @@ const ArticlePage = () => {
               className="form-control mb-5"
               style={{ resize: "none", height: "120px" }}
               placeholder="我想說......"
+              value={commentInput}
+              onChange={(e) => {
+                setCommentInput(e.target.value);
+              }}
             ></textarea>
-            <button type="submit" class="btn btn-lg btn-primary lh-sm fw-bold ls-0">
+            <button
+              type="submit"
+              className="btn btn-lg btn-primary lh-sm fw-bold ls-0"
+            >
               送出
             </button>
           </form>
@@ -133,14 +267,14 @@ const ArticlePage = () => {
       <section>
         <div className="container py-10 py-lg-15">
           <h3 className="fs-5 fs-lg-3 text-primary fw-bold mb-5">相關文章</h3>
-          <nav class="related-articles nav mb-5 gap-5">
-            <a class="nav-link p-0 active" aria-current="page" href="#">
+          <nav className="related-articles nav mb-5 gap-5">
+            <a className="nav-link p-0 active" aria-current="page" href="#">
               數位時代
             </a>
-            <a class="nav-link p-0" href="#">
+            <a className="nav-link p-0" href="#">
               AI生成
             </a>
-            <a class="nav-link p-0" href="#">
+            <a className="nav-link p-0" href="#">
               未來創作
             </a>
           </nav>
@@ -174,7 +308,6 @@ const ArticlePage = () => {
                 bulletClass:
                   "swiper-pagination-bullet swiper-pagination-bullet-mx-6",
               }}
-              loop={true}
               spaceBetween={"24px"}
             >
               <SwiperSlide>
