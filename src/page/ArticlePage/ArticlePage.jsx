@@ -21,8 +21,9 @@ const ArticlePage = () => {
   const [isLike, setIsLike] = useState(null);
   const [isSubscribed, setIsSubscribed] = useState(null);
   const [commentInput, setCommentInput] = useState("");
+  const [currentEdit,setCurrentEdit] =  useState(null);
   axios.defaults.headers.common["Authorization"] =
-    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJjZDNmYmNkLWI4NDAtNDAyOS04NDZlLThkZmQ2Zjk3ZTRhNSIsInVzZXJuYW1lIjoiaGFwcHlQaWdneSIsImlhdCI6MTc0MTA2OTg5OCwiZXhwIjoxNzQxMDczNDk4fQ._Q1LSXU7tkFvjdNSXps9ihAO9Rm8XI1ofss72gRQZPc";
+    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJjZDNmYmNkLWI4NDAtNDAyOS04NDZlLThkZmQ2Zjk3ZTRhNSIsInVzZXJuYW1lIjoiaGFwcHlQaWdneSIsImlhdCI6MTc0MTA5NTk1MywiZXhwIjoxNzQxMDk5NTUzfQ.zQSRLGFgH-eueYkThAhgyv9euHp3ZCkdikZT7UwyYIE";
   const getArticle = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/${articleId}`);
@@ -213,6 +214,7 @@ const ArticlePage = () => {
                 replie_count={commentItem.replies.length}
                 user_id={commentItem.user_id}
                 isAuther={commentItem.user_id === articleData?.user_id}
+                isCurrentUser={commentItem.user_id === userId}
                 hasReplie={commentItem.replies.some(
                   (repliesItem) => repliesItem.user_id === userId
                 )}
@@ -223,7 +225,10 @@ const ArticlePage = () => {
                       key={replieItem.id}
                       content={replieItem.content}
                       user_id={replieItem.user_id}
+                      comment_id = {replieItem.id}
+                      getComment={getComment}
                       isAuther={replieItem.user_id === articleData?.user_id}
+                      isCurrentUser={replieItem.user_id === userId}
                     />
                   );
                 })}

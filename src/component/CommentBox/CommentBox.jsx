@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
+import "../../../node_modules/bootstrap/js/src/dropdown.js";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -13,6 +14,7 @@ const CommentBox = ({
   user_id,
   isAuther,
   hasReplie,
+  isCurrentUser,
 }) => {
   const [commentUserData, setCommentUserData] = useState({
     username: "piggy",
@@ -22,10 +24,31 @@ const CommentBox = ({
   const [isReviewOpen, setIsReviewOpen] = useState(false);
   const [review, setReview] = useState("");
   const [showAllReview, setShowAllReview] = useState(false);
+  const [currentComment, setCurrentComment] = useState(content);
+  const [isEdit, setIsEdit] = useState(false);
+  const editInputRef = useRef(null);
   const getCommentUser = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/users/${user_id}`);
       setCommentUserData(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const delComment = async () => {
+    try {
+      await axios.delete(`${API_BASE_URL}/comments/${comment_id}`);
+      getComment();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const putComment = async () => {
+    try {
+      await axios.put(`${API_BASE_URL}/comments/${comment_id}`, {
+        content: currentComment,
+      });
+      getComment();
     } catch (error) {
       console.log(error);
     }
@@ -44,6 +67,14 @@ const CommentBox = ({
       console.log(error);
     }
   };
+  const handleEdit = () => {
+    putComment();
+    setIsEdit(false);
+    getComment();
+  };
+  useEffect(() => {
+    isEdit && editInputRef?.current?.focus();
+  }, [isEdit]);
   return (
     <>
       <div className="d-flex flex-column gap-3 mb-5">
@@ -56,7 +87,36 @@ const CommentBox = ({
           <a href="#">{commentUserData.username}</a>
           {isAuther && <span className="text-gray">作者</span>}
         </div>
-        <p>{content}</p>
+        {isEdit ? (
+          <div
+            className="input-group"
+            onBlur={() => {
+              setIsEdit(false);
+            }}
+          >
+            <input
+              type="text"
+              className="form-control border-end-0 rounded-1"
+              value={currentComment}
+              ref={editInputRef}
+              onChange={(e) => {
+                setCurrentComment(e.target.value);
+              }}
+              onKeyDown={(e) => e.key === "Enter" && handleEdit()}
+            />
+            <span
+              className="material-symbols-outlined input-group-text border-start-0 bg-light text-primary icon-fill fs-6 rounded-1"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                handleEdit();
+              }}
+            >
+              send
+            </span>
+          </div>
+        ) : (
+          <p>{content}</p>
+        )}
         <div className="d-flex gap-5">
           <a href="#" className="d-flex align-items-center text-primary gap-1">
             <span className="material-symbols-outlined icon-fill fs-6">
@@ -79,6 +139,44 @@ const CommentBox = ({
             </span>
             {replie_count}
           </a>
+          {isCurrentUser && (
+            <div className="comment-dropdown dropdown">
+              <a
+                className="text-gray"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <span className="material-symbols-outlined">more_horiz</span>
+              </a>
+              <ul className="dropdown-menu">
+                <li>
+                  <a
+                    className="dropdown-item"
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsEdit(true);
+                    }}
+                  >
+                    編輯
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="dropdown-item"
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      delComment();
+                    }}
+                  >
+                    刪除
+                  </a>
+                </li>
+              </ul>
+            </div>
+          )}
+
           <a
             href="#"
             className="text-gray"
@@ -104,6 +202,7 @@ const CommentBox = ({
               onChange={(e) => {
                 setReview(e.target.value);
               }}
+              onKeyDown={(e) => e.key === "Enter" && postReviewComment()}
             />
             <span
               className="material-symbols-outlined input-group-text border-start-0 bg-light text-primary icon-fill fs-6 rounded-1"
