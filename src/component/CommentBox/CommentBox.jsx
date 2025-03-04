@@ -8,9 +8,11 @@ const CommentBox = ({
   content,
   articleId,
   comment_id,
+  replie_count,
   getComment,
   user_id,
   isAuther,
+  hasReplie,
 }) => {
   const [commentUserData, setCommentUserData] = useState({
     username: "piggy",
@@ -19,6 +21,7 @@ const CommentBox = ({
   });
   const [isReviewOpen, setIsReviewOpen] = useState(false);
   const [review, setReview] = useState("");
+  const [showAllReview, setShowAllReview] = useState(false);
   const getCommentUser = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/users/${user_id}`);
@@ -61,11 +64,20 @@ const CommentBox = ({
             </span>
             2
           </a>
-          <a href="#" className="d-flex align-items-center text-gray gap-1">
+          <a
+            href="#"
+            className={`d-flex align-items-center ${
+              hasReplie ? "text-primary" : "text-gray"
+            } gap-1`}
+            onClick={(e) => {
+              e.preventDefault();
+              setIsReviewOpen(!isReviewOpen);
+            }}
+          >
             <span className="material-symbols-outlined icon-fill fs-6">
               chat_bubble
             </span>
-            1
+            {replie_count}
           </a>
           <a
             href="#"
@@ -80,7 +92,9 @@ const CommentBox = ({
         </div>
       </div>
       <div className="d-flex flex-column gap-3 ms-5 mb-5">
-        {children}
+        {children.map((childrenItem, index) => {
+          return (showAllReview || index < 2) && childrenItem;
+        })}
         {isReviewOpen && (
           <div className="input-group">
             <input
@@ -101,9 +115,18 @@ const CommentBox = ({
             </span>
           </div>
         )}
-        <a href="#" className="text-primary">
-          全部留言
-        </a>
+        {!showAllReview && replie_count > 2 && (
+          <a
+            href="#"
+            className="text-primary"
+            onClick={(e) => {
+              e.preventDefault();
+              setShowAllReview(true);
+            }}
+          >
+            全部留言
+          </a>
+        )}
       </div>
     </>
   );

@@ -19,9 +19,10 @@ const ArticlePage = () => {
   const [articleData, setArticleData] = useState(null);
   const [commentData, setCommentData] = useState(null);
   const [isLike, setIsLike] = useState(null);
+  const [isSubscribed, setIsSubscribed] = useState(null);
   const [commentInput, setCommentInput] = useState("");
   axios.defaults.headers.common["Authorization"] =
-    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJjZDNmYmNkLWI4NDAtNDAyOS04NDZlLThkZmQ2Zjk3ZTRhNSIsInVzZXJuYW1lIjoiaGFwcHlQaWdneSIsImlhdCI6MTc0MTAxNDY0MiwiZXhwIjoxNzQxMDE4MjQyfQ.qLdl1JaysxzkvmqqipOeG37BXtiTjgj18iACPQ5tWVE";
+    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJjZDNmYmNkLWI4NDAtNDAyOS04NDZlLThkZmQ2Zjk3ZTRhNSIsInVzZXJuYW1lIjoiaGFwcHlQaWdneSIsImlhdCI6MTc0MTA2OTg5OCwiZXhwIjoxNzQxMDczNDk4fQ._Q1LSXU7tkFvjdNSXps9ihAO9Rm8XI1ofss72gRQZPc";
   const getArticle = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/${articleId}`);
@@ -30,6 +31,7 @@ const ArticlePage = () => {
       console.log(error);
     }
   };
+  //留言相關功能
   const getComment = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/comments/${articleId}`);
@@ -50,18 +52,28 @@ const ArticlePage = () => {
       console.log(error);
     }
   };
-  const postArticleLike = async () => {
+  //訂閱相關功能
+  const checkIsSubscribed = async () => {
     try {
-      //可以加入動畫增加使用體驗，次要
-      const res = await axios.post(
-        `${API_BASE_URL}/posts/post_likes/${articleId}`
+      const res = await axios.get(`${API_BASE_URL}/subscriptions`);
+      setIsSubscribed(
+        res.data.data.some(
+          (subscribedData) => subscribedData.user_id === articleData?.user_id
+        )
       );
-      checkIsLikeArticle();
-      getArticle(); //為了取得讚數在進行一次get文章資料，是否可以進行優化
     } catch (error) {
       console.log(error);
     }
   };
+  const postSubscribed = async () => {
+    try {
+      await axios.post(`${API_BASE_URL}/subscriptions/${articleData.user_id}`);
+      checkIsSubscribed();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  //點讚相關功能
   const checkIsLikeArticle = async () => {
     try {
       const res = await axios.get(
@@ -72,11 +84,26 @@ const ArticlePage = () => {
       console.log(error);
     }
   };
+  const postArticleLike = async () => {
+    try {
+      //可以加入動畫增加使用體驗，次要
+      const res = await axios.post(
+        `${API_BASE_URL}/posts/post_likes/${articleId}`
+      );
+      getArticle(); //為了取得讚數在進行一次get文章資料，是否可以進行優化
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
     getArticle();
     getComment();
     checkIsLikeArticle();
   }, []);
+  //判斷訂閱需要取得articleData中作者的資料，用useEffect確保setState的值正確取得
+  useEffect(() => {
+    checkIsSubscribed();
+  }, [articleData]);
   return (
     <>
       <header>
@@ -105,9 +132,30 @@ const ArticlePage = () => {
                   <img className="avatar me-2" src={avatar} alt="avatar" />
                   <span>{articleData?.author_name}</span>
                 </div>
-                <a className="text-gray" href="#">
-                  追蹤
-                </a>
+                {/* 當目前user為作者時，不顯示追蹤按鈕 */}
+                {userId !== articleData?.user_id && (
+                  <a
+                    className={`${
+                      isSubscribed ? "text-primary" : "text-gray"
+                    } d-flex align-items-center`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      postSubscribed();
+                    }}
+                    href="#"
+                  >
+                    {isSubscribed ? (
+                      <>
+                        <span className="material-symbols-outlined">
+                          notifications
+                        </span>
+                        追蹤中
+                      </>
+                    ) : (
+                      <>追蹤</>
+                    )}
+                  </a>
+                )}
               </div>
               <div className="d-flex align-items-center gap-5">
                 <span
@@ -143,6 +191,7 @@ const ArticlePage = () => {
       </header>
       <section>
         <div className="container">
+          {/* DOMParserReact套件用來渲染文章內容，避免XSS攻擊 */}
           <div className="article-wrap d-flex flex-column gap-2 border-bottom pt-5 pt-lg-10 pb-10 pb-lg-15">
             <DOMParserReact source={articleData?.content} />
           </div>
@@ -161,8 +210,12 @@ const ArticlePage = () => {
                 comment_id={commentItem.id}
                 articleId={articleId}
                 getComment={getComment}
+                replie_count={commentItem.replies.length}
                 user_id={commentItem.user_id}
                 isAuther={commentItem.user_id === articleData?.user_id}
+                hasReplie={commentItem.replies.some(
+                  (repliesItem) => repliesItem.user_id === userId
+                )}
               >
                 {commentItem.replies.map((replieItem) => {
                   return (
