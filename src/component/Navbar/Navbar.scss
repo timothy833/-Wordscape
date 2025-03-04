@@ -41,6 +41,40 @@
   }
 }
 .avatar {
-  width: 40px;
+  width: 35px;
+  height: 35px;
+}
+
+.btn-register {
+  position: relative;
   height: 40px;
+  width: 90px;
+  z-index: 2;
+}
+
+.btn-login {
+  position: absolute;
+  height: 40px;
+  width: 90px;
+  z-index: 1;
+  right: 25px;
+  background-color: $primary_hover;
+}
+
+.btn-group:hover .btn-login{
+  background-color: $primary;
+}
+.btn-group:hover .btn-register{
+  background-color: $primary_hover;
+}
+
+.btn-group::after {
+  content: "";
+  position: absolute;
+  width: 50px;
+  height: 40px;
+  background: $primary;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 0;
 }
