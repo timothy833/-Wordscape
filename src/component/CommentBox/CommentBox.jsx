@@ -6,27 +6,25 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const CommentBox = ({
   children,
-  content,
+  commentData,
+  loginUserId,
   articleId,
-  comment_id,
-  replie_count,
   getComment,
-  user_name,
-  user_profile_picture,
   isAuther,
   hasReplie,
   isCurrentUser,
 }) => {
+  const [commentLikeData, setCommentLikeData] = useState(null);
   const [isReviewOpen, setIsReviewOpen] = useState(false);
   const [review, setReview] = useState("");
   const [showAllReview, setShowAllReview] = useState(false);
-  const [currentComment, setCurrentComment] = useState(content);
+  const [currentComment, setCurrentComment] = useState(commentData.content);
   const [isEdit, setIsEdit] = useState(false);
   const editInputRef = useRef(null);
 
   const delComment = async () => {
     try {
-      await axios.delete(`${API_BASE_URL}/comments/${comment_id}`);
+      await axios.delete(`${API_BASE_URL}/comments/${commentData.id}`);
       getComment();
     } catch (error) {
       console.log(error);
@@ -34,7 +32,7 @@ const CommentBox = ({
   };
   const putComment = async () => {
     try {
-      await axios.put(`${API_BASE_URL}/comments/${comment_id}`, {
+      await axios.put(`${API_BASE_URL}/comments/${commentData.id}`, {
         content: currentComment,
       });
       getComment();
@@ -44,14 +42,37 @@ const CommentBox = ({
   };
   const postReviewComment = async () => {
     try {
-      const res = await axios.post(`${API_BASE_URL}/comments`, {
-        post_id: articleId,
-        parent_comment_id: comment_id,
-        content: review,
-      });
-      await getComment();
-      setIsReviewOpen(false);
-      setReview("");
+      if(commentData?.id){
+        const res = await axios.post(`${API_BASE_URL}/comments`, {
+          post_id: articleId,
+          parent_comment_id: commentData.id,
+          content: review,
+        });
+        await getComment();
+        setIsReviewOpen(false);
+        setReview("");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getCommentLikeData = async () => {
+    try {
+      const res = await axios.get(
+        `${API_BASE_URL}/comments/comment_likes/${commentData.id}`
+      );
+      setCommentLikeData(res.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const postCommentLike = async () => {
+    try {
+      const res = await axios.post(
+        `${API_BASE_URL}/comments/comment_likes/${commentData.id}`
+      );
+      getComment();
+      getCommentLikeData();
     } catch (error) {
       console.log(error);
     }
@@ -62,8 +83,12 @@ const CommentBox = ({
     getComment();
   };
   useEffect(() => {
+    getCommentLikeData();
+  }, []);
+  useEffect(() => {
     isEdit && editInputRef?.current?.focus();
   }, [isEdit]);
+
   return (
     <>
       <div className="d-flex flex-column gap-3 mb-5">
@@ -71,14 +96,15 @@ const CommentBox = ({
           <img
             className="avatar object-fit-cover rounded-pill"
             src={
-              user_profile_picture ||
+              commentData.profile_picture ||
               "https://raw.githubusercontent.com/wfox5510/wordSapce-imgRepo/695229fa8c60c474d3d9dc0d60b25f9539ac74d9/default-avatar.svg"
             }
             alt="avatar"
           />
-          <a href="#">{user_name}</a>
+          <a href="#">{commentData.user_name}</a>
           {isAuther && <span className="text-gray">作者</span>}
         </div>
+        {/* 編輯目前留言 */}
         {isEdit ? (
           <div
             className="input-group"
@@ -107,14 +133,27 @@ const CommentBox = ({
             </span>
           </div>
         ) : (
-          <p>{content}</p>
+          <p>{commentData.content}</p>
         )}
         <div className="d-flex gap-5">
-          <a href="#" className="d-flex align-items-center text-primary gap-1">
+          <a
+            href="#"
+            className={`d-flex align-items-center ${
+              commentLikeData?.some(
+                (LikeDataItem) => LikeDataItem.user_id === loginUserId
+              )
+                ? "text-primary"
+                : "text-gray"
+            } gap-1`}
+            onClick={(e) => {
+              e.preventDefault();
+              postCommentLike();
+            }}
+          >
             <span className="material-symbols-outlined icon-fill fs-6">
               favorite
             </span>
-            2
+            {commentData.likes_count}
           </a>
           <a
             href="#"
@@ -129,7 +168,7 @@ const CommentBox = ({
             <span className="material-symbols-outlined icon-fill fs-6">
               chat_bubble
             </span>
-            {replie_count}
+            {commentData.replies.length}
           </a>
           {isCurrentUser && (
             <div className="comment-dropdown dropdown">
@@ -185,6 +224,7 @@ const CommentBox = ({
         {children.map((childrenItem, index) => {
           return (showAllReview || index < 2) && childrenItem;
         })}
+        {/* 輸入回覆留言 */}
         {isReviewOpen && (
           <div className="input-group">
             <input
@@ -206,7 +246,7 @@ const CommentBox = ({
             </span>
           </div>
         )}
-        {!showAllReview && replie_count > 2 && (
+        {!showAllReview && commentData.replies.length > 2 && (
           <a
             href="#"
             className="text-primary"

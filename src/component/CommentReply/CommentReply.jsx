@@ -4,21 +4,20 @@ import axios from "axios";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const CommentReply = ({
-  content,
-  user_name,
-  user_profile_picture,
-  comment_id,
+  commentData,
   isAuther,
   isCurrentUser,
   getComment,
+  loginUserId
 }) => {
-  const [currentComment, setCurrentComment] = useState(content);
+  const [commentLikeData, setCommentLikeData] = useState(null);
+  const [currentComment, setCurrentComment] = useState(commentData.content);
   const [isEdit, setIsEdit] = useState(false);
   const editInputRef = useRef(null);
 
   const delComment = async () => {
     try {
-      await axios.delete(`${API_BASE_URL}/comments/${comment_id}`);
+      await axios.delete(`${API_BASE_URL}/comments/${commentData.id}`);
       getComment();
     } catch (error) {
       console.log(error);
@@ -26,10 +25,31 @@ const CommentReply = ({
   };
   const putComment = async () => {
     try {
-      await axios.put(`${API_BASE_URL}/comments/${comment_id}`, {
+      await axios.put(`${API_BASE_URL}/comments/${commentData.id}`, {
         content: currentComment,
       });
       getComment();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getCommentLikeData = async () => {
+    try {
+      const res = await axios.get(
+        `${API_BASE_URL}/comments/comment_likes/${commentData.id}`
+      );
+      setCommentLikeData(res.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const postCommentLike = async () => {
+    try {
+      const res = await axios.post(
+        `${API_BASE_URL}/comments/comment_likes/${commentData.id}`
+      );
+      getComment();
+      getCommentLikeData();
     } catch (error) {
       console.log(error);
     }
@@ -40,6 +60,9 @@ const CommentReply = ({
     getComment();
   };
   useEffect(() => {
+    getCommentLikeData();
+  }, []);
+  useEffect(() => {
     isEdit && editInputRef?.current?.focus();
   }, [isEdit]);
   return (
@@ -49,19 +72,33 @@ const CommentReply = ({
           <img
             className="avatar object-fit-cover rounded-pill"
             src={
-              user_profile_picture ||
+              commentData.profile_picture ||
               "https://raw.githubusercontent.com/wfox5510/wordSapce-imgRepo/695229fa8c60c474d3d9dc0d60b25f9539ac74d9/default-avatar.svg"
             }
             alt="avatar"
           />
-          <a href="#">{user_name}</a>
+          <a href="#">{commentData.user_name}</a>
           {isAuther && <span className="text-gray">作者</span>}
         </div>
         <div className="d-flex gap-5 align-items-center">
-          <a href="#" className="d-flex align-items-center text-primary gap-1">
+          <a
+            href="#"
+            className={`d-flex align-items-center ${
+              commentLikeData?.some(
+                (LikeDataItem) => LikeDataItem.user_id === loginUserId
+              )
+                ? "text-primary"
+                : "text-gray"
+            } gap-1`}
+            onClick={(e) => {
+              e.preventDefault();
+              postCommentLike();
+            }}
+          >
             <span className="material-symbols-outlined icon-fill fs-6">
               favorite
             </span>
+            {commentData.likes_count}
           </a>
           {isCurrentUser && (
             <div className="comment-dropdown dropdown">
@@ -130,7 +167,7 @@ const CommentReply = ({
           </span>
         </div>
       ) : (
-        <p>{content}</p>
+        <p>{commentData.content}</p>
       )}
     </div>
   );

@@ -14,7 +14,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ArticlePage = () => {
   const { id: articleId } = useParams();
-  const userId = "2cd3fbcd-b840-4029-846e-8dfd6f97e4a5";
+  const userId = "2c1130a5-8ded-4554-b7b6-fa0db7dfd2ae";
   const [articleData, setArticleData] = useState(null);
   const [autherData, setAutherData] = useState(null);
   const [commentData, setCommentData] = useState(null);
@@ -22,7 +22,7 @@ const ArticlePage = () => {
   const [isSubscribed, setIsSubscribed] = useState(null);
   const [commentInput, setCommentInput] = useState("");
   axios.defaults.headers.common["Authorization"] =
-    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJjZDNmYmNkLWI4NDAtNDAyOS04NDZlLThkZmQ2Zjk3ZTRhNSIsInVzZXJuYW1lIjoiaGFwcHlQaWdneSIsImlhdCI6MTc0MTA5NTk1MywiZXhwIjoxNzQxMDk5NTUzfQ.zQSRLGFgH-eueYkThAhgyv9euHp3ZCkdikZT7UwyYIE";
+    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJjMTEzMGE1LThkZWQtNDU1NC1iN2I2LWZhMGRiN2RmZDJhZSIsInVzZXJuYW1lIjoic21hbGxQaWdneSIsImlhdCI6MTc0MTE2MDcxNiwiZXhwIjoxNzQxMTY0MzE2fQ.gPWyG8RMYt_O13VDKYAOz0ozpQDdeGahJ1ty_-V1AlI";
   const getArticle = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/${articleId}`);
@@ -34,7 +34,7 @@ const ArticlePage = () => {
   const getAutherData = async () => {
     try {
       const res = await axios.get(
-        `${API_BASE_URL}/users/${articleData.user_id}`
+        `${API_BASE_URL}/users/${articleData?.user_id}`
       );
       setAutherData(res.data);
     } catch (error) {
@@ -101,6 +101,7 @@ const ArticlePage = () => {
         `${API_BASE_URL}/posts/post_likes/${articleId}`
       );
       getArticle(); //為了取得讚數在進行一次get文章資料，是否可以進行優化
+      checkIsLikeArticle();
     } catch (error) {
       console.log(error);
     }
@@ -112,8 +113,10 @@ const ArticlePage = () => {
   }, []);
   //判斷訂閱需要取得articleData中作者的資料，用useEffect確保setState的值正確取得
   useEffect(() => {
-    checkIsSubscribed();
-    getAutherData();
+    if (articleData) {
+      checkIsSubscribed();
+      getAutherData();
+    }
   }, [articleData]);
   return (
     <>
@@ -223,6 +226,8 @@ const ArticlePage = () => {
             return (
               <CommentBox
                 key={commentItem.id}
+                loginUserId={userId}
+                commentData={commentItem}
                 content={commentItem.content}
                 user_name={commentItem.user_name}
                 user_profile_picture={commentItem.profile_picture}
@@ -241,8 +246,10 @@ const ArticlePage = () => {
                     <CommentReply
                       key={replieItem.id}
                       content={replieItem.content}
+                      loginUserId={userId}
                       user_name={commentItem.user_name}
                       user_profile_picture={commentItem.profile_picture}
+                      commentData={replieItem}
                       comment_id={replieItem.id}
                       getComment={getComment}
                       isAuther={replieItem.user_id === articleData?.user_id}
