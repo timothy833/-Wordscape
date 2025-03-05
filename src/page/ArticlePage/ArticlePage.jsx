@@ -17,17 +17,25 @@ const ArticlePage = () => {
   const { id: articleId } = useParams();
   const userId = "2cd3fbcd-b840-4029-846e-8dfd6f97e4a5";
   const [articleData, setArticleData] = useState(null);
+  const [autherData, setAutherData] = useState(null);
   const [commentData, setCommentData] = useState(null);
   const [isLike, setIsLike] = useState(null);
   const [isSubscribed, setIsSubscribed] = useState(null);
   const [commentInput, setCommentInput] = useState("");
-  const [currentEdit,setCurrentEdit] =  useState(null);
   axios.defaults.headers.common["Authorization"] =
     "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJjZDNmYmNkLWI4NDAtNDAyOS04NDZlLThkZmQ2Zjk3ZTRhNSIsInVzZXJuYW1lIjoiaGFwcHlQaWdneSIsImlhdCI6MTc0MTA5NTk1MywiZXhwIjoxNzQxMDk5NTUzfQ.zQSRLGFgH-eueYkThAhgyv9euHp3ZCkdikZT7UwyYIE";
   const getArticle = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/${articleId}`);
       setArticleData(res.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getAutherData = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/users/${articleData.user_id}`);
+      setAutherData(res.data);
     } catch (error) {
       console.log(error);
     }
@@ -104,6 +112,7 @@ const ArticlePage = () => {
   //判斷訂閱需要取得articleData中作者的資料，用useEffect確保setState的值正確取得
   useEffect(() => {
     checkIsSubscribed();
+    getAutherData();
   }, [articleData]);
   return (
     <>
@@ -130,8 +139,8 @@ const ArticlePage = () => {
             <div className="d-flex gap-5 flex-column flex-lg-row">
               <div className="d-flex align-items-center gap-5">
                 <div className="d-flex align-items-center">
-                  <img className="avatar me-2" src={avatar} alt="avatar" />
-                  <span>{articleData?.author_name}</span>
+                  <img className="avatar object-fit-cover rounded-pill me-2" src={autherData?.profile_picture} alt="avatar" />
+                  <span>{autherData?.username}</span>
                 </div>
                 {/* 當目前user為作者時，不顯示追蹤按鈕 */}
                 {userId !== articleData?.user_id && (
@@ -208,7 +217,8 @@ const ArticlePage = () => {
               <CommentBox
                 key={commentItem.id}
                 content={commentItem.content}
-                comment_id={commentItem.id}
+                user_name={commentItem.user_name}
+                user_profile_picture={commentItem.profile_picture}
                 articleId={articleId}
                 getComment={getComment}
                 replie_count={commentItem.replies.length}
@@ -224,8 +234,9 @@ const ArticlePage = () => {
                     <CommentReply
                       key={replieItem.id}
                       content={replieItem.content}
-                      user_id={replieItem.user_id}
-                      comment_id = {replieItem.id}
+                      user_name={commentItem.user_name}
+                      user_profile_picture={commentItem.profile_picture}
+                      comment_id={replieItem.id}
                       getComment={getComment}
                       isAuther={replieItem.user_id === articleData?.user_id}
                       isCurrentUser={replieItem.user_id === userId}

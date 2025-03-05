@@ -5,7 +5,8 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const CommentReply = ({
   content,
-  user_id,
+  user_name,
+  user_profile_picture,
   comment_id,
   isAuther,
   isCurrentUser,
@@ -13,20 +14,8 @@ const CommentReply = ({
 }) => {
   const [currentComment, setCurrentComment] = useState(content);
   const [isEdit, setIsEdit] = useState(false);
-  const [commentUserData, setCommentUserData] = useState({
-    username: "piggy",
-    profile_picture:
-      "https://megapx-assets.dcard.tw/images/c3bb80c5-2fd9-42e4-9310-d61ef38473e2/640.jpeg",
-  });
   const editInputRef = useRef(null);
-  const getCommentUser = async () => {
-    try {
-      const res = await axios.get(`${API_BASE_URL}/users/${user_id}`);
-      setCommentUserData(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  
   const delComment = async () => {
     try {
       await axios.delete(`${API_BASE_URL}/comments/${comment_id}`);
@@ -59,10 +48,10 @@ const CommentReply = ({
         <div className="d-flex align-items-center gap-2 me-5">
           <img
             className="avatar object-fit-cover rounded-pill"
-            src={commentUserData.profile_picture}
+            src={user_profile_picture}
             alt="avatar"
           />
-          <a href="#">{commentUserData.username}</a>
+          <a href="#">{user_name}</a>
           {isAuther && <span className="text-gray">作者</span>}
         </div>
         <div className="d-flex gap-5 align-items-center">
