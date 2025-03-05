@@ -50,6 +50,7 @@
   height: 40px;
   width: 90px;
   z-index: 2;
+  background-color: $primary;
 }
 
 .btn-login {
@@ -61,11 +62,12 @@
   background-color: $primary_hover;
 }
 
-.btn-group:hover .btn-login{
-  background-color: $primary;
-}
-.btn-group:hover .btn-register{
+.btn-group:hover .btn-register {
   background-color: $primary_hover;
+}
+
+.btn-group:hover .btn-login {
+  background-color: $primary;
 }
 
 .btn-group::after {

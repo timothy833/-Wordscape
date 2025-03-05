@@ -1,11 +1,13 @@
-import { useState } from 'react'
-import axios from 'axios'
-const { VITE_API_SERVER_URL } = import.meta.env;
-//頁面跳轉登入
+import { useState } from 'react';
+import axios from 'axios';
+const { VITE_API_BASE_URL } = import.meta.env;
+//TODO 頁面跳轉登入
+//TODO confirm password
+//TODO 清空表單
 
 const SignupPage = ({ show, handleClose }) => {
     const [formData, setFormData] = useState({ username:"", email: "", password: "" });
-
+    
     const formInputChange = (e) => {
         const { name, value } = e.target;
             setFormData({
@@ -14,9 +16,9 @@ const SignupPage = ({ show, handleClose }) => {
             });
         };
     const signUpHandle = async() => {
-        console.log('sign test');
+        console.log('sign up test s');
         try{
-            const url = `${VITE_API_SERVER_URL}/api/users/register`;
+            const url = `${VITE_API_BASE_URL}/users/register`;
             const data = {
                 "username": formData.username,
                 "email": formData.email,
@@ -35,6 +37,9 @@ const SignupPage = ({ show, handleClose }) => {
         }catch(error){
             console.log('error in sign up', error.response?.data || error.message);
         }
+    }
+    const guideToLoginHandle = () =>{
+    
     }
     
     if (!show) return null; // 不顯示時直接返回null
@@ -56,7 +61,7 @@ const SignupPage = ({ show, handleClose }) => {
                             <div className="fs-3 fw-normal mb-4 text-dark lh-sm">一起踏上這段奇妙的旅程<br/>發現更多有趣的事物！</div>
                             <div className="d-flex flex-column">
                                 <div className="h6 fw-light mb-3">已經有帳戶了？</div>
-                                <a href="#" className="h6 text-primary fw-bold mb-0">立即登入</a>
+                                <a onClick={guideToLoginHandle} href="#" className="h6 text-primary fw-bold mb-0">立即登入</a>
                             </div>
                         </div>
                         
@@ -64,7 +69,7 @@ const SignupPage = ({ show, handleClose }) => {
                         <div className="col-md-4 d-flex align-items-center h-100 position-relative">
                             <div className="card shadow-lg rounded-4 border-0 w-100 bg-white login-card mx-5">
                                 <div className="card-body">
-                                    <button type="button" className="btn-close login-btn" onClick={handleClose} aria-label="Close"></button>
+                                    <button type="button" className="btn-close login-btn-close" onClick={handleClose} aria-label="Close"></button>
                                     <h5 className="card-title fs-5 fw-normal mb-10">建立新帳戶</h5>
                                     <div className="form-floating mb-4">
                                         <input 

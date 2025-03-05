@@ -3,18 +3,20 @@ import logo from "../../assets/images/logo.svg";
 import logo_sm from "../../assets/images/logo-sm.svg";
 import avatar from "../../assets/images/avatar-1.png";
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from "react-router-dom";
+// import axios from 'axios';
 import SignupPage from "../../page/AccessPage/SignupPage";
 import LoginPage from "../../page/AccessPage/LoginPage";
+const { VITE_API_BASE_URL } = import.meta.env;
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const [showSignupModal, setShowSignupModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleShowSignupModal = () => setShowSignupModal(true);
-  const handleCloseSignupModal = () => {
-    checkToken();
-    setShowSignupModal(false)};
+  const handleCloseSignupModal = () => setShowSignupModal(false);
   const handleShowLoginModal = () => setShowLoginModal(true);
   const handleCloseLoginModal = () => setShowLoginModal(false);
 
@@ -30,16 +32,24 @@ const Navbar = () => {
     }
   };
 
-
   useEffect(() => {
     checkToken();
   }, []);
 
-  const logout = () => {
-    console.log('logout test');
+  const logout = async() => {
     document.cookie = "WS_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-     alert('登出成功');
-     checkToken();
+    alert('登出成功');
+    checkToken();
+    navigate("/"); 
+  //   try{
+  //     const url = `${VITE_API_BASE_URL}/users/logout`;
+  //     const resetPwRes = await axios.post(url);
+      
+  //     console.log('logout',resetPwRes);
+      
+  // }catch(error){
+  //     console.log('error in reset password', error.response?.data || error.message);
+  // }
   };
 
   return (
