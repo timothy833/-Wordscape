@@ -19,6 +19,7 @@ const ArticlePage = () => {
   const [autherData, setAutherData] = useState(null);
   const [commentData, setCommentData] = useState(null);
   const [isLike, setIsLike] = useState(null);
+  const [isFavorite, setIsFavorite] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(null);
   const [commentInput, setCommentInput] = useState("");
   axios.defaults.headers.common["Authorization"] =
@@ -106,10 +107,32 @@ const ArticlePage = () => {
       console.log(error);
     }
   };
+  //收藏相關功能
+  const checkIsFavorites = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/posts/favorites`);
+      setIsFavorite(
+        res.data.data?.some(
+          (favoritesDataItem) => favoritesDataItem.id === articleId
+        )
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const postFavorites = async () => {
+    try {
+      await axios.post(`${API_BASE_URL}/posts/favorites/${articleId}`);
+      checkIsFavorites();
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
     getArticle();
     getComment();
     checkIsLikeArticle();
+    checkIsFavorites();
   }, []);
   //判斷訂閱需要取得articleData中作者的資料，用useEffect確保setState的值正確取得
   useEffect(() => {
@@ -179,6 +202,18 @@ const ArticlePage = () => {
                 )}
               </div>
               <div className="d-flex align-items-center gap-5">
+                <a
+                  href="#"
+                  className={`btn ${
+                    isFavorite ? "btn-primary" : "btn-outline-primary border border-primary-hover"
+                  }`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    postFavorites();
+                  }}
+                >
+                  {isFavorite ? "已收藏" : "收藏"}
+                </a>
                 <span
                   className={` d-flex align-items-center gap-1 ${
                     isLike ? "text-primary" : "text-gray"
