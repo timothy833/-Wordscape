@@ -70,7 +70,10 @@ const CommentBox = ({
         <div className="d-flex align-items-center gap-2">
           <img
             className="avatar object-fit-cover rounded-pill"
-            src={user_profile_picture}
+            src={
+              user_profile_picture ||
+              "https://raw.githubusercontent.com/wfox5510/wordSapce-imgRepo/695229fa8c60c474d3d9dc0d60b25f9539ac74d9/default-avatar.svg"
+            }
             alt="avatar"
           />
           <a href="#">{user_name}</a>

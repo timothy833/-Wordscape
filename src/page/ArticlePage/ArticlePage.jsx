@@ -5,7 +5,6 @@ import CommentBox from "../../component/CommentBox/CommentBox";
 import CommentReply from "../../component/CommentReply/CommentReply";
 import Footer from "../../component/Footer/Footer";
 import Navbar from "../../component/Navbar/Navbar";
-import avatar from "../../assets/images/avatar-1.png";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -34,7 +33,9 @@ const ArticlePage = () => {
   };
   const getAutherData = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/users/${articleData.user_id}`);
+      const res = await axios.get(
+        `${API_BASE_URL}/users/${articleData.user_id}`
+      );
       setAutherData(res.data);
     } catch (error) {
       console.log(error);
@@ -139,7 +140,14 @@ const ArticlePage = () => {
             <div className="d-flex gap-5 flex-column flex-lg-row">
               <div className="d-flex align-items-center gap-5">
                 <div className="d-flex align-items-center">
-                  <img className="avatar object-fit-cover rounded-pill me-2" src={autherData?.profile_picture} alt="avatar" />
+                  <img
+                    className="avatar object-fit-cover rounded-pill me-2"
+                    src={
+                      autherData?.profile_picture ||
+                      "https://raw.githubusercontent.com/wfox5510/wordSapce-imgRepo/695229fa8c60c474d3d9dc0d60b25f9539ac74d9/default-avatar.svg"
+                    }
+                    alt="avatar"
+                  />
                   <span>{autherData?.username}</span>
                 </div>
                 {/* 當目前user為作者時，不顯示追蹤按鈕 */}
@@ -191,9 +199,8 @@ const ArticlePage = () => {
         </div>
         <img
           src={
-            articleData?.image_url
-              ? articleData?.image_url
-              : "https://github.com/wfox5510/wordSapce-imgRepo/blob/main/banner-1.png?raw=true"
+            articleData?.image_url ||
+            "https://github.com/wfox5510/wordSapce-imgRepo/blob/main/banner-1.png?raw=true"
           }
           className="w-100 object-fit-cover article-banner"
           alt="banner"
