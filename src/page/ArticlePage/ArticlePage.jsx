@@ -5,7 +5,6 @@ import CommentBox from "../../component/CommentBox/CommentBox";
 import CommentReply from "../../component/CommentReply/CommentReply";
 import Footer from "../../component/Footer/Footer";
 import Navbar from "../../component/Navbar/Navbar";
-import avatar from "../../assets/images/avatar-1.png";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -15,19 +14,30 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ArticlePage = () => {
   const { id: articleId } = useParams();
-  const userId = "2cd3fbcd-b840-4029-846e-8dfd6f97e4a5";
+  const userId = "2c1130a5-8ded-4554-b7b6-fa0db7dfd2ae";
   const [articleData, setArticleData] = useState(null);
+  const [autherData, setAutherData] = useState(null);
   const [commentData, setCommentData] = useState(null);
   const [isLike, setIsLike] = useState(null);
+  const [isFavorite, setIsFavorite] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(null);
   const [commentInput, setCommentInput] = useState("");
-  const [currentEdit,setCurrentEdit] =  useState(null);
   axios.defaults.headers.common["Authorization"] =
-    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJjZDNmYmNkLWI4NDAtNDAyOS04NDZlLThkZmQ2Zjk3ZTRhNSIsInVzZXJuYW1lIjoiaGFwcHlQaWdneSIsImlhdCI6MTc0MTA5NTk1MywiZXhwIjoxNzQxMDk5NTUzfQ.zQSRLGFgH-eueYkThAhgyv9euHp3ZCkdikZT7UwyYIE";
+    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJjMTEzMGE1LThkZWQtNDU1NC1iN2I2LWZhMGRiN2RmZDJhZSIsInVzZXJuYW1lIjoic21hbGxQaWdneSIsImlhdCI6MTc0MTE2MDcxNiwiZXhwIjoxNzQxMTY0MzE2fQ.gPWyG8RMYt_O13VDKYAOz0ozpQDdeGahJ1ty_-V1AlI";
   const getArticle = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/${articleId}`);
       setArticleData(res.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getAutherData = async () => {
+    try {
+      const res = await axios.get(
+        `${API_BASE_URL}/users/${articleData?.user_id}`
+      );
+      setAutherData(res.data);
     } catch (error) {
       console.log(error);
     }
@@ -92,6 +102,28 @@ const ArticlePage = () => {
         `${API_BASE_URL}/posts/post_likes/${articleId}`
       );
       getArticle(); //為了取得讚數在進行一次get文章資料，是否可以進行優化
+      checkIsLikeArticle();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  //收藏相關功能
+  const checkIsFavorites = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/posts/favorites`);
+      setIsFavorite(
+        res.data.data?.some(
+          (favoritesDataItem) => favoritesDataItem.id === articleId
+        )
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const postFavorites = async () => {
+    try {
+      await axios.post(`${API_BASE_URL}/posts/favorites/${articleId}`);
+      checkIsFavorites();
     } catch (error) {
       console.log(error);
     }
@@ -100,10 +132,14 @@ const ArticlePage = () => {
     getArticle();
     getComment();
     checkIsLikeArticle();
+    checkIsFavorites();
   }, []);
   //判斷訂閱需要取得articleData中作者的資料，用useEffect確保setState的值正確取得
   useEffect(() => {
-    checkIsSubscribed();
+    if (articleData) {
+      checkIsSubscribed();
+      getAutherData();
+    }
   }, [articleData]);
   return (
     <>
@@ -130,8 +166,15 @@ const ArticlePage = () => {
             <div className="d-flex gap-5 flex-column flex-lg-row">
               <div className="d-flex align-items-center gap-5">
                 <div className="d-flex align-items-center">
-                  <img className="avatar me-2" src={avatar} alt="avatar" />
-                  <span>{articleData?.author_name}</span>
+                  <img
+                    className="avatar object-fit-cover rounded-pill me-2"
+                    src={
+                      autherData?.profile_picture ||
+                      "https://raw.githubusercontent.com/wfox5510/wordSapce-imgRepo/695229fa8c60c474d3d9dc0d60b25f9539ac74d9/default-avatar.svg"
+                    }
+                    alt="avatar"
+                  />
+                  <span>{autherData?.username}</span>
                 </div>
                 {/* 當目前user為作者時，不顯示追蹤按鈕 */}
                 {userId !== articleData?.user_id && (
@@ -159,6 +202,18 @@ const ArticlePage = () => {
                 )}
               </div>
               <div className="d-flex align-items-center gap-5">
+                <a
+                  href="#"
+                  className={`btn ${
+                    isFavorite ? "btn-primary" : "btn-outline-primary border border-primary-hover"
+                  }`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    postFavorites();
+                  }}
+                >
+                  {isFavorite ? "已收藏" : "收藏"}
+                </a>
                 <span
                   className={` d-flex align-items-center gap-1 ${
                     isLike ? "text-primary" : "text-gray"
@@ -182,9 +237,8 @@ const ArticlePage = () => {
         </div>
         <img
           src={
-            articleData?.image_url
-              ? articleData?.image_url
-              : "https://github.com/wfox5510/wordSapce-imgRepo/blob/main/banner-1.png?raw=true"
+            articleData?.image_url ||
+            "https://github.com/wfox5510/wordSapce-imgRepo/blob/main/banner-1.png?raw=true"
           }
           className="w-100 object-fit-cover article-banner"
           alt="banner"
@@ -207,12 +261,10 @@ const ArticlePage = () => {
             return (
               <CommentBox
                 key={commentItem.id}
-                content={commentItem.content}
-                comment_id={commentItem.id}
+                loginUserId={userId}
+                commentData={commentItem}
                 articleId={articleId}
                 getComment={getComment}
-                replie_count={commentItem.replies.length}
-                user_id={commentItem.user_id}
                 isAuther={commentItem.user_id === articleData?.user_id}
                 isCurrentUser={commentItem.user_id === userId}
                 hasReplie={commentItem.replies.some(
@@ -223,9 +275,8 @@ const ArticlePage = () => {
                   return (
                     <CommentReply
                       key={replieItem.id}
-                      content={replieItem.content}
-                      user_id={replieItem.user_id}
-                      comment_id = {replieItem.id}
+                      loginUserId={userId}
+                      commentData={replieItem}
                       getComment={getComment}
                       isAuther={replieItem.user_id === articleData?.user_id}
                       isCurrentUser={replieItem.user_id === userId}
