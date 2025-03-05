@@ -228,13 +228,8 @@ const ArticlePage = () => {
                 key={commentItem.id}
                 loginUserId={userId}
                 commentData={commentItem}
-                content={commentItem.content}
-                user_name={commentItem.user_name}
-                user_profile_picture={commentItem.profile_picture}
                 articleId={articleId}
                 getComment={getComment}
-                replie_count={commentItem.replies.length}
-                user_id={commentItem.user_id}
                 isAuther={commentItem.user_id === articleData?.user_id}
                 isCurrentUser={commentItem.user_id === userId}
                 hasReplie={commentItem.replies.some(
@@ -245,12 +240,8 @@ const ArticlePage = () => {
                   return (
                     <CommentReply
                       key={replieItem.id}
-                      content={replieItem.content}
                       loginUserId={userId}
-                      user_name={commentItem.user_name}
-                      user_profile_picture={commentItem.profile_picture}
                       commentData={replieItem}
-                      comment_id={replieItem.id}
                       getComment={getComment}
                       isAuther={replieItem.user_id === articleData?.user_id}
                       isCurrentUser={replieItem.user_id === userId}
