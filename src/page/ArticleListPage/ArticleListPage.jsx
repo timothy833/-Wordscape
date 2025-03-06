@@ -1,9 +1,7 @@
-import Navbar from "../../component/Navbar/Navbar";
 import Footer from "../../component/Footer/Footer";
 const ArticleListPage = () => {
   return (
     <>
-      <Navbar />
       <section>
         <div className="container pt-6 pb-3 pt-lg-17 pb-lg-10">
           <h2 className="fs-8 fs-lg-7 fw-bold text-dark mb-3">類別選擇</h2>

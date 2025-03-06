@@ -5,7 +5,6 @@ import Marquee from "react-fast-marquee";
 import "swiper/scss/pagination";
 import "swiper/css/navigation";
 import "swiper/css/autoplay";
-import Navbar from "../../component/Navbar/Navbar";
 import Footer from "../../component/Footer/Footer";
 import ReviewCard from "../../component/ReviewCard/ReviewCard";
 import ArticleCard from "../../component/ArticleCard/ArticleCard";
@@ -21,7 +20,6 @@ const HomePage = () => {
   return (
     <>
       <header>
-        <Navbar />
         <section className="position-relative">
           <Swiper
             style={{
