@@ -7,6 +7,8 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ArticleListPage = () => {
   const [categoriesData, setCategoriesData] = useState(null);
+  const [articleListData, setArticleListData] = useState(null);
+  const [allArticleData, setAllArticleData] = useState(null);
   axios.defaults.headers.common["Authorization"] =
     "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJjMTEzMGE1LThkZWQtNDU1NC1iN2I2LWZhMGRiN2RmZDJhZSIsInVzZXJuYW1lIjoic21hbGxQaWdneSIsImlhdCI6MTc0MTI0NDc5MSwiZXhwIjoxNzQxMjQ4MzkxfQ.B3dEiZihp74-RUXY_RymrnGKxhSaimlxcTrhCA1QUiY";
 
@@ -24,7 +26,24 @@ const ArticleListPage = () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/categories`);
       setCategoriesData(res.data.data);
-      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getAllArticleData = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/posts`);
+      setAllArticleData(res.data.data);
+      console.log(res.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getArticleData = async (page = 1) => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/posts?page=${page}`);
+      setArticleListData(res.data.data);
+      console.log(res.data.data);
     } catch (error) {
       console.log(error);
     }
@@ -32,6 +51,8 @@ const ArticleListPage = () => {
   useEffect(() => {
     getFavoriteArticle();
     getCategories();
+    getAllArticleData();
+    getArticleData();
   }, []);
   return (
     <>
@@ -190,6 +211,46 @@ const ArticleListPage = () => {
             </button>
           </div>
           <ul className="list-unstyled d-flex flex-column gap-5 px-4 px-lg-0">
+            {/* {articleListData.map((articleListDataItem) => {
+              <li className="rounded-2 border">
+                <a
+                  className="article-list-card d-flex flex-column-reverse flex-md-row justify-content-between p-5"
+                  href="#"
+                >
+                  <div className="d-flex flex-column gap-5 me-md-6">
+                    <h3 className="text-primary fs-7 fw-bold text-truncate-2lines lh-sm">
+                      {articleListDataItem.title}
+                    </h3>
+                    <p className="text-truncate-2lines ">
+                    {articleListDataItem.description}
+                    </p>
+                    <div className="d-flex align-items-center gap-3 mt-auto">
+                      <span className="text-gray">2024/12/22</span>
+                      <span className="text-gray d-flex align-items-center gap-1">
+                        {articleListDataItem.likes_count}
+                        <span className="material-icons-outlined">
+                          favorite
+                        </span>
+                      </span>
+                      <span className=" text-gray d-flex align-items-center gap-1">
+                        16
+                        <span className="material-icons-outlined">
+                          chat_bubble
+                        </span>
+                      </span>
+                      <span class="material-symbols-outlined text-primary ms-2 pb-1 icon-fill">
+                        bookmark
+                      </span>
+                    </div>
+                  </div>
+                  <img
+                    className="card-img object-fit-cover mb-5 mb-md-0"
+                    src="https://github.com/wfox5510/wordSapce-imgRepo/blob/main/articleList-article1.png?raw=true"
+                    alt=""
+                  />
+                </a>
+              </li>;
+            })} */}
             {Array.from({ length: 10 }).map(() => {
               return (
                 <li className="rounded-2 border">
