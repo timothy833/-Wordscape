@@ -375,7 +375,6 @@ const ArticlePage = () => {
           </div>
         </div>
       </section>
-      <Footer />
     </>
   );
 };

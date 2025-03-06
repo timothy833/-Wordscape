@@ -235,7 +235,6 @@ const ArticleListPage = () => {
           </ul>
         </div>
       </section>
-      <Footer />
     </>
   );
 };
