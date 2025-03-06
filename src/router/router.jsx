@@ -14,7 +14,7 @@ import SignupPage from "../page/AccessPage/SignupPage";
 import BlogPage from "../page/BlogPage/BlogPage";
 import TestLoginPage from "../page/BlogPage/TestLoginPage";
 import TestArticlePage from "../page/BlogPage/TestArticlePage";
-
+import ResetPassword from "../page/AccessPage/ResetPassword";
 
 const router = [
   {
@@ -65,7 +65,7 @@ const router = [
   },
   {
     path: "/reset-password",
-    element: <SignupPage />
+    element: <ResetPassword />
   },
   { path: "/articleList", 
     element: <ArticleListPage /> 
@@ -74,11 +74,6 @@ const router = [
     path: "/blogpage",
     element: <BlogPage />
   }, {
-    path: "/testlogin",
-    element: <TestLoginPage />
-  }, {
-  },
-  {
     path: "/testlogin",
     element: <TestLoginPage />
   },
