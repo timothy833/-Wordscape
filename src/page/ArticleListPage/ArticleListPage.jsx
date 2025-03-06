@@ -11,8 +11,9 @@ const ArticleListPage = () => {
   const [articleListData, setArticleListData] = useState(null);
   const [allArticleData, setAllArticleData] = useState(null);
   const [listSelector, setListSelector] = useState("allArticle");
+  const [articleListDisplayCount, SetArticleListDisplayCount] = useState(10);
   axios.defaults.headers.common["Authorization"] =
-    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJjZDNmYmNkLWI4NDAtNDAyOS04NDZlLThkZmQ2Zjk3ZTRhNSIsInVzZXJuYW1lIjoiaGFwcHlQaWdneSIsImlhdCI6MTc0MTI2NDY4OSwiZXhwIjoxNzQxMjc1NDg5fQ.PsYwvi0vjU9PEYWLdmSGL2B-246cdO_W7VSh2Beks4E";
+    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJjZDNmYmNkLWI4NDAtNDAyOS04NDZlLThkZmQ2Zjk3ZTRhNSIsInVzZXJuYW1lIjoiaGFwcHlQaWdneSIsImlhdCI6MTc0MTI3Mjg0MywiZXhwIjoxNzQxMjgzNjQzfQ.fBmicGHURZUlp8VrOOrpyxQv59xn8kUiBm0vzjUUzVk";
 
   const dispatch = useDispatch();
   const favorite = useSelector((state) => state.favorite.favoriteArticle);
@@ -40,10 +41,16 @@ const ArticleListPage = () => {
       console.log(error);
     }
   };
-  const getArticleData = async (page = 1) => {
+  const getArticleListData = async (page = 1) => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/full?page=${page}`);
-      setArticleListData(res.data.data);
+      setArticleListData(
+        res.data.data.filter(
+          (articleDataItem) =>
+            articleDataItem.category_id === listSelector ||
+            listSelector === "allArticle"
+        )
+      );
     } catch (error) {
       console.log(error);
     }
@@ -56,15 +63,31 @@ const ArticleListPage = () => {
       console.log(error);
     }
   };
+
   useEffect(() => {
     getFavoriteArticle();
     getCategories();
     getAllArticleData();
-    getArticleData();
+    getArticleListData();
   }, []);
+
   useEffect(() => {
-    console.log(listSelector);
+    getArticleListData();
   }, [listSelector]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      //當滑動到底部，且顯示文章數量少於文章列表資料數量
+      window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight &&
+        articleListData?.length > articleListDisplayCount &&
+        SetArticleListDisplayCount((prev) => {
+          return prev + 10;
+        });
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [articleListData]);
 
   return (
     <>
@@ -129,7 +152,10 @@ const ArticleListPage = () => {
                     if (index === 0) {
                       return (
                         <li className="page-item">
-                          <a className="page-link rounded-1 active p-0" href="#">
+                          <a
+                            className="page-link rounded-1 active p-0"
+                            href="#"
+                          >
                             {index + 1}
                           </a>
                         </li>
@@ -212,7 +238,7 @@ const ArticleListPage = () => {
                 className="text-dark p-3 border"
                 name="article-list-class"
                 id="article-list-class"
-                onChange={(e)=>setListSelector(e.target.value)}
+                onChange={(e) => setListSelector(e.target.value)}
               >
                 <option value="allArticle">全部內容</option>
                 {categoriesData?.map((categoriesDataItem) => {
@@ -232,70 +258,71 @@ const ArticleListPage = () => {
             </button>
           </div>
           <ul className="list-unstyled d-flex flex-column gap-5 px-4 px-lg-0">
-            {articleListData?.map((articleListDataItem) => {
-              if (listSelector === articleListDataItem.category_id || listSelector === "allArticle")
-              return (
-                <li key={articleListDataItem.id} className="rounded-2 border">
-                  <Link
-                    to={`/article/${articleListDataItem.id}`}
-                    className="article-list-card d-flex flex-column-reverse flex-md-row justify-content-between p-5"
-                  >
-                    <div className="d-flex flex-column gap-5 me-md-6">
-                      <h3 className="text-primary fs-7 fw-bold text-truncate-2lines lh-sm">
-                        {articleListDataItem.title}
-                      </h3>
-                      <p className="text-truncate-2lines ">
-                        {articleListDataItem.description}
-                      </p>
-                      <div className="d-flex align-items-center gap-3 mt-auto">
-                        <span className="text-gray">
-                          {new Date(
-                            articleListDataItem.created_at
-                          ).toLocaleDateString()}
-                        </span>
-                        <span className="text-gray d-flex align-items-center gap-1">
-                          {articleListDataItem.likes_count}
-                          <span className="material-icons-outlined">
-                            favorite
+            {articleListData
+              ?.slice(0, articleListDisplayCount)
+              .map((articleListDataItem) => {
+                return (
+                  <li key={articleListDataItem.id} className="rounded-2 border">
+                    <Link
+                      to={`/article/${articleListDataItem.id}`}
+                      className="article-list-card d-flex flex-column-reverse flex-md-row justify-content-between p-5"
+                    >
+                      <div className="d-flex flex-column gap-5 me-md-6">
+                        <h3 className="text-primary fs-7 fw-bold text-truncate-2lines lh-sm">
+                          {articleListDataItem.title}
+                        </h3>
+                        <p className="text-truncate-2lines ">
+                          {articleListDataItem.description}
+                        </p>
+                        <div className="d-flex align-items-center gap-3 mt-auto">
+                          <span className="text-gray">
+                            {new Date(
+                              articleListDataItem.created_at
+                            ).toLocaleDateString()}
                           </span>
-                        </span>
-                        <span className=" text-gray d-flex align-items-center gap-1">
-                          {articleListDataItem.comments.length}
-                          <span className="material-icons-outlined">
-                            chat_bubble
+                          <span className="text-gray d-flex align-items-center gap-1">
+                            {articleListDataItem.likes_count}
+                            <span className="material-icons-outlined">
+                              favorite
+                            </span>
                           </span>
-                        </span>
-                        <a
-                          href="#"
-                          className={`material-symbols-outlined ${
-                            favorite.some(
-                              (favoriteItem) =>
-                                favoriteItem.id === articleListDataItem.id
-                            )
-                              ? "text-primary"
-                              : "text-gray"
-                          } ms-2 pb-1 icon-fill`}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            postFavorites(articleListDataItem.id);
-                          }}
-                        >
-                          bookmark
-                        </a>
+                          <span className=" text-gray d-flex align-items-center gap-1">
+                            {articleListDataItem.comments.length}
+                            <span className="material-icons-outlined">
+                              chat_bubble
+                            </span>
+                          </span>
+                          <a
+                            href="#"
+                            className={`material-symbols-outlined ${
+                              favorite.some(
+                                (favoriteItem) =>
+                                  favoriteItem.id === articleListDataItem.id
+                              )
+                                ? "text-primary"
+                                : "text-gray"
+                            } ms-2 pb-1 icon-fill`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              postFavorites(articleListDataItem.id);
+                            }}
+                          >
+                            bookmark
+                          </a>
+                        </div>
                       </div>
-                    </div>
-                    <img
-                      className="card-img object-fit-cover mb-5 mb-md-0"
-                      src={
-                        articleListDataItem.image_url ||
-                        "https://github.com/wfox5510/wordSapce-imgRepo/blob/main/banner-1.png?raw=true"
-                      }
-                      alt="article-img"
-                    />
-                  </Link>
-                </li>
-              );
-            })}
+                      <img
+                        className="card-img object-fit-cover mb-5 mb-md-0"
+                        src={
+                          articleListDataItem.image_url ||
+                          "https://github.com/wfox5510/wordSapce-imgRepo/blob/main/banner-1.png?raw=true"
+                        }
+                        alt="article-img"
+                      />
+                    </Link>
+                  </li>
+                );
+              })}
           </ul>
         </div>
       </section>
