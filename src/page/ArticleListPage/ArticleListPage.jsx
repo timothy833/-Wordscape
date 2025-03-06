@@ -1,51 +1,51 @@
-import Footer from "../../component/Footer/Footer";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setFavoriteArticle } from "../../slice/favoriteSlice";
+import axios from "axios";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const ArticleListPage = () => {
+  const [categoriesData, setCategoriesData] = useState(null);
+  axios.defaults.headers.common["Authorization"] =
+    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJjMTEzMGE1LThkZWQtNDU1NC1iN2I2LWZhMGRiN2RmZDJhZSIsInVzZXJuYW1lIjoic21hbGxQaWdneSIsImlhdCI6MTc0MTI0NDc5MSwiZXhwIjoxNzQxMjQ4MzkxfQ.B3dEiZihp74-RUXY_RymrnGKxhSaimlxcTrhCA1QUiY";
+
+  const dispatch = useDispatch();
+  const favorite = useSelector((state) => state.favorite.favoriteArticle);
+  const getFavoriteArticle = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/posts/favorites`);
+      dispatch(setFavoriteArticle(res.data.data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getCategories = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/categories`);
+      setCategoriesData(res.data.data);
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getFavoriteArticle();
+    getCategories();
+  }, []);
   return (
     <>
       <section>
         <div className="container pt-6 pb-3 pt-lg-17 pb-lg-10">
           <h2 className="fs-8 fs-lg-7 fw-bold text-dark mb-3">類別選擇</h2>
           <ul className="article-taglist list-unstyled d-flex flex-wrap gap-1 gap-lg-2 mb-2 mb-lg-3">
-            {Array.from({ length: 3 }).map(() => {
+            {categoriesData?.map((categoriesDataItem) => {
               return (
-                <>
-                  <li>
-                    <a className="article-tag active lh-lg fs-9 fs-lg-8 rounded-pill">
-                      生活隨筆
-                    </a>
-                  </li>
-                  <li>
-                    <a className="article-tag lh-lg fs-9 fs-lg-8 rounded-pill">
-                      心得分享
-                    </a>
-                  </li>
-                  <li>
-                    <a className="article-tag lh-lg fs-9 fs-lg-8 rounded-pill">
-                      書籍評論
-                    </a>
-                  </li>
-                </>
-              );
-            })}
-            {Array.from({ length: 5 }).map(() => {
-              return (
-                <>
-                  <li>
-                    <a className="article-tag lh-lg fs-9 fs-lg-8 rounded-pill">
-                      創業心得
-                    </a>
-                  </li>
-                  <li>
-                    <a className="article-tag lh-lg fs-9 fs-lg-8 rounded-pill">
-                      工作職場
-                    </a>
-                  </li>
-                  <li>
-                    <a className="article-tag lh-lg fs-9 fs-lg-8 rounded-pill">
-                      學習筆記
-                    </a>
-                  </li>
-                </>
+                <li key={categoriesDataItem.id}>
+                  <a className="article-tag lh-lg fs-9 fs-lg-8 rounded-pill">
+                    {categoriesDataItem.name}
+                  </a>
+                </li>
               );
             })}
           </ul>
@@ -218,8 +218,8 @@ const ArticleListPage = () => {
                             chat_bubble
                           </span>
                         </span>
-                        <span class="material-symbols-outlined text-primary icon-fill">
-                          keep
+                        <span class="material-symbols-outlined text-primary ms-2 pb-1 icon-fill">
+                          bookmark
                         </span>
                       </div>
                     </div>
