@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-
+import FrontLayout from "../layout/FrontLayout";
 import HomePage from "../page/HomePage/HomePage";
 import ArticlePage from "../page/ArticlePage/ArticlePage";
 import ArticleListPage from "../page/ArticleListPage/ArticleListPage";
@@ -19,68 +19,73 @@ import ResetPassword from "../page/AccessPage/ResetPassword";
 const router = [
   {
     path: "/",
-    element: <HomePage />,
-  },
-  {
-    path: "/article/:id",
-    element: <ArticlePage />
-  },
-  {
-    path: "/blog",
-    element: <BlogHome />
-  },
-  {
-    path: "/admin",
-    element: <AdminLayout />,
+    element: <FrontLayout />,
     children: [
       {
-        index: true,
-        element: <Navigate to="info" replace />
+        path: "/",
+        element: <HomePage />,
       },
       {
-        path: "info",
-        element: <AdminInfo />
+        path: "/article/:id",
+        element: <ArticlePage />,
       },
       {
-        path: "collection",
-        element: <AdminCollection />
+        path: "/blog",
+        element: <BlogHome />,
       },
       {
-        path: "subscription",
-        element: <AdminSubscription />
+        path: "/admin",
+        element: <AdminLayout />,
+        children: [
+          {
+            index: true,
+            element: <Navigate to="info" replace />,
+          },
+          {
+            path: "info",
+            element: <AdminInfo />,
+          },
+          {
+            path: "collection",
+            element: <AdminCollection />,
+          },
+          {
+            path: "subscription",
+            element: <AdminSubscription />,
+          },
+          {
+            path: "background",
+            element: <AdminBackground />,
+          },
+        ],
       },
       {
-        path: "background",
-        element: <AdminBackground />
-      }
-    ]
+        path: "/login",
+        element: <LoginPage />,
+      },
+      {
+        path: "/signup",
+        element: <SignupPage />,
+      },
+      {
+        path: "/reset-password",
+        element: <ResetPassword />,
+      },
+      { path: "/articleList", element: <ArticleListPage /> },
+      {
+        path: "/blogpage",
+        element: <BlogPage />,
+      },
+      {
+        path: "/testlogin",
+        element: <TestLoginPage />,
+      },
+      {
+        path: "/testArticle/:id",
+        element: <TestArticlePage />,
+      },
+    ],
   },
-  {
-    path: "/login",
-    element: <LoginPage />
-  },
-  {
-    path: "/signup",
-    element: <SignupPage />
-  },
-  {
-    path: "/reset-password",
-    element: <ResetPassword />
-  },
-  { path: "/articleList", 
-    element: <ArticleListPage /> 
-  },
-  {
-    path: "/blogpage",
-    element: <BlogPage />
-  }, {
-    path: "/testlogin",
-    element: <TestLoginPage />
-  },
-  {
-    path: "/testArticle/:id",
-    element: <TestArticlePage />
-  }
 ];
 
 export default router;

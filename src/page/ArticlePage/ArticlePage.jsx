@@ -4,7 +4,6 @@ import ArticleCard from "../../component/ArticleCard/ArticleCard";
 import CommentBox from "../../component/CommentBox/CommentBox";
 import CommentReply from "../../component/CommentReply/CommentReply";
 import Footer from "../../component/Footer/Footer";
-import Navbar from "../../component/Navbar/Navbar";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -145,7 +144,6 @@ const ArticlePage = () => {
     <>
       <header>
         <div className="container">
-          <Navbar />
           <div className="pt-10 pt-lg-15 pb-5 pb-lg-10 z-3">
             <div className="d-flex gap-2 mb-5">
               {articleData?.tags.map((tagItem) => {
@@ -377,7 +375,6 @@ const ArticlePage = () => {
           </div>
         </div>
       </section>
-      <Footer />
     </>
   );
 };
