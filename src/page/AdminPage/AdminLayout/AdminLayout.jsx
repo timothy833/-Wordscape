@@ -10,9 +10,6 @@ const AdminLayout = () => {
   const adminLinkActive = ({ isActive }) => (isActive ? "adminLinkActive" : "");
   return (
     <>
-      <header>
-        <Navbar />
-      </header>
       <main className="bg-secondary py-10">
         <div className="container">
           <div className="row">
@@ -52,7 +49,6 @@ const AdminLayout = () => {
           </div>
         </div>
       </main>
-      <Footer />
     </>
   );
 };
