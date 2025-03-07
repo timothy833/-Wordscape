@@ -1,13 +1,28 @@
-import { useState } from 'react'
 import axios from 'axios'
+import { useState, useEffect } from 'react'
 const { VITE_API_BASE_URL } = import.meta.env;
+import { useDispatch, useSelector } from 'react-redux';
+import { login, clearError } from '../../slice/authSlice';
+import { useNavigate } from 'react-router-dom';
 //TODO 頁面跳轉註冊＋忘記密碼設定
 //TODO 清空表單
 
-const LoginPage = ({ checkToken, show, handleClose }) => {
+const LoginPage = ({ show, handleClose }) => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { loading, error, isAuthorized } = useSelector(state => state.auth);
     const [isForgot, setIsForgot] = useState(false);
     const [resetEmail, setResetEmail] = useState({ email: "" });
     const [formData, setFormData] = useState({ email: "", password: "" });
+
+    useEffect(() => {
+        if (isAuthorized) {
+          navigate('/');
+        }
+        return () => {
+          if (error) dispatch(clearError());
+        };
+      }, [isAuthorized, navigate, error, dispatch]);
 
     const resetEmailInputChange = (e) => {
         const { name, value } = e.target;
@@ -24,39 +39,18 @@ const LoginPage = ({ checkToken, show, handleClose }) => {
                 [name]: value,
             });
         };
-    const loginHandle = async() => {
-        try{
-            const url = `${VITE_API_BASE_URL}/users/login`;
-            const data = {
-                "email": formData.email,
-                "password": formData.password,
-              }
-            const loginRes = await axios.post(url, data, {
-                headers: {
-                "Content-Type": "application/json"
-                }
-            });
-            const { token } = loginRes.data; 
-            // 設置7天後過期
-            const expiryDate = new Date();
-            expiryDate.setDate(expiryDate.getDate() + 1);
-            // 儲存 token
-            document.cookie = `WS_token=${token}; expires=${expiryDate.toUTCString()};path=/; secure; SameSite=Strict`;
-            //將token存入axios中header代入預設值（每次發送都會使用此值）
-            axios.defaults.headers.common.Authorization = `${token}`;
-            
-            console.log("login",loginRes);
+
+    const loginHandle = async () => {
+        const result = await dispatch(login(formData));  // 等待登入完成
+        if (result.payload.token) { // 確保登入成功才關閉 modal
             handleClose();
-            checkToken();
-            alert('登入成功'); 
-        }catch(error){
-            alert(error)
-            console.log('error in login', error.response?.data || error.message);
         }
-    }
+    };
+        
     const forgotPasswordHandle = () => {
         setIsForgot(true);
     }
+    
     const returnLoginHandle = () => {
         setIsForgot(false);
     }
