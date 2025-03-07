@@ -90,18 +90,10 @@ export const logout = createAsyncThunk(
 
 // 初始 id username
 export const initializeAuth = () => (dispatch) => {
-  // 從 cookie 中讀取資訊
-  function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-    return null;
-  }
   
-  const id = getCookie('userId');
-  const username = getCookie('username');
+  const id = localStorage.getItem('WS_id');
+  const username = localStorage.getItem('WS_username');
   
-  // 如果 cookie 中有資訊，則更新 Redux store
   if (id && username) {
     dispatch(setUserInfo({ id, username }));
   }
@@ -114,11 +106,17 @@ export const authSlice = createSlice({
     isAuthorized: !!initialToken,
     loading: false,
     error: null,
-    id: null,
-    username: null,
+    id: localStorage.getItem('WS_id') || null,
+    username: localStorage.getItem('WS_username') || null,
   },reducers: {
     clearError: (state) => {
       state.error = null;
+    },
+    setUserInfo: (state, action) => {
+      const { id, username } = action.payload;
+      state.id = id;
+      state.username = username;
+      state.isAuthorized = true;
     }
   },
   extraReducers: (builder) => {
@@ -147,5 +145,5 @@ export const authSlice = createSlice({
   }
 });
 
-export const { clearError } = authSlice.actions;
+export const { clearError, setUserInfo } = authSlice.actions;
 export default authSlice.reducer;

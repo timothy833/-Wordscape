@@ -7,7 +7,6 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../slice/authSlice';
 import { Link } from 'react-router-dom';
-
 import SignupPage from "../../page/AccessPage/SignupPage";
 import LoginPage from "../../page/AccessPage/LoginPage";
 
@@ -22,7 +21,7 @@ const Navbar = () => {
   const handleCloseLoginModal = () => setShowLoginModal(false);
   
   const { isAuthorized, id, username } = useSelector(state => state.auth);
-
+  
   const logoutHandle = () => {
      dispatch(logout());
   };
