@@ -10,7 +10,7 @@ const ArticleListPage = () => {
   const [categoriesData, setCategoriesData] = useState(null);
   const [hotArticleData, setHotArticleData] = useState([]);
   const [recommendArticleData, setRecommendArticleData] = useState([]);
-
+  const [currentPage, setCurrentPage] = useState(1);
   axios.defaults.headers.common["Authorization"] =
     "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJjZDNmYmNkLWI4NDAtNDAyOS04NDZlLThkZmQ2Zjk3ZTRhNSIsInVzZXJuYW1lIjoiaGFwcHlQaWdneSIsImlhdCI6MTc0MTI3Mjg0MywiZXhwIjoxNzQxMjgzNjQzfQ.fBmicGHURZUlp8VrOOrpyxQv59xn8kUiBm0vzjUUzVk";
 
@@ -184,34 +184,26 @@ const ArticleListPage = () => {
                     </a>
                   </li>
                   {Array.from({ length: 10 }).map((item, index) => {
-                    if (index === 0) {
+                    if (
+                      currentPage - index - 1 <= 2 &&
+                      currentPage - index - 1 >= -2
+                    )
                       return (
                         <li className="page-item">
                           <a
-                            className="page-link rounded-1 active p-0"
+                            className={`page-link rounded-1 p-0 ${
+                              currentPage === index + 1 && "active"
+                            }`}
                             href="#"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setCurrentPage(index + 1);
+                            }}
                           >
                             {index + 1}
                           </a>
                         </li>
                       );
-                    } else if (index + 1 <= 2 || 10 - (index + 1) < 2)
-                      return (
-                        <li className="page-item">
-                          <a className="page-link rounded-1 p-0" href="#">
-                            {index + 1}
-                          </a>
-                        </li>
-                      );
-                    else if (index + 1 === 3) {
-                      return (
-                        <li className="page-item">
-                          <a className="page-link rounded-1 p-0" href="#">
-                            ...
-                          </a>
-                        </li>
-                      );
-                    }
                   })}
                   <li className="page-item">
                     <a
