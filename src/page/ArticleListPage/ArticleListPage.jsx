@@ -8,23 +8,14 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ArticleListPage = () => {
   const [categoriesData, setCategoriesData] = useState(null);
-  const [articleListData, setArticleListData] = useState(null);
-  const [allArticleData, setAllArticleData] = useState(null);
-  const [listSelector, setListSelector] = useState("allArticle");
-  const [articleListDisplayCount, SetArticleListDisplayCount] = useState(10);
+  const [hotArticleData, setHotArticleData] = useState([]);
+  const [recommendArticleData, setRecommendArticleData] = useState([]);
+
   axios.defaults.headers.common["Authorization"] =
     "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJjZDNmYmNkLWI4NDAtNDAyOS04NDZlLThkZmQ2Zjk3ZTRhNSIsInVzZXJuYW1lIjoiaGFwcHlQaWdneSIsImlhdCI6MTc0MTI3Mjg0MywiZXhwIjoxNzQxMjgzNjQzfQ.fBmicGHURZUlp8VrOOrpyxQv59xn8kUiBm0vzjUUzVk";
 
   const dispatch = useDispatch();
-  const favorite = useSelector((state) => state.favorite.favoriteArticle);
-  const getFavoriteArticle = async () => {
-    try {
-      const res = await axios.get(`${API_BASE_URL}/posts/favorites`);
-      dispatch(setFavoriteArticle(res.data.data));
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  //取得分類資料
   const getCategories = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/categories`);
@@ -33,17 +24,40 @@ const ArticleListPage = () => {
       console.log(error);
     }
   };
-  const getAllArticleData = async () => {
+  const getHotArticleData = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/full`);
-      setAllArticleData(res.data.data);
+      setHotArticleData(
+        res.data.data.filter(
+          (articleDataItem) => articleDataItem.views_count > 10
+        )
+      );
     } catch (error) {
       console.log(error);
     }
   };
+  const getRecommendArticleData = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/posts/full`);
+      setRecommendArticleData(
+        res.data.data.filter(
+          (articleDataItem) => articleDataItem.likes_count > 0
+        )
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  //下半部文章列表相關邏輯
+  //取得所有文章資料後根據選擇分類篩選資料，用於渲染文章列表
+  const [articleListData, setArticleListData] = useState(null);
+  const [listSelector, setListSelector] = useState("allArticle");
+  const [articleListDisplayCount, SetArticleListDisplayCount] = useState(10);
+
   const getArticleListData = async (page = 1) => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/posts/full?page=${page}`);
+      const res = await axios.get(`${API_BASE_URL}/posts/full`);
       setArticleListData(
         res.data.data.filter(
           (articleDataItem) =>
@@ -55,6 +69,18 @@ const ArticleListPage = () => {
       console.log(error);
     }
   };
+  //取得我的收藏文章，在文章列表提示是否收藏，且可直接點選icon取消
+  //！！注意！！favorite資料為登入功能，待登入功能完成後需要加入相關邏輯
+  const favorite = useSelector((state) => state.favorite.favoriteArticle);
+  const getFavoriteArticle = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/posts/favorites`);
+      dispatch(setFavoriteArticle(res.data.data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const postFavorites = async (id) => {
     try {
       await axios.post(`${API_BASE_URL}/posts/favorites/${id}`);
@@ -63,18 +89,7 @@ const ArticleListPage = () => {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    getFavoriteArticle();
-    getCategories();
-    getAllArticleData();
-    getArticleListData();
-  }, []);
-
-  useEffect(() => {
-    getArticleListData();
-  }, [listSelector]);
-
+  //文章列表沒有paganation，用滾動至底部作為新增資料的判斷
   useEffect(() => {
     const handleScroll = () => {
       //當滑動到底部，且顯示文章數量少於文章列表資料數量
@@ -88,6 +103,21 @@ const ArticleListPage = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [articleListData]);
+
+  useEffect(() => {
+    getFavoriteArticle();
+    getCategories();
+    getHotArticleData();
+    getRecommendArticleData();
+    getArticleListData();
+  }, []);
+
+  useEffect(() => {
+    getArticleListData();
+  }, [listSelector]);
+  useEffect(() => {
+    console.log(recommendArticleData);
+  }, [recommendArticleData]);
 
   return (
     <>
@@ -115,26 +145,31 @@ const ArticleListPage = () => {
                 熱門文章
               </h2>
               <ul className="list-unstyled mb-6 d-flex flex-column gap-3 gap-lg-6 ">
-                {Array.from({ length: 3 }).map(() => {
+                {hotArticleData.slice(0, 3).map((hotArticleDataItem) => {
                   return (
                     <li className="hot-article-card">
                       <a href="#" className="card border-0 gap-1 gap-lg-2">
                         <img
-                          src="https://github.com/wfox5510/wordSapce-imgRepo/blob/main/articleList-hot1.png?raw=true"
+                          src={
+                            hotArticleDataItem.image_url ||
+                            "https://github.com/wfox5510/wordSapce-imgRepo/blob/main/banner-1.png?raw=true"
+                          }
                           className="card-img-top object-fit-cover"
                           alt="..."
                         />
                         <div className="card-body p-0">
                           <h3 className="card-title fw-bold text-truncate">
-                            為什麼拖延症不是你的錯？心理學揭密拖延的真正原因！
+                            {hotArticleDataItem.title}
                           </h3>
                           <p className="card-text text-truncate fs-9 fs-lg-8">
-                            你可能認為自己只是懶惰或缺乏自制力，但心理學研究顯示，拖延的真正原因並非如此簡單...
+                            {hotArticleDataItem.description}
                           </p>
                         </div>
                         <div className="card-footer border-0 p-0 bg-light">
-                          <span className="me-2">陳奕文 |</span>
-                          <span>心理學作家</span>
+                          <span className="me-2">
+                            {hotArticleDataItem.author_name} |
+                          </span>
+                          <span>{hotArticleDataItem.category_name}</span>
                         </div>
                       </a>
                     </li>
@@ -194,31 +229,41 @@ const ArticleListPage = () => {
                 推薦專欄
               </h2>
               <ul className="list-unstyled d-flex flex-column gap-6">
-                {Array.from({ length: 5 }).map(() => {
-                  return (
-                    <li className="recommend-article-card bg-light rounded-2 border-bottom border-2 border-lg-4 border-primary">
-                      <a href="#" className="d-flex py-4 px-5 py-lg-7 px-lg-9">
-                        <img
-                          className="card-img me-3 me-lg-6 object-fit-cover"
-                          src="https://github.com/wfox5510/wordSapve-imgRepo/blob/main/articleList-recommend1.png?raw=true"
-                          alt=""
-                        />
-                        <div className="card-body d-flex flex-column gap-2 gap-lg-3">
-                          <h3 className="fs-9 fs-lg-8 fw-bold">
-                            【程式設計的美感】
-                          </h3>
-                          <h4 className="card-title text-primary fw-bold text-truncate-2lines lh-sm">
-                            設計師與工程師的橋樑：讓 UI/UX 更直覺的
-                            7個程式技巧！
-                          </h4>
-                          <p className="card-text text-truncate-2lines fs-9 fs-lg-8">
-                            結合設計與開發，談如何讓網站既有視覺美感，又兼具良好使用者體驗。
-                          </p>
-                        </div>
-                      </a>
-                    </li>
-                  );
-                })}
+                {recommendArticleData
+                  .slice(0, 4)
+                  .map((recommendArticleDataItem) => {
+                    return (
+                      <li
+                        key={recommendArticleDataItem.id}
+                        className="recommend-article-card bg-light rounded-2 border-bottom border-2 border-lg-4 border-primary"
+                      >
+                        <a
+                          href="#"
+                          className="d-flex py-4 px-5 py-lg-7 px-lg-9"
+                        >
+                          <img
+                            className="card-img me-3 me-lg-6 object-fit-cover"
+                            src={
+                              recommendArticleDataItem.image_url ||
+                              "https://github.com/wfox5510/wordSapve-imgRepo/blob/main/articleList-recommend1.png?raw=true"
+                            }
+                            alt=""
+                          />
+                          <div className="card-body d-flex flex-column gap-2 gap-lg-3">
+                            <h3 className="fs-9 fs-lg-8 fw-bold">
+                              【程式設計的美感】
+                            </h3>
+                            <h4 className="card-title text-primary fw-bold text-truncate-2lines lh-sm">
+                              {recommendArticleDataItem.title}
+                            </h4>
+                            <p className="card-text text-truncate-2lines fs-9 fs-lg-8">
+                              {recommendArticleDataItem.description}
+                            </p>
+                          </div>
+                        </a>
+                      </li>
+                    );
+                  })}
               </ul>
             </div>
           </div>
