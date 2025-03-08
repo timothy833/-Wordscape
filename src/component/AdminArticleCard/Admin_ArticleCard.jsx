@@ -11,6 +11,7 @@ const Admin_ArticleCard = () => {
     return tokenCookie ? tokenCookie.split("=")[1] : null;
   };
   const [favorites, setFavorites] = useState([]);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     (async () => {
       const token = getTokenFromCookies();
@@ -27,7 +28,9 @@ const Admin_ArticleCard = () => {
         setFavorites(res.data.data);
       } catch (error) {
         console.log(error);
-      }
+      } finally {
+        setLoading(false);
+      };
     })();
   }, []);
   const cancelFavorites = async (id) => {
@@ -50,6 +53,7 @@ const Admin_ArticleCard = () => {
       console.log(error);
     }
   }
+  if (loading) return <p className="text-center text-gray">載入中...</p>;
   return (
     <>
       {favorites.length === 0 ? (
