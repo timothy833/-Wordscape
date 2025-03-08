@@ -5,6 +5,10 @@ import { RouterProvider, createHashRouter } from "react-router-dom";
 import router from "./router/router";
 import { store } from "./store";
 import { Provider } from "react-redux";
+import { initializeAuth } from './slice/authSlice';
+
+store.dispatch(initializeAuth());
+
 createRoot(document.getElementById("root")).render(
   <Provider store={store}>
     <RouterProvider router={createHashRouter(router)} />
