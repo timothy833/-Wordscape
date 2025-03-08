@@ -65,6 +65,10 @@
 .hot-article-pagination {
   .page-link.material-symbols-outlined {
     color: #c4cdd5;
+    &.disabled {
+      background-color: #919EAB;
+      border-color: #919EAB;
+    }
   }
   .page-link {
     user-select: none;

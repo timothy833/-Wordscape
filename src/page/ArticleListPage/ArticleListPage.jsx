@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setFavoriteArticle } from "../../slice/favoriteSlice";
 import { Link } from "react-router-dom";
+
 import axios from "axios";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -48,12 +49,15 @@ const ArticleListPage = () => {
       console.log(error);
     }
   };
+  useEffect(() => {
+    console.log(hotArticleData);
+  }, [hotArticleData]);
 
   //下半部文章列表相關邏輯
   //取得所有文章資料後根據選擇分類篩選資料，用於渲染文章列表
   const [articleListData, setArticleListData] = useState(null);
   const [listSelector, setListSelector] = useState("allArticle");
-  const [articleListDisplayCount, SetArticleListDisplayCount] = useState(10);
+  const [articleListDisplayCount, SetArticleListDisplayCount] = useState(5);
 
   const getArticleListData = async (page = 1) => {
     try {
@@ -97,7 +101,7 @@ const ArticleListPage = () => {
         document.documentElement.scrollHeight &&
         articleListData?.length > articleListDisplayCount &&
         SetArticleListDisplayCount((prev) => {
-          return prev + 10;
+          return prev + 5;
         });
     };
     window.addEventListener("scroll", handleScroll);
@@ -115,9 +119,6 @@ const ArticleListPage = () => {
   useEffect(() => {
     getArticleListData();
   }, [listSelector]);
-  useEffect(() => {
-    console.log(recommendArticleData);
-  }, [recommendArticleData]);
 
   return (
     <>
@@ -145,51 +146,123 @@ const ArticleListPage = () => {
                 熱門文章
               </h2>
               <ul className="list-unstyled mb-6 d-flex flex-column gap-3 gap-lg-6 ">
-                {hotArticleData.slice(0, 3).map((hotArticleDataItem) => {
-                  return (
-                    <li className="hot-article-card">
-                      <a href="#" className="card border-0 gap-1 gap-lg-2">
-                        <img
-                          src={
-                            hotArticleDataItem.image_url ||
-                            "https://github.com/wfox5510/wordSapce-imgRepo/blob/main/banner-1.png?raw=true"
-                          }
-                          className="card-img-top object-fit-cover"
-                          alt="..."
-                        />
-                        <div className="card-body p-0">
-                          <h3 className="card-title fw-bold text-truncate">
-                            {hotArticleDataItem.title}
-                          </h3>
-                          <p className="card-text text-truncate fs-9 fs-lg-8">
-                            {hotArticleDataItem.description}
-                          </p>
-                        </div>
-                        <div className="card-footer border-0 p-0 bg-light">
-                          <span className="me-2">
-                            {hotArticleDataItem.author_name} |
-                          </span>
-                          <span>{hotArticleDataItem.category_name}</span>
-                        </div>
-                      </a>
-                    </li>
-                  );
-                })}
+                {hotArticleData
+                  .slice((currentPage - 1) * 3, (currentPage - 1) * 3 + 3)
+                  .map((hotArticleDataItem) => {
+                    return (
+                      <li className="hot-article-card">
+                        <a href="#" className="card border-0 gap-1 gap-lg-2">
+                          <img
+                            src={
+                              hotArticleDataItem.image_url ||
+                              "https://github.com/wfox5510/wordSapce-imgRepo/blob/main/banner-1.png?raw=true"
+                            }
+                            className="card-img-top object-fit-cover"
+                            alt="..."
+                          />
+                          <div className="card-body p-0">
+                            <h3 className="card-title fw-bold text-truncate">
+                              {hotArticleDataItem.title}
+                            </h3>
+                            <p className="card-text text-truncate fs-9 fs-lg-8">
+                              {hotArticleDataItem.description}
+                            </p>
+                          </div>
+                          <div className="card-footer border-0 p-0 bg-light">
+                            <span className="me-2">
+                              {hotArticleDataItem.author_name} |
+                            </span>
+                            <span>{hotArticleDataItem.category_name}</span>
+                          </div>
+                        </a>
+                      </li>
+                    );
+                  })}
               </ul>
               <nav className="d-none d-lg-block" aria-label="Page navigation">
                 <ul className="hot-article-pagination pagination justify-content-center gap-2 mb-0">
                   <li className="page-item" disable="true">
-                    <a className="page-link material-symbols-outlined p-0 ps-1 pt-1 rounded-1">
+                    <a
+                      className={`page-link material-symbols-outlined p-0 ps-1 pt-1 rounded-1 ${
+                        currentPage === 1 && "disabled"
+                      }`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCurrentPage(currentPage - 1);
+                      }}
+                    >
                       arrow_back_ios
                     </a>
                   </li>
-                  {Array.from({ length: 10 }).map((item, index) => {
-                    if (
+                  {Array.from({
+                    length: Math.ceil(hotArticleData.length / 3),
+                  }).map((item, index) => {
+                    if (currentPage > 3 && index === 0)
+                      return (
+                        <Fragment key={index}>
+                          <li className="page-item">
+                            <a
+                              className={`page-link rounded-1 p-0 ${
+                                currentPage === index + 1 && "active"
+                              }`}
+                              href="#"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setCurrentPage(index + 1);
+                              }}
+                            >
+                              {index + 1}
+                            </a>
+                          </li>
+                          <li className="page-item">
+                            <a
+                              className={`page-link rounded-1 p-0`}
+                              href="#"
+                              onClick={(e) => {
+                                e.preventDefault();
+                              }}
+                            >
+                              ...
+                            </a>
+                          </li>
+                        </Fragment>
+                      );
+                    else if (currentPage < 10 - 2 && index === 9)
+                      return (
+                        <Fragment key={index}>
+                          <li className="page-item">
+                            <a
+                              className={`page-link rounded-1 p-0`}
+                              href="#"
+                              onClick={(e) => {
+                                e.preventDefault();
+                              }}
+                            >
+                              ...
+                            </a>
+                          </li>
+                          <li className="page-item">
+                            <a
+                              className={`page-link rounded-1 p-0 ${
+                                currentPage === index + 1 && "active"
+                              }`}
+                              href="#"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setCurrentPage(index + 1);
+                              }}
+                            >
+                              {index + 1}
+                            </a>
+                          </li>
+                        </Fragment>
+                      );
+                    else if (
                       currentPage - index - 1 <= 2 &&
                       currentPage - index - 1 >= -2
                     )
                       return (
-                        <li className="page-item">
+                        <li className="page-item" key={index}>
                           <a
                             className={`page-link rounded-1 p-0 ${
                               currentPage === index + 1 && "active"
@@ -207,8 +280,15 @@ const ArticleListPage = () => {
                   })}
                   <li className="page-item">
                     <a
-                      className="page-link material-symbols-outlined rounded-1 p-0"
+                      className={`page-link material-symbols-outlined rounded-1 p-0 ${
+                        currentPage === Math.ceil(hotArticleData.length / 3) &&
+                        "disabled"
+                      }`}
                       href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCurrentPage(currentPage + 1);
+                      }}
                     >
                       arrow_forward_ios
                     </a>
@@ -242,9 +322,13 @@ const ArticleListPage = () => {
                             alt=""
                           />
                           <div className="card-body d-flex flex-column gap-2 gap-lg-3">
-                            <h3 className="fs-9 fs-lg-8 fw-bold">
-                              【程式設計的美感】
-                            </h3>
+                            <span>
+                              {recommendArticleDataItem.author_name} |
+                              <span className="ms-2">
+                                {recommendArticleDataItem.category_name}
+                              </span>
+                            </span>
+
                             <h4 className="card-title text-primary fw-bold text-truncate-2lines lh-sm">
                               {recommendArticleDataItem.title}
                             </h4>
