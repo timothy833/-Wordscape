@@ -3,26 +3,27 @@ import { Pagination, Navigation } from "swiper/modules";
 import ArticleCard from "../../component/ArticleCard/ArticleCard";
 import CommentBox from "../../component/CommentBox/CommentBox";
 import CommentReply from "../../component/CommentReply/CommentReply";
-import Footer from "../../component/Footer/Footer";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 import DOMParserReact from "dom-parser-react";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ArticlePage = () => {
   const { id: articleId } = useParams();
-  const userId = "2c1130a5-8ded-4554-b7b6-fa0db7dfd2ae";
+  const { isAuthorized, id: userId } = useSelector((state) => state.auth);
+
   const [articleData, setArticleData] = useState(null);
   const [autherData, setAutherData] = useState(null);
   const [commentData, setCommentData] = useState(null);
+  const [commentInput, setCommentInput] = useState("");
+  // 登入相關狀態
   const [isLike, setIsLike] = useState(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(null);
-  const [commentInput, setCommentInput] = useState("");
-  axios.defaults.headers.common["Authorization"] =
-    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJjMTEzMGE1LThkZWQtNDU1NC1iN2I2LWZhMGRiN2RmZDJhZSIsInVzZXJuYW1lIjoic21hbGxQaWdneSIsImlhdCI6MTc0MTE2MDcxNiwiZXhwIjoxNzQxMTY0MzE2fQ.gPWyG8RMYt_O13VDKYAOz0ozpQDdeGahJ1ty_-V1AlI";
+
   const getArticle = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/${articleId}`);
@@ -41,7 +42,11 @@ const ArticlePage = () => {
       console.log(error);
     }
   };
-  //留言相關功能
+  //使用功能確認是否登入
+  const checkIsLogin=()=>{
+    
+  } 
+  //留言相關功能(需登入)
   const getComment = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/comments/${articleId}`);
@@ -62,7 +67,7 @@ const ArticlePage = () => {
       console.log(error);
     }
   };
-  //訂閱相關功能
+  //訂閱相關功能(需登入)
   const checkIsSubscribed = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/subscriptions`);
@@ -83,7 +88,7 @@ const ArticlePage = () => {
       console.log(error);
     }
   };
-  //點讚相關功能
+  //點讚相關功能(需登入)
   const checkIsLikeArticle = async () => {
     try {
       const res = await axios.get(
@@ -106,7 +111,7 @@ const ArticlePage = () => {
       console.log(error);
     }
   };
-  //收藏相關功能
+  //收藏相關功能(需登入)
   const checkIsFavorites = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/favorites`);
@@ -130,8 +135,6 @@ const ArticlePage = () => {
   useEffect(() => {
     getArticle();
     getComment();
-    checkIsLikeArticle();
-    checkIsFavorites();
   }, []);
   //判斷訂閱需要取得articleData中作者的資料，用useEffect確保setState的值正確取得
   useEffect(() => {
@@ -140,6 +143,16 @@ const ArticlePage = () => {
       getAutherData();
     }
   }, [articleData]);
+  useEffect(() => {
+    if (isAuthorized) {
+      checkIsLikeArticle();
+      checkIsFavorites();
+    } else if (!isAuthorized) {
+      setIsLike(null);
+      setIsFavorite(false);
+      setIsSubscribed(null);
+    }
+  }, [isAuthorized]);
   return (
     <>
       <header>
@@ -182,7 +195,7 @@ const ArticlePage = () => {
                     } d-flex align-items-center`}
                     onClick={(e) => {
                       e.preventDefault();
-                      postSubscribed();
+                      isAuthorized ? postSubscribed() : alert("請先登入")
                     }}
                     href="#"
                   >
@@ -203,11 +216,13 @@ const ArticlePage = () => {
                 <a
                   href="#"
                   className={`btn ${
-                    isFavorite ? "btn-primary" : "btn-outline-primary border border-primary-hover"
+                    isFavorite
+                      ? "btn-primary"
+                      : "btn-outline-primary border border-primary-hover"
                   }`}
                   onClick={(e) => {
                     e.preventDefault();
-                    postFavorites();
+                    isAuthorized ? postFavorites() : alert("請先登入")
                   }}
                 >
                   {isFavorite ? "已收藏" : "收藏"}
@@ -216,7 +231,7 @@ const ArticlePage = () => {
                   className={` d-flex align-items-center gap-1 ${
                     isLike ? "text-primary" : "text-gray"
                   } `}
-                  onClick={() => postArticleLike()}
+                  onClick={() => isAuthorized ? postArticleLike() : alert("請先登入")()}
                 >
                   <span className="material-symbols-outlined icon-fill">
                     favorite
@@ -287,7 +302,7 @@ const ArticlePage = () => {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              postComment();
+              isAuthorized ? postComment() : alert("請先登入");
             }}
           >
             <label className="d-none" htmlFor="comment">
