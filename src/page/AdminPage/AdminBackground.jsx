@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+
 import axios from "axios";
 const { VITE_API_BASE_URL } = import.meta.env;
 import dayjs from "dayjs";
@@ -6,11 +8,8 @@ import dayjs from "dayjs";
 import AdminRevenueChart from "../../component/AdminRevenueChart/AdminRevenueChart";
 
 const AdminBackground = () => {
-  const getTokenFromCookies = () => {
-    const cookies = document.cookie.split(";");
-    const tokenCookie = cookies.find((cookie) => cookie.trim().startsWith("WS_token="));
-    return tokenCookie ? tokenCookie.split("=")[1] : null;
-  };
+  const { isAuthorized, id, username, token } = useSelector(state => state.auth);
+
   const [followers, setFollowers] = useState(0); // 訂閱人數
   const [totalViews, setTotalViews] = useState([]);  // 總點閱量
   const [revenue, setRevenue] = useState([]) //總收益
@@ -23,11 +22,9 @@ const AdminBackground = () => {
 
 
   const [loading, setLoading] = useState(true);
-  const userId = "cd32c544-9c5a-4f08-b30f-2f5e8c17ff15";
 
   useEffect(() => {
     const fetchData = async () => {
-      const token = getTokenFromCookies();
       if (!token) {
         console.log("驗證錯誤，請重新登入");
         return;
@@ -42,7 +39,7 @@ const AdminBackground = () => {
           axios.get(`${VITE_API_BASE_URL}/subscriptions/followers`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          axios.get(`${VITE_API_BASE_URL}/posts/user/${userId}`, {
+          axios.get(`${VITE_API_BASE_URL}/posts/user/${id}`, {
             headers: { Authorization: `Bearer ${token}` },
           }).catch((error) => {
             if (error.response && error.response.data.message === "文章不存在") {
@@ -332,20 +329,20 @@ const AdminBackground = () => {
             <p className="text-gray d-none d-md-block">標題</p>
             <div className="d-flex d-md-none align-items-center" onClick={() => handleSort("date")}>
               <p className={`me-2 ${sortBy === "date" ? "" : "text-gray"}`}>日期</p>
-              <span className={`material-symbols-outlined ${sortBy === "date" ? "" : "text-gray"}`}>
+              <span style={{ cursor: "pointer" }} className={`material-symbols-outlined ${sortBy === "date" ? "" : "text-gray"}`}>
                 {sortBy === "date" ? (sortOrder === "asc" ? "arrow_upward_alt" : "arrow_downward_alt") : "swap_vert"}
               </span>
             </div>
           </div>
-          <div className="d-flex align-items-center" onClick={() => handleSort("date")}>
+          <div className="d-md-flex d-none align-items-center" onClick={() => handleSort("date")}>
             <p className={`me-2 ${sortBy === "date" ? "" : "text-gray"}`}>日期</p>
-            <span className={`material-symbols-outlined ${sortBy === "date" ? "" : "text-gray"}`}>
+            <span style={{ cursor: "pointer" }} className={`material-symbols-outlined ${sortBy === "date" ? "" : "text-gray"}`}>
               {sortBy === "date" ? (sortOrder === "asc" ? "arrow_upward_alt" : "arrow_downward_alt") : "swap_vert"}
             </span>
           </div>
           <div className="d-flex align-items-center" onClick={() => handleSort("views")}>
             <p className={`me-2 ${sortBy === "views" ? "" : "text-gray"}`}>觀看量</p>
-            <span className={`material-symbols-outlined ${sortBy === "views" ? "" : "text-gray"}`}>
+            <span style={{ cursor: "pointer" }} className={`material-symbols-outlined ${sortBy === "views" ? "" : "text-gray"}`}>
               {sortBy === "views" ? (sortOrder === "asc" ? "arrow_upward_alt" : "arrow_downward_alt") : "swap_vert"}
             </span>
           </div>

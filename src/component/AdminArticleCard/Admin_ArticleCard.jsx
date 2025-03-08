@@ -1,20 +1,16 @@
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import axios from "axios";
 const { VITE_API_BASE_URL } = import.meta.env;
 import { Link } from "react-router-dom";
 
 
 const Admin_ArticleCard = () => {
-  const getTokenFromCookies = () => {
-    const cookies = document.cookie.split(";");
-    const tokenCookie = cookies.find((cookie) => cookie.trim().startsWith("WS_token="));
-    return tokenCookie ? tokenCookie.split("=")[1] : null;
-  };
+  const { isAuthorized, id, username, token } = useSelector(state => state.auth);
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     (async () => {
-      const token = getTokenFromCookies();
       if (!token) {
         console.log("驗證錯誤，請重新登入");
         return;
@@ -34,7 +30,6 @@ const Admin_ArticleCard = () => {
     })();
   }, []);
   const cancelFavorites = async (id) => {
-    const token = getTokenFromCookies();
     if (!token) {
       console.log("驗證錯誤，請重新登入");
       return;

@@ -1,28 +1,24 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 const { VITE_API_BASE_URL } = import.meta.env;
 
 const AdminInfo = () => {
+  const { isAuthorized, id, username, token } = useSelector(state => state.auth);
   const [loading, setLoading] = useState(true);
   const [previewImage, setPreviewImage] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
-  const getTokenFromCookies = () => {
-    const cookies = document.cookie.split(";");
-    const tokenCookie = cookies.find((cookie) => cookie.trim().startsWith("WS_token="));
-    return tokenCookie ? tokenCookie.split("=")[1] : null;
-  };
-  const userId = "cd32c544-9c5a-4f08-b30f-2f5e8c17ff15";
+
   const { register, handleSubmit, setValue, watch } = useForm();
   useEffect(() => {
     (async () => {
-      const token = getTokenFromCookies();
       if (!token) {
         alert("驗證錯誤，請重新登入");
         return;
       };
       try {
-        const res = await axios.get(`${VITE_API_BASE_URL}/users/${userId}`);
+        const res = await axios.get(`${VITE_API_BASE_URL}/users/${id}`);
         if (res.data.birthday) {
           const date = new Date(res.data.birthday);
           const year = date.getUTCFullYear();
@@ -65,7 +61,6 @@ const AdminInfo = () => {
 
 
   const onSubmit = async (data) => {
-    const token = getTokenFromCookies();
     if (!token) {
       alert("Token 無效，請重新登入");
       return;
@@ -76,7 +71,7 @@ const AdminInfo = () => {
         const formData = new FormData();
         formData.append("profile_picture", selectedFile);
 
-        await axios.patch(`${VITE_API_BASE_URL}/users/${userId}`, formData, {
+        await axios.patch(`${VITE_API_BASE_URL}/users/${id}`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
@@ -94,7 +89,7 @@ const AdminInfo = () => {
         profile_picture: selectedFile ? undefined : data.profile_picture,
       };
 
-      await axios.patch(`${VITE_API_BASE_URL}/users/${userId}`, updatedUser, {
+      await axios.patch(`${VITE_API_BASE_URL}/users/${id}`, updatedUser, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
