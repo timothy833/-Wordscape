@@ -1,10 +1,12 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { useOutletContext } from "react-router-dom";
 import { useForm } from "react-hook-form";
 const { VITE_API_BASE_URL } = import.meta.env;
 
 const AdminInfo = () => {
+  const { fetchUserInfo } = useOutletContext();  // 通知父層
   const { isAuthorized, id, username, token } = useSelector(state => state.auth);
   const [loading, setLoading] = useState(true);
   const [previewImage, setPreviewImage] = useState("");
@@ -97,6 +99,7 @@ const AdminInfo = () => {
       });
 
       alert("資料更新成功");
+      fetchUserInfo();  // 通知父層
     } catch (error) {
       alert("更新失敗");
       console.error(error);
