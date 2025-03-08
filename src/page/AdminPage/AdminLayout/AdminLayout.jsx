@@ -1,8 +1,5 @@
 import { Outlet, NavLink } from "react-router-dom";
 
-import Navbar from "../../../component/Navbar/Navbar";
-import Footer from "../../../component/Footer/Footer";
-
 import avatar from "../../../assets/images/avatar-1.png";
 
 
