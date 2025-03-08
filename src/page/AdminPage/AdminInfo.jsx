@@ -1,62 +1,201 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+const { VITE_API_BASE_URL } = import.meta.env;
+
 const AdminInfo = () => {
+  const [loading, setLoading] = useState(true);
+  const [previewImage, setPreviewImage] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
+  const getTokenFromCookies = () => {
+    const cookies = document.cookie.split(";");
+    const tokenCookie = cookies.find((cookie) => cookie.trim().startsWith("WS_token="));
+    return tokenCookie ? tokenCookie.split("=")[1] : null;
+  };
+  const userId = "cd32c544-9c5a-4f08-b30f-2f5e8c17ff15";
+  const { register, handleSubmit, setValue, watch } = useForm();
+  useEffect(() => {
+    (async () => {
+      const token = getTokenFromCookies();
+      if (!token) {
+        alert("驗證錯誤，請重新登入");
+        return;
+      };
+      try {
+        const res = await axios.get(`${VITE_API_BASE_URL}/users/${userId}`);
+        if (res.data.birthday) {
+          const date = new Date(res.data.birthday);
+          const year = date.getUTCFullYear();
+          const month = (date.getUTCMonth() + 1).toString().padStart(2, "0");
+          const day = date.getUTCDate().toString().padStart(2, "0");
+          setValue("year", year);
+          setValue("month", month);
+          setValue("day", day);
+        }
+        setValue("username", res.data.username);
+        setValue("email", res.data.email);
+        setValue("phone", res.data.phone);
+        setValue("gender", res.data.gender);
+        setValue("bio", res.data.bio);
+        setValue("profile_picture", res.data.profile_picture || "");
+
+        setPreviewImage(res.data.profile_picture || "/default-avatar.png");
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setSelectedFile(file);
+    setPreviewImage(URL.createObjectURL(file));
+    setValue("profile_picture", "");
+  };
+
+  const handleImageUrlChange = (e) => {
+    const imageUrl = e.target.value;
+    setPreviewImage(imageUrl);
+    setSelectedFile(null);
+    setValue("profile_picture", imageUrl);
+  };
+
+
+  const onSubmit = async (data) => {
+    const token = getTokenFromCookies();
+    if (!token) {
+      alert("Token 無效，請重新登入");
+      return;
+    }
+
+    try {
+      if (selectedFile) {
+        const formData = new FormData();
+        formData.append("profile_picture", selectedFile);
+
+        await axios.patch(`${VITE_API_BASE_URL}/users/${userId}`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log("圖片上傳成功");
+      }
+      const updatedUser = {
+        username: data.username,
+        email: data.email,
+        phone: data.phone,
+        gender: data.gender,
+        birthday: `${data.year}-${data.month}-${data.day}T00:00:00.000Z`,
+        bio: data.bio,
+        profile_picture: selectedFile ? undefined : data.profile_picture,
+      };
+
+      await axios.patch(`${VITE_API_BASE_URL}/users/${userId}`, updatedUser, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      alert("資料更新成功");
+    } catch (error) {
+      alert("更新失敗");
+      console.error(error);
+    }
+  };
+
+  if (loading) return <p className="text-center text-gray">載入中...</p>;
   return (
     <>
       <h1 className="fs-4 fs-md-1 text-primary fw-bold mb-5">會員資訊</h1>
-      <form>
-        <div className="mb-5 admin-form_group">
-          <label htmlFor="name" className="form-label mb-2">姓名</label>
-          <input type="text" className="form-control py-3" id="name" placeholder="快樂小豬" defaultValue="快樂小豬" />
-        </div>
-        <div className="mb-5 admin-form_group">
-          <label htmlFor="email" className="form-label mb-2">電子郵件</label>
-          <input type="email" className="form-control py-3" id="email" placeholder="piggy@gmail.com" defaultValue="piggy@gmail.com" />
-        </div>
-        <div className="mb-5 admin-form_group">
-          <label htmlFor="phone" className="form-label mb-2">手機號碼</label>
-          <input type="number" className="form-control py-3" id="phone" placeholder="0912345678" defaultValue="0912345678" />
-        </div>
-        <div className="admin-form_group py-md-3 mb-5">
-          <p className="mb-md-0 mb-2">性別</p>
-          <div className="d-flex gap-5 mb-md-0">
-            <div className="form-check">
-              <input className="form-check-input border-gray admin-form_checked" type="radio" name="admin-form_sex" id="admin-form_sex-m" defaultChecked />
-              <label className="form-check-label" htmlFor="admin-form_sex-m">
-                男
-              </label>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="row mb-5 d-flex flex-column-reverse flex-md-row">
+          <div className="col-md-8">
+            <div className="mb-5 admin-form_group">
+              <label htmlFor="username" className="form-label mb-2">姓名</label>
+              <input type="text" className="form-control py-3" id="username" placeholder="姓名" {...register("username")} />
             </div>
-            <div className="form-check">
-              <input className="form-check-input border-gray admin-form_checked" type="radio" name="admin-form_sex" id="admin-form_sex-f" />
-              <label className="form-check-label" htmlFor="admin-form_sex-f">
-                女
-              </label>
+            <div className="mb-5 admin-form_group">
+              <label htmlFor="email" className="form-label mb-2">電子郵件</label>
+              <input type="email" className="form-control py-3" id="email" placeholder="email" {...register("email")} />
             </div>
-            <div className="form-check">
-              <input className="form-check-input border-gray admin-form_checked" type="radio" name="admin-form_sex" id="admin-form_sex-else" />
-              <label className="form-check-label" htmlFor="admin-form_sex-else">
-                其他
-              </label>
+            <div className="mb-5 admin-form_group">
+              <label htmlFor="phone" className="form-label mb-2">手機號碼</label>
+              <input type="number" className="form-control py-3" id="phone" placeholder="電話" {...register("phone")} />
+            </div>
+            <div className="admin-form_group py-md-3 mb-5">
+              <p className="mb-md-0 mb-2">性別</p>
+              <div className="d-flex gap-5 mb-md-0">
+                {["男", "女", "其他"].map((gender) => (
+                  <div className="form-check" key={gender}>
+                    <input className="form-check-input border-gray admin-form_checked"
+                      type="radio" name="gender" value={gender}
+                      {...register("gender")} />
+                    <label className="form-check-label">{gender}</label>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
+          <div className="col-md-4 d-flex flex-column align-items-center mb-5 mb-md-0">
+            <p className="mb-3">個人照片</p>
+            <img
+              src={previewImage}
+              alt="profile"
+              className="rounded-circle border"
+              style={{ width: "150px", height: "150px", objectFit: "cover" }}
+            />
+            <div className="mt-3">
+              <label className="btn btn-outline-primary">
+                上傳圖片
+                <input
+                  type="file"
+                  className="d-none"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+              </label>
+            </div>
+            <p className="my-3">或貼上圖片網址</p>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="輸入圖片網址"
+              {...register("profile_picture")}
+              value={watch("profile_picture")}
+              onChange={handleImageUrlChange} />
+          </div>
         </div>
-        <div className="admin-form_group mb-5 pb-5 border-bottom border-gray-light">
+        <div className="admin-form_group mb-5">
           <p className="mb-md-0 mb-2">生日</p>
           <div className="admin-form_birthday d-flex gap-3 w-md-100">
-            <select className="form-select py-3" defaultValue="1990">
-              <option value="1990">1990</option>
-              <option value="1991">1991</option>
-              <option value="1992">1992</option>
+            <select className="form-select py-3" {...register("year")}>
+              {[...Array(46)].map((_, i) => {
+                const year = 1980 + i;
+                return <option key={year} value={year}>{year}</option>;
+              })}
             </select>
-            <select className="form-select py-3" defaultValue="01">
-              <option value="01">01</option>
-              <option value="02">02</option>
-              <option value="03">03</option>
+            <select className="form-select py-3" {...register("month")}>
+              {[...Array(12)].map((_, i) => {
+                const month = (i + 1).toString().padStart(2, "0"); // 01, 02, ..., 12
+                return <option key={month} value={month}>{month}</option>;
+              })}
             </select>
-            <select className="form-select py-3" defaultValue="24">
-              <option value="24">24</option>
-              <option value="25">25</option>
-              <option value="26">26</option>
+            <select className="form-select py-3" {...register("day")}>
+              {[...Array(31)].map((_, i) => {
+                const day = (i + 1).toString().padStart(2, "0"); // 01, 02, ..., 31
+                return <option key={day} value={day}>{day}</option>;
+              })}
             </select>
           </div>
+        </div>
+        <div className="mb-5 admin-form_group mb-5 pb-5 border-bottom border-gray-light">
+          <label htmlFor="bio" className="form-label mb-2">個人介紹</label>
+          <input type="text" className="form-control py-3" id="bio" placeholder="個人介紹" {...register("bio")} />
         </div>
         <div className="admin-form_group mb-5 py-md-3">
           <p className="mb-5 mb-md-0">付款方式</p>
