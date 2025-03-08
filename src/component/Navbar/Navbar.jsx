@@ -2,54 +2,28 @@ import { Dropdown } from "bootstrap";
 import logo from "../../assets/images/logo.svg";
 import logo_sm from "../../assets/images/logo-sm.svg";
 import avatar from "../../assets/images/avatar-1.png";
-import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from "react-router-dom";
-// import axios from 'axios';
+
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../../slice/authSlice';
+import { Link } from 'react-router-dom';
 import SignupPage from "../../page/AccessPage/SignupPage";
 import LoginPage from "../../page/AccessPage/LoginPage";
-const { VITE_API_BASE_URL } = import.meta.env;
 
 const Navbar = () => {
-  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [showSignupModal, setShowSignupModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleShowSignupModal = () => setShowSignupModal(true);
   const handleCloseSignupModal = () => setShowSignupModal(false);
   const handleShowLoginModal = () => setShowLoginModal(true);
   const handleCloseLoginModal = () => setShowLoginModal(false);
 
-  // 檢查cookie中是否存在WS_token
-  const checkToken = () => {
-    const cookies = document.cookie.split(';');
-    const tokenCookie = cookies.find(cookie => cookie.trim().startsWith('WS_token='));
+  const { isAuthorized, id, username } = useSelector(state => state.auth);
 
-    if (tokenCookie) {
-      setIsLoggedIn(true);
-    } else {
-      setIsLoggedIn(false);
-    }
-  };
-
-  useEffect(() => {
-    checkToken();
-  }, []);
-
-  const logout = async () => {
-    document.cookie = "WS_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    alert('登出成功');
-    checkToken();
-    navigate("/");
-    //   try{
-    //     const url = `${VITE_API_BASE_URL}/users/logout`;
-    //     const resetPwRes = await axios.post(url);
-
-    //     console.log('logout',resetPwRes);
-
-    // }catch(error){
-    //     console.log('error in reset password', error.response?.data || error.message);
-    // }
+  const logoutHandle = () => {
+    dispatch(logout());
   };
 
   return (
@@ -57,7 +31,7 @@ const Navbar = () => {
       <div className="fixed-top bg-light shadow-sm">
         <div className="container">
           <div className=" navbar d-flex justify-content-between align-items-center">
-            <a href="#">
+            <Link to="/">
               <picture>
                 <source
                   media="(min-width: 992px)"
@@ -72,7 +46,7 @@ const Navbar = () => {
                   height="auto"
                 />
               </picture>
-            </a>
+            </Link>
 
             {/* 使用者選單-PC */}
             <div className="d-none d-lg-flex align-items-center gap-4">
@@ -88,12 +62,10 @@ const Navbar = () => {
                     placeholder="搜尋..."
                   />
                 </div>
-                <a className="text-nowrap" href="#">
-                  文章列表
-                </a>
+                <Link to="/articleList" className="text-nowrap border-0 bg-light">文章列表</Link>
 
                 {/* 根據登入狀態顯示 */}
-                {!isLoggedIn ? (
+                {!isAuthorized ? (
                   // 未登入狀態：顯示註冊和登入按鈕
                   <div className="btn-group">
                     <button className="btn btn-register btn-primary rounded-pill px-5 pe-8"
@@ -112,7 +84,7 @@ const Navbar = () => {
                         data-bs-toggle="dropdown"
                         href="#"
                       >
-                        super123
+                        {username}
                         <span className="material-symbols-outlined ms-2">
                           keyboard_arrow_down
                         </span>
@@ -127,14 +99,12 @@ const Navbar = () => {
                           </a>
                         </li>
                         <li>
-                          <a className="dropdown-item py-3 px-5" href="/#/admin">
-                            會員中心
-                          </a>
+                          <Link to="/admin" className="dropdown-item py-3 px-5">會員中心</Link>
                         </li>
                         <li>
-                          <a onClick={logout} className="dropdown-item py-3 px-5" href="#">
+                          <button onClick={logoutHandle} className="dropdown-item py-3 px-5">
                             登出
-                          </a>
+                          </button>
                         </li>
                       </ul>
                     </div>
@@ -188,7 +158,7 @@ const Navbar = () => {
                 </li>
 
                 {/* 根據登入狀態顯示不同的選項 */}
-                {isLoggedIn ? (
+                {isAuthorized ? (
                   // 已登入狀態
                   <>
                     <li>
@@ -198,7 +168,7 @@ const Navbar = () => {
                       >
                         <span>
                           <img className="avatar me-2" src={avatar} alt="" />
-                          super123
+                          {username}
                         </span>
                         <span className="material-symbols-outlined fs-5 fw-light">
                           arrow_forward_ios
@@ -216,7 +186,7 @@ const Navbar = () => {
                       </a>
                     </li>
                     <li>
-                      <a className="dropdown-item py-2 px-5" href="#">
+                      <a onClick={() => { logoutHandle }} className="dropdown-item py-2 px-5" href="#">
                         登出
                       </a>
                     </li>
@@ -240,7 +210,6 @@ const Navbar = () => {
                 )}
               </ul>
             </div>
-
             {/* mobile-search-list */}
             <div
               className="collapse homepage-collapse position-absolute bg-light start-0 w-100 z-3 d-lg-none  border-top"
@@ -284,114 +253,12 @@ const Navbar = () => {
                 </ul>
               </div>
             </div>
-            <ul>
-              <li>
-                <a className="py-2 px-5" href="#">
-                  文章列表
-                </a>
-              </li>
 
-              {/* 根據登入狀態顯示不同的選項 */}
-              {isLoggedIn ? (
-                // 已登入狀態
-                <>
-                  <li>
-                    <a
-                      className="d-flex justify-content-between justify-content-sm-center gap-20 align-items-center py-5 px-3 border-top border-bottom border-gray_light"
-                      href="#"
-                    >
-                      <span>
-                        <img className="avatar me-2" src={avatar} alt="" />
-                        super123
-                      </span>
-                      <span className="material-symbols-outlined fs-5 fw-light">
-                        arrow_forward_ios
-                      </span>
-                    </a>
-                  </li>
-                  <li>
-                    <a className="dropdown-item py-2 px-5" href="#">
-                      追蹤部落格
-                    </a>
-                  </li>
-                  <li>
-                    <a className="dropdown-item py-2 px-5" href="/#/admin">
-                      會員中心
-                    </a>
-                  </li>
-                  <li>
-                    <a className="dropdown-item py-2 px-5" href="#">
-                      登出
-                    </a>
-                  </li>
-                </>
-              ) : (
-                // 未登入狀態
-                <>
-                  <li>
-                    <button onClick={handleShowLoginModal}
-                      className="dropdown-item py-2 px-5" href="#">
-                      登入
-                    </button>
-                  </li>
-                  <li>
-                    <button onClick={handleShowSignupModal}
-                      className="dropdown-item py-2 px-5" href="#">
-                      註冊
-                    </button>
-                  </li>
-                </>
-              )}
-            </ul>
-          </div>
-
-          {/* mobile-search-list */}
-          <div
-            className="collapse homepage-collapse position-absolute bg-light start-0 w-100 z-3 d-lg-none  border-top"
-            id="collapseSearch"
-          >
-            <div className="container">
-              <ul
-                className="text-left list-unstyled mb-0"
-                aria-labelledby="dropdownUserMenu"
-              >
-                <li className="input-group input-group-sm py-3">
-                  <span className="material-symbols-outlined searchbar-icon text-gray fs-6">
-                    search
-                  </span>
-                  <input
-                    type="text"
-                    className="search-bar form-control fs-8 ps-11 w-100"
-                    placeholder="搜尋..."
-                  />
-                </li>
-                <li>
-                  <a className="dropdown-item py-1 px-3 text-gray" href="#">
-                    熱門關鍵字
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item py-2 px-3" href="#">
-                    拾字間
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item py-2 px-3" href="#">
-                    專注閱讀
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item py-2 px-3" href="#">
-                    閱讀體驗
-                  </a>
-                </li>
-              </ul>
-            </div>
           </div>
         </div>
       </div>
       {/* Modal */}
-      <LoginPage checkToken={checkToken} show={showLoginModal} handleClose={handleCloseLoginModal} />
+      <LoginPage show={showLoginModal} handleClose={handleCloseLoginModal} />
       <SignupPage show={showSignupModal} handleClose={handleCloseSignupModal} />
     </section>
   );
