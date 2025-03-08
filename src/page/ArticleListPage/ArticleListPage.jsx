@@ -12,8 +12,6 @@ const ArticleListPage = () => {
   const [hotArticleData, setHotArticleData] = useState([]);
   const [recommendArticleData, setRecommendArticleData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  axios.defaults.headers.common["Authorization"] =
-    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJjZDNmYmNkLWI4NDAtNDAyOS04NDZlLThkZmQ2Zjk3ZTRhNSIsInVzZXJuYW1lIjoiaGFwcHlQaWdneSIsImlhdCI6MTc0MTI3Mjg0MywiZXhwIjoxNzQxMjgzNjQzfQ.fBmicGHURZUlp8VrOOrpyxQv59xn8kUiBm0vzjUUzVk";
 
   const dispatch = useDispatch();
   //取得分類資料
