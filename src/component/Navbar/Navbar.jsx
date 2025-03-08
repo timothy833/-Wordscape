@@ -14,16 +14,16 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const [showSignupModal, setShowSignupModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  
+
   const handleShowSignupModal = () => setShowSignupModal(true);
   const handleCloseSignupModal = () => setShowSignupModal(false);
   const handleShowLoginModal = () => setShowLoginModal(true);
   const handleCloseLoginModal = () => setShowLoginModal(false);
-  
+
   const { isAuthorized, id, username } = useSelector(state => state.auth);
-  
+
   const logoutHandle = () => {
-     dispatch(logout());
+    dispatch(logout());
   };
 
   return (
@@ -68,10 +68,10 @@ const Navbar = () => {
                 {!isAuthorized ? (
                   // 未登入狀態：顯示註冊和登入按鈕
                   <div className="btn-group">
-                    <button className="btn btn-register btn-primary rounded-pill px-5 pe-8" 
-                            onClick={handleShowSignupModal}>註冊</button>
-                    <button className="btn btn-login btn-primary rounded-pill px-5 ps-8" 
-                            onClick={handleShowLoginModal}>登入</button>
+                    <button className="btn btn-register btn-primary rounded-pill px-5 pe-8"
+                      onClick={handleShowSignupModal}>註冊</button>
+                    <button className="btn btn-login btn-primary rounded-pill px-5 ps-8"
+                      onClick={handleShowLoginModal}>登入</button>
                   </div>
                 ) : (
                   // 已登入狀態：顯示用戶資訊
@@ -99,7 +99,7 @@ const Navbar = () => {
                           </a>
                         </li>
                         <li>
-                        <Link to="/admin" className="dropdown-item py-3 px-5">會員中心</Link>
+                          <Link to="/admin" className="dropdown-item py-3 px-5">會員中心</Link>
                         </li>
                         <li>
                           <button onClick={logoutHandle} className="dropdown-item py-3 px-5">
@@ -120,43 +120,43 @@ const Navbar = () => {
           >
             {/* 使用者選單-mobile */}
             <div className="d-lg-none">
-                <a
-                  className="me-4"
-                  data-bs-toggle="collapse"
-                  href="#collapseSearch"
-                  aria-expanded="false"
-                  aria-controls="collapseSearch"
-                >
-                  <span className="material-symbols-outlined text-primary fs-2">
-                    search
-                  </span>
-                </a>
-                <a
-                  data-bs-toggle="collapse"
-                  href="#collapseUserMenu"
-                  aria-expanded="false"
-                  aria-controls="collapseUserMenu"
-                >
-                  <span className="material-symbols-outlined text-primary fs-2">
-                    menu
-                  </span>
-                </a>
+              <a
+                className="me-4"
+                data-bs-toggle="collapse"
+                href="#collapseSearch"
+                aria-expanded="false"
+                aria-controls="collapseSearch"
+              >
+                <span className="material-symbols-outlined text-primary fs-2">
+                  search
+                </span>
+              </a>
+              <a
+                data-bs-toggle="collapse"
+                href="#collapseUserMenu"
+                aria-expanded="false"
+                aria-controls="collapseUserMenu"
+              >
+                <span className="material-symbols-outlined text-primary fs-2">
+                  menu
+                </span>
+              </a>
             </div>
 
             <div
               className="collapse homepage-collapse position-absolute bg-light start-0 w-100 z-3 d-lg-none"
               id="collapseUserMenu"
             >
-              <ul 
-              className="text-center list-unstyled mb-0"
-              aria-labelledby="dropdownUserMenu"
+              <ul
+                className="text-center list-unstyled mb-0"
+                aria-labelledby="dropdownUserMenu"
               >
                 <li>
                   <a className="py-2 px-5" href="#">
                     文章列表
                   </a>
                 </li>
-                
+
                 {/* 根據登入狀態顯示不同的選項 */}
                 {isAuthorized ? (
                   // 已登入狀態
@@ -181,12 +181,12 @@ const Navbar = () => {
                       </a>
                     </li>
                     <li>
-                      <a className="dropdown-item py-2 px-5" href="#">
+                      <a className="dropdown-item py-2 px-5" href="/#/admin">
                         會員中心
                       </a>
                     </li>
                     <li>
-                      <a onClick={()=>{logoutHandle}} className="dropdown-item py-2 px-5" href="#">
+                      <a onClick={() => { logoutHandle }} className="dropdown-item py-2 px-5" href="#">
                         登出
                       </a>
                     </li>
@@ -196,13 +196,13 @@ const Navbar = () => {
                   <>
                     <li>
                       <button onClick={handleShowLoginModal}
-                      className="dropdown-item py-2 px-5" href="#">
+                        className="dropdown-item py-2 px-5" href="#">
                         登入
                       </button>
                     </li>
                     <li>
                       <button onClick={handleShowSignupModal}
-                      className="dropdown-item py-2 px-5" href="#">
+                        className="dropdown-item py-2 px-5" href="#">
                         註冊
                       </button>
                     </li>
@@ -210,51 +210,51 @@ const Navbar = () => {
                 )}
               </ul>
             </div>
-          {/* mobile-search-list */}
-          <div
-            className="collapse homepage-collapse position-absolute bg-light start-0 w-100 z-3 d-lg-none  border-top"
-            id="collapseSearch"
+            {/* mobile-search-list */}
+            <div
+              className="collapse homepage-collapse position-absolute bg-light start-0 w-100 z-3 d-lg-none  border-top"
+              id="collapseSearch"
             >
-            <div className="container">
-              <ul
-                className="text-left list-unstyled mb-0"
-                aria-labelledby="dropdownUserMenu"
+              <div className="container">
+                <ul
+                  className="text-left list-unstyled mb-0"
+                  aria-labelledby="dropdownUserMenu"
                 >
-                <li className="input-group input-group-sm py-3">
-                  <span className="material-symbols-outlined searchbar-icon text-gray fs-6">
-                    search
-                  </span>
-                  <input
-                    type="text"
-                    className="search-bar form-control fs-8 ps-11 w-100"
-                    placeholder="搜尋..."
+                  <li className="input-group input-group-sm py-3">
+                    <span className="material-symbols-outlined searchbar-icon text-gray fs-6">
+                      search
+                    </span>
+                    <input
+                      type="text"
+                      className="search-bar form-control fs-8 ps-11 w-100"
+                      placeholder="搜尋..."
                     />
-                </li>
-                <li>
-                  <a className="dropdown-item py-1 px-3 text-gray" href="#">
-                    熱門關鍵字
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item py-2 px-3" href="#">
-                    拾字間
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item py-2 px-3" href="#">
-                    專注閱讀
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item py-2 px-3" href="#">
-                    閱讀體驗
-                  </a>
-                </li>
-              </ul>
+                  </li>
+                  <li>
+                    <a className="dropdown-item py-1 px-3 text-gray" href="#">
+                      熱門關鍵字
+                    </a>
+                  </li>
+                  <li>
+                    <a className="dropdown-item py-2 px-3" href="#">
+                      拾字間
+                    </a>
+                  </li>
+                  <li>
+                    <a className="dropdown-item py-2 px-3" href="#">
+                      專注閱讀
+                    </a>
+                  </li>
+                  <li>
+                    <a className="dropdown-item py-2 px-3" href="#">
+                      閱讀體驗
+                    </a>
+                  </li>
+                </ul>
+              </div>
             </div>
-          </div>
 
-          </div>  
+          </div>
         </div>
       </div>
       {/* Modal */}

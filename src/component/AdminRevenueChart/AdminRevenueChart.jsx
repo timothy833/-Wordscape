@@ -2,13 +2,13 @@ import React, { useEffect } from "react";
 import c3 from "c3";
 import "c3/c3.css";
 
-const AdminRevenueChart = () => {
+const AdminRevenueChart = ({ revenueData }) => {
   useEffect(() => {
     c3.generate({
       bindto: "#revenue-chart",
       data: {
         columns: [
-          ["營收", 20000, 40000, 15000, 25000, 35000, 27000, 30000],
+          ["營收", ...revenueData],
         ],
         type: "bar",
         names: {
@@ -22,18 +22,21 @@ const AdminRevenueChart = () => {
       axis: {
         x: {
           type: "category",
-          categories: ["1月", "2月", "3月", "4月", "5月", "6月", "7月"],
+          categories: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
           tick: {
             outer: false, // 移除 X 軸外框
           },
         },
         y: {
-          tick: {
-            format: (d) => d === 0 ? "0" : d / 1000 + "K", // 
-            // 0 顯示 `0`，其他數字顯示 10K, 20K
-            values: [0, 10000, 20000, 30000, 40000, 50000], // 10K 間隔
-            outer: false, // 移除Y 軸外框
-          },
+          // tick: {
+          //   format: (d) => d === 0 ? "0" : d / 1000 + "K", // 
+          //   // 0 顯示 `0`，其他數字顯示 10K, 20K
+          //   values: [0, 10000, 20000, 30000, 40000, 50000], // 10K 間隔
+          //   outer: false, // 移除Y 軸外框
+          // },
+          min: 0, // 確保 Y 軸從 0 開始
+          max: Math.max(...revenueData) * 1.2 || 50000, // 自動設定最大值，確保不會太大
+          padding: { top: 0, bottom: 0 }, // 取消多餘的 padding
         },
       },
       grid: {
@@ -50,7 +53,7 @@ const AdminRevenueChart = () => {
         show: false, // 隱藏圖例
       },
     });
-  }, []);
+  }, [revenueData]);
 
   return (
     <div className="chart-container">

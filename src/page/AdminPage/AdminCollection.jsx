@@ -5,8 +5,6 @@ const AdminCollection = () => {
     <>
       <h1 className="fs-4 fs-md-1 text-primary fw-bold mb-5">我的收藏</h1>
       <Admin_ArticleCard />
-      <Admin_ArticleCard />
-      <Admin_ArticleCard />
     </>
   );
 };
