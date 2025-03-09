@@ -1,31 +1,64 @@
 import avatar from "../../assets/images/avatar-1.png";
-const Blog_CommentReply = () => {
+import PropTypes from "prop-types";
+const Blog_CommentReply = ({comment, likeComment }) => {
+
+
   return (
     <div className="d-flex flex-column gap-3 py-5 mt-5 mt-md-0 border-top border-gray_light">
+      {/* 顯示留言者資訊 */}
       <div className="d-flex">
         <div className="d-flex align-items-center gap-2">
-          <img className="avatar" src={avatar} alt="avatar" />
-          <a href="#">張語森</a>
+          <img className="avatar rounded-circle border" src={comment.profile_picture ||avatar} alt="avatar" />
+          <a href="#">{comment.user_name}</a>
         </div>
       </div>
-      <p>AI生成的未來，我們需要更多溫度。</p>
+      {/* 顯示留言內容 */}
+      <p>{comment.content}</p>
+      {/*按讚、留言等互動按鈕 */}
       <div className="d-flex align-items-center gap-5">
-        <div className="d-flex text-primary gap-1">
+        <div className="d-flex text-primary gap-1" onClick={() => likeComment(comment.id)} style={{ cursor: "pointer" }}>
           <span className="material-symbols-outlined">
             favorite
           </span>
-          <p>2</p>
+          <p>{comment.likes_count}</p>
         </div>
         <div className="d-flex text-gray gap-1">
           <span className="material-symbols-outlined">
             chat_bubble
           </span>
-          <p>2</p>
+          <p>{comment.replies.length}</p>
         </div>
         <p className="text-gray">回覆</p>
       </div>
+
+      {/* 遞迴渲染子留言 */}
+      {comment.replies.length >0 && (
+         <div className="ms-4 border-start border-gray_light ps-3">
+          {comment.replies.map(reply => (
+              <Blog_CommentReply key={reply.id} comment={reply} />
+            )
+          )}
+         </div>
+      )}
+
     </div>
   );
 };
+
+Blog_CommentReply.propTypes = {
+  comment: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    content: PropTypes.string.isRequired,
+    user_name: PropTypes.string.isRequired,
+    profile_picture: PropTypes.string,
+    likes_count: PropTypes.string,
+    replies: PropTypes.arrayOf(PropTypes.object),
+  }).isRequired,  
+  likeComment: PropTypes.func, // 按讚留言
+  commentLikes: PropTypes.object, // 留言按讚數對應物件
+};
+
+
+
 
 export default Blog_CommentReply;
