@@ -134,19 +134,17 @@ const ArticleListPage = () => {
   }, [articleListData]);
 
   useEffect(() => {
-    getFavoriteArticle();
     getCategories();
     getAllArticleData();
     getArticleListData();
   }, []);
 
   useEffect(() => {
+    isAuthorized && getFavoriteArticle();
+  }, [isAuthorized]);
+  useEffect(() => {
     getArticleListData();
   }, [listSelector]);
-
-  useEffect(() => {
-    console.log(recommendArticleData);
-  }, [categoriesSelector]);
 
   return (
     <>
