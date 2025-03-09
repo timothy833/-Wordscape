@@ -6,7 +6,7 @@ import avatar from "../../assets/images/avatar-1.png";
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../slice/authSlice';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import SignupPage from "../../page/AccessPage/SignupPage";
 import LoginPage from "../../page/AccessPage/LoginPage";
 
@@ -22,20 +22,18 @@ const Navbar = () => {
   const handleShowLoginModal = () => setShowLoginModal(true);
   const handleCloseLoginModal = () => setShowLoginModal(false);
   
-  const { isAuthorized, username } = useSelector(state => state.auth);
+  const { isAuthorized, username, id } = useSelector(state => state.auth);
   
   const logoutHandle = () => {
      dispatch(logout());
      console.log("logout",isAuthorized);
   };
-
+  const navigate = useNavigate();
   useEffect(() => {
-    // if (isAuthorized === false) {
-  //     // 登出成功後跳轉到首頁
-      // window.location.href = '/';  // 或者使用 React Router 的 navigate
-    // }
-  console.log(isAuthorized);
-  }, [isAuthorized]);
+    if (isAuthorized === false) {
+      navigate("/"); // 跳轉到首頁
+    }
+  }, [isAuthorized, navigate]);
 
   // Collapse
   useEffect(() => {
@@ -147,7 +145,7 @@ const Navbar = () => {
                         aria-labelledby="dropdownUserMenu"
                       >
                         <li>
-                          <Link to="/blogpage" className="dropdown-item py-3 px-5">我的部落格</Link>
+                          <Link to={`/blog/${id}`} className="dropdown-item py-3 px-5">我的部落格</Link>
                         </li>
                         <li>
                           <Link to="/admin" className="dropdown-item py-3 px-5">會員中心</Link>
