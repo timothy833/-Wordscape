@@ -320,7 +320,7 @@ const ArticleListPage = () => {
                             alt=""
                           />
                           <div className="card-body d-flex flex-column gap-2 gap-lg-3">
-                            <span>
+                            <span className="fw-bold">
                               {recommendArticleDataItem.author_name} |
                               <span className="ms-2">
                                 {recommendArticleDataItem.category_name}
