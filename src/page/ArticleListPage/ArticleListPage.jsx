@@ -9,14 +9,16 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ArticleListPage = () => {
   const { isAuthorized, id: userId } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
-  const [categoriesData, setCategoriesData] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [allArticleData, setAllArticleData] = useState([]);
   const [hotArticleData, setHotArticleData] = useState([]);
   const [recommendArticleData, setRecommendArticleData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
 
-  const dispatch = useDispatch();
   //取得分類資料
+  const [categoriesData, setCategoriesData] = useState(null);
+  const [categoriesSelector, setCategoriesSelector] = useState([]);
   const getCategories = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/categories`);
@@ -25,33 +27,56 @@ const ArticleListPage = () => {
       console.log(error);
     }
   };
-  const getHotArticleData = async () => {
+  
+  const getAllArticleData = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/full`);
-      setHotArticleData(
-        res.data.data
-          .slice(0, 100)
-          .filter((articleDataItem) => articleDataItem.views_count > 5)
-      );
+      setAllArticleData(res.data.data);
     } catch (error) {
       console.log(error);
     }
   };
-  const getRecommendArticleData = async () => {
-    try {
-      const res = await axios.get(`${API_BASE_URL}/posts/full`);
-      setRecommendArticleData(
-        res.data.data.filter(
-          (articleDataItem) => articleDataItem.likes_count > 0
-        )
-      );
-    } catch (error) {
-      console.log(error);
-    }
+
+  //熱門文章 推薦文章篩選
+  const filterHotArticleData = (articleData) => {
+    return articleData
+      .slice(0, 100)
+      .filter((articleDataItem) => articleDataItem.views_count > 5)
+      .filter((articleDataItem) => {
+        if (categoriesSelector && categoriesSelector.length !== 0)
+          return categoriesSelector.some(
+            (categoriesSelectorItem) =>
+              categoriesSelectorItem === articleDataItem.category_id
+          );
+        return true;
+      });
   };
+  const filterRecommendArticleData = (articleData) => {
+    return articleData
+      .slice(0, 100)
+      .filter((articleDataItem) => articleDataItem.likes_count > 0)
+      .filter((articleDataItem) => {
+        if (categoriesSelector && categoriesSelector.length !== 0)
+          return categoriesSelector.some(
+            (categoriesSelectorItem) =>
+              categoriesSelectorItem === articleDataItem.category_id
+          );
+        return true;
+      });
+  };
+  const toggleCategoriesTag = (id) =>
+    categoriesSelector.includes(id)
+      ? setCategoriesSelector((prev) => prev.filter((item) => item !== id))
+      : setCategoriesSelector((prev) => [...prev, id]);
+
   useEffect(() => {
-    console.log(hotArticleData);
-  }, [hotArticleData]);
+    setHotArticleData(filterHotArticleData(allArticleData));
+    setRecommendArticleData(filterRecommendArticleData(allArticleData));
+  }, [allArticleData]);
+  useEffect(() => {
+    setHotArticleData(filterHotArticleData(allArticleData));
+    setRecommendArticleData(filterRecommendArticleData(allArticleData));
+  }, [categoriesSelector]);
 
   //下半部文章列表相關邏輯
   //取得所有文章資料後根據選擇分類篩選資料，用於渲染文章列表
@@ -59,7 +84,7 @@ const ArticleListPage = () => {
   const [listSelector, setListSelector] = useState("allArticle");
   const [articleListDisplayCount, SetArticleListDisplayCount] = useState(5);
 
-  const getArticleListData = async (page = 1) => {
+  const getArticleListData = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/full`);
       setArticleListData(
@@ -111,14 +136,17 @@ const ArticleListPage = () => {
   useEffect(() => {
     getFavoriteArticle();
     getCategories();
-    getHotArticleData();
-    getRecommendArticleData();
+    getAllArticleData();
     getArticleListData();
   }, []);
 
   useEffect(() => {
     getArticleListData();
   }, [listSelector]);
+
+  useEffect(() => {
+    console.log(recommendArticleData);
+  }, [categoriesSelector]);
 
   return (
     <>
@@ -129,7 +157,15 @@ const ArticleListPage = () => {
             {categoriesData?.map((categoriesDataItem) => {
               return (
                 <li key={categoriesDataItem.id}>
-                  <a className="article-tag lh-lg fs-9 fs-lg-8 rounded-pill">
+                  <a
+                    className={`article-tag lh-lg fs-9 fs-lg-8 rounded-pill ${
+                      categoriesSelector.some(
+                        (categoriesSelectorItem) =>
+                          categoriesSelectorItem === categoriesDataItem.id
+                      ) && "active"
+                    }`}
+                    onClick={() => toggleCategoriesTag(categoriesDataItem.id)}
+                  >
                     {categoriesDataItem.name}
                   </a>
                 </li>
@@ -142,15 +178,16 @@ const ArticleListPage = () => {
         <div className="container">
           <div className="row">
             <div className="col-12 col-lg-7">
-              <h2 className="text-primary fs-6 fs-lg-3 fw-bold mb-3 mb-lg-7 p-0 p-lg-2">
-                熱門文章
-              </h2>
+              <h2 className="text-primary fs-6 fs-lg-3 fw-bold mb-3 mb-lg-7 p-0 p-lg-2"></h2>
               <ul className="list-unstyled mb-6 d-flex flex-column gap-3 gap-lg-6 ">
                 {hotArticleData
                   .slice((currentPage - 1) * 3, (currentPage - 1) * 3 + 3)
                   .map((hotArticleDataItem) => {
                     return (
-                      <li className="hot-article-card">
+                      <li
+                        className="hot-article-card"
+                        key={hotArticleDataItem.id}
+                      >
                         <Link
                           to={`/article/${hotArticleDataItem.id}`}
                           className="card border-0 gap-1 gap-lg-2"
