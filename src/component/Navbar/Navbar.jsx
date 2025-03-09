@@ -151,7 +151,6 @@ const Navbar = () => {
                         </li>
                         <li>
                           <Link to="/admin" className="dropdown-item py-3 px-5">會員中心</Link>
-                          <Link to="/admin" className="dropdown-item py-3 px-5">會員中心</Link>
                         </li>
                         <li>
                           <button onClick={logoutHandle} className="dropdown-item py-3 px-5">
