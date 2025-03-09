@@ -1,7 +1,32 @@
+.modal-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+    z-index: 10000;
+  }
+  
+  .modal-container.show {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .modal-content {
+    transition: transform 0.5s ease-in-out;
+    transform: translateY(-20px);
+  }
+  
+  .modal-container.show .modal-content {
+    transform: translateY(0);
+  }
+  
+
 .login{
     background-color: $secondary;
     position: relative;
-    height: 100vh;
     overflow: hidden;
     background-image: url('/src/assets/images/AccessPage/img-access.png');
     background-size: 50%;

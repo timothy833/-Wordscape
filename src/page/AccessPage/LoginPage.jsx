@@ -32,6 +32,15 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
         };
       }, [isAuthorized, navigate, error, dispatch]);
 
+
+    useEffect(()=>{
+        if (!show) {
+            setTimeout(() => {
+                setIsForgot(false);
+              }, 1000);
+        }
+    },[show]);
+
     const resetEmailInputChange = (e) => {
         const { name, value } = e.target;
         setResetEmail({
@@ -110,10 +119,10 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
     }
     
     const guideToSignupHandle = () =>{
+        setIsForgot(false);
         handleShowSignupModal();
         handleClose();
     }
-    if (!show) return null; // 不顯示時直接返回null
 
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
@@ -138,135 +147,132 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
     };
 
     return (
-        <div 
-        className="position-fixed top-0 start-0 w-100 h-100" 
-        style={{ 
-            zIndex: 1050, 
-            backgroundColor: 'white',
-            overflow: 'auto'
-        }}>
-        <div className="login vh-100 position-relative">
-            <div className="container-fluid h-100">
-                <div className="row h-100 w-100 justify-content-center">
-                    {/* 左側區域 */}
-                    <div className="d-none flex-column  d-lg-flex col-md-4 ps-5" style={{ marginTop: '25vh' }}>
-                        <div className="h1 fw-bold mb-3 text-dark">歡迎回來！</div>
-                        <div className="fs-3 fw-normal mb-4 text-dark">立即探索更多精彩內容</div>
-                        <div className="d-flex flex-column">
-                            <div className="h6 fw-light mb-3">還沒有帳戶嗎？</div>
-                            <a onClick={guideToSignupHandle} href="#" className="h6 text-primary fw-bold mb-0">立即註冊</a>
-                        </div>
-                    </div>
-                    
-                    {/* 右側區域 */}
-                    {isForgot ? (
-                         <div className="col-md-4 d-flex align-items-center h-100 position-relative">
-                         <div className="card shadow-lg rounded-4 border-0 w-100 bg-white login-card mx-5">
-                             <div className="card-body">
-                                <form id="signupForm" noValidate onSubmit={forgotPassword}>
-                                    <button type="button" className="btn-close login-btn-close" 
-                                    onClick={()=>{
-                                        handleClose();
-                                        setResetEmail({ email: "" });
-                                        setFormErrors({});
-                                    }} 
-                                        aria-label="Close">
-                                    </button>
-                                    <h5 className="card-title fs-6 fw-normal mb-5">重新設定您的密碼</h5>
-                                    <p className='fw-light mb-3'> 輸入註冊使用的 email，我們將寄送設定連結給您。</p>
-                                    <div className="form-floating mb-5">
-                                        <input 
-                                        type="email" 
-                                        className={`form-control border-0 ${validated && formErrors.email ? "is-invalid" : ""}`}
-                                        id="resetEmail"
-                                        name="email"
-                                        value={resetEmail.email}
-                                        placeholder="name@example.com"
-                                        onChange={resetEmailInputChange}
-                                        />
-                                        <label htmlFor="resetEmail">Email address</label>
-                                        <div className="invalid-feedback">{formErrors.email}</div>
-                                    </div>
-                                    <div className="d-grid">
-                                        <button type="submit" className="btn btn-primary py-3 mb-5">送出</button>
-                                    </div>
-                                 </form>
-                                 <div className="text-center my-5">
-                                     <a onClick={returnLoginHandle} href='#' className="text-gray small">返回</a>
-                                 </div>
-                             </div>
-                         </div>
-                     </div>
-                    ):(
-                    <div className="col-md-4 d-flex align-items-center h-100 position-relative">
-                        <div className="card shadow-lg rounded-4 border-0 w-100 bg-white login-card mx-5">
-                            <div className="card-body">
-                                <form id="signupForm" noValidate onSubmit={loginHandle}>
-                                    <button type="button" className="btn-close login-btn-close" 
-                                    onClick={()=>{
-                                        handleClose();
-                                        setFormData({ email: "", password: ""});
-                                        setFormErrors({});
-                                    }} 
-                                        aria-label="Close">
-                                    </button>
-                                    <h5 className="card-title fs-5 fw-normal mb-10">登入帳戶</h5>
-                                    <div className="form-floating mb-10">
-                                        <input 
-                                        type="email" 
-                                        className={`form-control border-0 ${validated && formErrors.email ? "is-invalid" : ""}`}
-                                        id="loginEmail"
-                                        name="email"
-                                        value={formData.email}
-                                        placeholder="name@example.com"
-                                        onChange={formInputChange}
-                                        />
-                                        <label htmlFor="loginEmail">Email address</label>
-                                        <div className="invalid-feedback">{formErrors.email}</div>
-                                    </div>
-                                    <div className="form-floating mb-3">
-                                        <input 
-                                        type="password" 
-                                        className={`form-control border-0 ${validated && formErrors.password ? "is-invalid" : ""}`}
-                                        id="loginPassword"
-                                        name="password"
-                                        value={formData.password} 
-                                        placeholder="Password"
-                                        onChange={formInputChange}
-                                        />
-                                        <label htmlFor="loginPassword">Password</label>
-                                        <div className="invalid-feedback">{formErrors.password}</div>
-                                    </div>
-                                    <div className="d-flex justify-content-end mb-10">
-                                        <a onClick={forgotPasswordHandle} href="#" className="text-gray small">忘記密碼</a>
-                                    </div>
-                                    <div className="d-grid">
-                                        <button type="submit" className="btn btn-primary py-3 mb-10">登入</button>
-                                    </div>
-                                </form>
-                                <div className="text-center my-5">
-                                    <span className="text-gray fw-light">或以其他平台登入</span>
-                                </div>
-                                <div className="d-flex justify-content-center gap-5">
-                                    <a href="#" target="_blank">
-                                    <img src="/src/assets/images/AccessPage/Facebook-icon.png" width="40px" height="40px" alt="facebook-login" />
-                                    </a>
-                                    <a href="#" target="_blank">
-                                        <img src="/src/assets/images/AccessPage/Apple-icon.png" width="40px" height="40px" alt="apple-login" />
-                                    </a>
-                                    <a href="#" target="_blank">
-                                        <img src="/src/assets/images/AccessPage/Google-icon.png" width="40px" height="40px" alt="google-login" />
-                                    </a>
+        <div className={`modal-container ${show ? "show" : ""} w-100 h-100`}>
+            <div 
+            className="modal-content h-100">
+                <div className="login position-relative h-100">
+                    <div className="container-fluid h-100">
+                        <div className="row h-100 w-100 justify-content-center">
+                            {/* 左側區域 */}
+                            <div className="d-none flex-column  d-lg-flex col-md-4 ps-5" style={{ marginTop: '25vh' }}>
+                                <div className="h1 fw-bold mb-3 text-dark">歡迎回來！</div>
+                                <div className="fs-3 fw-normal mb-4 text-dark">立即探索更多精彩內容</div>
+                                <div className="d-flex flex-column">
+                                    <div className="h6 fw-light mb-3">還沒有帳戶嗎？</div>
+                                    <a onClick={guideToSignupHandle} href="#" className="h6 text-primary fw-bold mb-0">立即註冊</a>
                                 </div>
                             </div>
+                            
+                            {/* 右側區域 */}
+                            {isForgot ? (
+                                <div className="col-md-4 d-flex align-items-center h-100 position-relative">
+                                <div className="card shadow-lg rounded-4 border-0 w-100 bg-white login-card mx-5">
+                                    <div className="card-body">
+                                        <form id="signupForm" noValidate onSubmit={forgotPassword}>
+                                            <button type="button" className="btn-close login-btn-close" 
+                                            onClick={()=>{
+                                                handleClose();
+                                                setResetEmail({ email: "" });
+                                                setFormErrors({});
+                                            }} 
+                                                aria-label="Close">
+                                            </button>
+                                            <h5 className="card-title fs-6 fw-normal mb-5">重新設定您的密碼</h5>
+                                            <p className='fw-light mb-3'> 輸入註冊使用的 email，我們將寄送設定連結給您。</p>
+                                            <div className="form-floating mb-5">
+                                                <input 
+                                                type="email" 
+                                                className={`form-control border-0 ${validated && formErrors.email ? "is-invalid" : ""}`}
+                                                id="resetEmail"
+                                                name="email"
+                                                value={resetEmail.email}
+                                                placeholder="name@example.com"
+                                                onChange={resetEmailInputChange}
+                                                />
+                                                <label htmlFor="resetEmail">Email address</label>
+                                                <div className="invalid-feedback">{formErrors.email}</div>
+                                            </div>
+                                            <div className="d-grid">
+                                                <button type="submit" className="btn btn-primary py-3 mb-5">送出</button>
+                                            </div>
+                                        </form>
+                                        <div className="text-center my-5">
+                                            <a onClick={returnLoginHandle} href='#' className="text-gray small">返回</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            ):(
+                            <div className="col-md-4 d-flex align-items-center h-100 position-relative">
+                                <div className="card shadow-lg rounded-4 border-0 w-100 bg-white login-card mx-5">
+                                    <div className="card-body">
+                                        <form id="signupForm" noValidate onSubmit={loginHandle}>
+                                            <button type="button" className="btn-close login-btn-close" 
+                                            onClick={()=>{
+                                                handleClose();
+                                                setFormData({ email: "", password: ""});
+                                                setFormErrors({});
+                                            }} 
+                                                aria-label="Close">
+                                            </button>
+                                            <h5 className="card-title fs-5 fw-normal mb-10">登入帳戶</h5>
+                                            <div className="form-floating mb-10">
+                                                <input 
+                                                type="email" 
+                                                className={`form-control border-0 ${validated && formErrors.email ? "is-invalid" : ""}`}
+                                                id="loginEmail"
+                                                name="email"
+                                                value={formData.email}
+                                                placeholder="name@example.com"
+                                                onChange={formInputChange}
+                                                />
+                                                <label htmlFor="loginEmail">Email address</label>
+                                                <div className="invalid-feedback">{formErrors.email}</div>
+                                            </div>
+                                            <div className="form-floating mb-3">
+                                                <input 
+                                                type="password" 
+                                                className={`form-control border-0 ${validated && formErrors.password ? "is-invalid" : ""}`}
+                                                id="loginPassword"
+                                                name="password"
+                                                value={formData.password} 
+                                                placeholder="Password"
+                                                onChange={formInputChange}
+                                                />
+                                                <label htmlFor="loginPassword">Password</label>
+                                                <div className="invalid-feedback">{formErrors.password}</div>
+                                            </div>
+                                            <div className="d-flex justify-content-end mb-10">
+                                                <a onClick={forgotPasswordHandle} href="#" className="text-gray small">忘記密碼</a>
+                                            </div>
+                                            <div className="d-grid">
+                                                <button type="submit" className="btn btn-primary py-3 mb-10">登入</button>
+                                            </div>
+                                        </form>
+                                        <div className="text-center my-5">
+                                            <span className="text-gray fw-light">或以其他平台登入</span>
+                                        </div>
+                                        <div className="d-flex justify-content-center gap-5">
+                                            <a href="#" target="_blank">
+                                            <img src="/src/assets/images/AccessPage/Facebook-icon.png" width="40px" height="40px" alt="facebook-login" />
+                                            </a>
+                                            <a href="#" target="_blank">
+                                                <img src="/src/assets/images/AccessPage/Apple-icon.png" width="40px" height="40px" alt="apple-login" />
+                                            </a>
+                                            <a href="#" target="_blank">
+                                                <img src="/src/assets/images/AccessPage/Google-icon.png" width="40px" height="40px" alt="google-login" />
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                         </div>
                     </div>
-                )}
+                    <div className="pattern-container">
+                    </div>
                 </div>
             </div>
-            <div className="pattern-container">
-            </div>
-        </div>
         </div>
     );
 };

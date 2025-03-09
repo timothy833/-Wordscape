@@ -28,6 +28,7 @@ const Navbar = () => {
      dispatch(logout());
      console.log("logout",isAuthorized);
   };
+
   const navigate = useNavigate();
   useEffect(() => {
     if (isAuthorized === false) {
