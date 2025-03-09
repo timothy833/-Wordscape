@@ -27,7 +27,7 @@ const ArticleListPage = () => {
       console.log(error);
     }
   };
-  
+
   const getAllArticleData = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/full`);
@@ -414,9 +414,6 @@ const ArticleListPage = () => {
                 })}
               </select>
             </div>
-            <button className="btn btn-lg btn-primary fw-bold lh-sm">
-              新增文章
-            </button>
           </div>
           <ul className="list-unstyled d-flex flex-column gap-5 px-4 px-lg-0">
             {articleListData
