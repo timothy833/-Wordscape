@@ -17,8 +17,8 @@ function getTokenFromCookie() {
 // 初始 token
 const initialToken = getTokenFromCookie();
 if (initialToken) {
-  axios.defaults.headers.common.Authorization = `${initialToken}`;
-  console.log('初始化 token 成功');
+  axios.defaults.headers.common.Authorization = `Bearer ${initialToken}`;
+  console.log('初始化 token 成功', initialToken);
 };
 
 export const login = createAsyncThunk(
@@ -60,31 +60,48 @@ export const login = createAsyncThunk(
 
 export const logout = createAsyncThunk(
   'auth/logout',
-  async () => {
+  async (_, { getState, rejectWithValue }) => {
     console.log('logout');
     try{
+      const token = getState().auth.token;
+      if (!token) {
+        return rejectWithValue('沒有可用的 token，無法登出');
+      }
       const url = `${VITE_API_BASE_URL}/users/logout`;
       const logoutRes = await axios.post(url,{},{
         headers:{
-          'Authorization': `Bearer ${initialToken}`
+          'Authorization': `Bearer ${token}`
         }
       });
       
       console.log('logout',logoutRes);
-      
-      if(logoutRes.status == 200){
+
+      if (logoutRes.status === 200) {
+        // 成功登出，清除數據
         document.cookie = "WS_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         delete axios.defaults.headers.common["Authorization"];
         localStorage.removeItem('WS_id');
         localStorage.removeItem('WS_username');
-      };
-      alert(logoutRes.data.message);
-    
+        
+        alert(logoutRes.data.message || '登出成功');
+        return { success: true };
+      } else {
+        // 不是 200 狀態碼，視為失敗
+        alert('登出失敗，請稍後再試');
+        return rejectWithValue('伺服器回應非成功狀態');
+      }
         
     }catch(error){
-        console.log('error in logout', error.response?.data || error.message);
+      console.log('error in logout', error.response?.data || error.message);
+      
+      if (error.code === 'ECONNABORTED') {
+        alert('登出請求超時，請檢查網絡連接並稍後再試');
+      } else {
+        alert('登出失敗：' + (error.response?.data?.message || '請稍後再試'));
+      }
+      
+      return rejectWithValue(error.response?.data || error.message);
     };
-    return null;
   }
 );
 
@@ -93,10 +110,20 @@ export const initializeAuth = () => (dispatch) => {
   
   const id = localStorage.getItem('WS_id');
   const username = localStorage.getItem('WS_username');
+  const token = getTokenFromCookie();
   
-  if (id && username) {
+  if (id && username && token) {
     dispatch(setUserInfo({ id, username }));
+    dispatch(updateToken(token)); // 更新 token
   }
+};
+
+export const updateToken = (token) => (dispatch) => {
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+  dispatch({
+    type: 'auth/updateToken',
+    payload: token
+  });
 };
 
 export const authSlice = createSlice({
@@ -106,8 +133,8 @@ export const authSlice = createSlice({
     isAuthorized: !!initialToken,
     loading: false,
     error: null,
-    id: localStorage.getItem('WS_id') || null,
-    username: localStorage.getItem('WS_username') || null,
+    id: null,
+    username:null,
   },reducers: {
     clearError: (state) => {
       state.error = null;
@@ -116,7 +143,7 @@ export const authSlice = createSlice({
       const { id, username } = action.payload;
       state.id = id;
       state.username = username;
-      state.isAuthorized = true;
+      state.isAuthorized = !!id;
     }
   },
   extraReducers: (builder) => {

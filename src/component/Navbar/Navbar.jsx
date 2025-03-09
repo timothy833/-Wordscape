@@ -26,8 +26,18 @@ const Navbar = () => {
   
   const logoutHandle = () => {
      dispatch(logout());
+     console.log("logout",isAuthorized);
   };
 
+  useEffect(() => {
+    // if (isAuthorized === false) {
+  //     // 登出成功後跳轉到首頁
+      // window.location.href = '/';  // 或者使用 React Router 的 navigate
+    // }
+  console.log(isAuthorized);
+  }, [isAuthorized]);
+
+  // Collapse
   useEffect(() => {
     const handleDocumentClick = (e) => {
       const isSearchCollapse = document.getElementById('collapseSearch');
@@ -49,6 +59,22 @@ const Navbar = () => {
     document.addEventListener('click', handleDocumentClick)
     return () => document.removeEventListener('click', handleDocumentClick)
   }, [])
+
+  // Search
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      console.log('搜尋:', searchQuery);
+      if(searchQuery==""){
+        alert("請輸入搜尋文字")
+      }else{
+
+    }
+      // 執行搜尋邏輯
+    }
+  };
   
 
   return (
@@ -83,6 +109,9 @@ const Navbar = () => {
                   <input
                     type="text"
                     className="search-bar form-control ps-11 fs-8 rounded"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={handleKeyDown}
                     placeholder="搜尋..."
                   />
                 </div>
