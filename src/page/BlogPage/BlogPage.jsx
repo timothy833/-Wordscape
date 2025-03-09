@@ -36,9 +36,9 @@ const BlogPage = () => {
         </ul>
       )}
       
-      <button className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newPostModal"  >
+      {/* <button className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newPostModal"  >
         新增文章
-      </button>
+      </button> */}
 
       <NewPostModal  />
     </div>

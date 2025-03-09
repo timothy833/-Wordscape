@@ -3,7 +3,7 @@ import { Pagination, Navigation } from "swiper/modules";
 import ArticleCard from "../../component/ArticleCard/ArticleCard";
 import CommentBox from "../../component/CommentBox/CommentBox";
 import CommentReply from "../../component/CommentReply/CommentReply";
-import Footer from "../../component/Footer/Footer";
+// import Footer from "../../component/Footer/Footer";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -22,7 +22,7 @@ const ArticlePage = () => {
   const [isSubscribed, setIsSubscribed] = useState(null);
   const [commentInput, setCommentInput] = useState("");
   axios.defaults.headers.common["Authorization"] =
-    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJjMTEzMGE1LThkZWQtNDU1NC1iN2I2LWZhMGRiN2RmZDJhZSIsInVzZXJuYW1lIjoic21hbGxQaWdneSIsImlhdCI6MTc0MTE2MDcxNiwiZXhwIjoxNzQxMTY0MzE2fQ.gPWyG8RMYt_O13VDKYAOz0ozpQDdeGahJ1ty_-V1AlI";
+    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRjNTc2MDk4LWRjMjYtNDZhNC1hZWRlLTZiYzVjOGYzMDBlYSIsInVzZXJuYW1lIjoidGltbyIsImlhdCI6MTc0MTI0ODIwMSwiZXhwIjoxNzQxMjUxODAxfQ.g89BR2IWcRY4oFX5J70C5ElaK_Z0bEs2aX1_cS9j16k";
   const getArticle = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/${articleId}`);

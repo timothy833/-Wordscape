@@ -30,7 +30,7 @@ const router = [
         element: <ArticlePage />,
       },
       {
-        path: "/blog",
+        path: "/blog/:user_id",
         element: <BlogHome />,
       },
       {

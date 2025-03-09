@@ -5,7 +5,7 @@ import Marquee from "react-fast-marquee";
 import "swiper/scss/pagination";
 import "swiper/css/navigation";
 import "swiper/css/autoplay";
-import Footer from "../../component/Footer/Footer";
+// import Footer from "../../component/Footer/Footer";
 import ReviewCard from "../../component/ReviewCard/ReviewCard";
 import ArticleCard from "../../component/ArticleCard/ArticleCard";
 import banner_1 from "../../assets/images/banner/banner-1.png";
