@@ -8,6 +8,8 @@ import axios from "axios";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ArticleListPage = () => {
+  const { isAuthorized, id: userId } = useSelector((state) => state.auth);
+
   const [categoriesData, setCategoriesData] = useState(null);
   const [hotArticleData, setHotArticleData] = useState([]);
   const [recommendArticleData, setRecommendArticleData] = useState([]);
@@ -27,9 +29,9 @@ const ArticleListPage = () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/full`);
       setHotArticleData(
-        res.data.data.slice(0,100).filter(
-          (articleDataItem) => articleDataItem.views_count > 5
-        )
+        res.data.data
+          .slice(0, 100)
+          .filter((articleDataItem) => articleDataItem.views_count > 5)
       );
     } catch (error) {
       console.log(error);
@@ -149,7 +151,10 @@ const ArticleListPage = () => {
                   .map((hotArticleDataItem) => {
                     return (
                       <li className="hot-article-card">
-                        <Link to={`/article/${hotArticleDataItem.id}`} className="card border-0 gap-1 gap-lg-2">
+                        <Link
+                          to={`/article/${hotArticleDataItem.id}`}
+                          className="card border-0 gap-1 gap-lg-2"
+                        >
                           <img
                             src={
                               hotArticleDataItem.image_url ||
@@ -411,23 +416,25 @@ const ArticleListPage = () => {
                               chat_bubble
                             </span>
                           </span>
-                          <a
-                            href="#"
-                            className={`material-symbols-outlined ${
-                              favorite.some(
-                                (favoriteItem) =>
-                                  favoriteItem.id === articleListDataItem.id
-                              )
-                                ? "text-primary"
-                                : "text-gray"
-                            } ms-2 pb-1 icon-fill`}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              postFavorites(articleListDataItem.id);
-                            }}
-                          >
-                            bookmark
-                          </a>
+                          {isAuthorized && (
+                            <a
+                              href="#"
+                              className={`material-symbols-outlined ${
+                                favorite.some(
+                                  (favoriteItem) =>
+                                    favoriteItem.id === articleListDataItem.id
+                                )
+                                  ? "text-primary"
+                                  : "text-gray"
+                              } ms-2 pb-1 icon-fill`}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                postFavorites(articleListDataItem.id);
+                              }}
+                            >
+                              bookmark
+                            </a>
+                          )}
                         </div>
                       </div>
                       <img
