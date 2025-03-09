@@ -27,8 +27,8 @@ const ArticleListPage = () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/full`);
       setHotArticleData(
-        res.data.data.filter(
-          (articleDataItem) => articleDataItem.views_count > 10
+        res.data.data.slice(0,100).filter(
+          (articleDataItem) => articleDataItem.views_count > 5
         )
       );
     } catch (error) {
@@ -149,7 +149,7 @@ const ArticleListPage = () => {
                   .map((hotArticleDataItem) => {
                     return (
                       <li className="hot-article-card">
-                        <a href="#" className="card border-0 gap-1 gap-lg-2">
+                        <Link to={`/article/${hotArticleDataItem.id}`} className="card border-0 gap-1 gap-lg-2">
                           <img
                             src={
                               hotArticleDataItem.image_url ||
@@ -172,7 +172,7 @@ const ArticleListPage = () => {
                             </span>
                             <span>{hotArticleDataItem.category_name}</span>
                           </div>
-                        </a>
+                        </Link>
                       </li>
                     );
                   })}
@@ -307,8 +307,8 @@ const ArticleListPage = () => {
                         key={recommendArticleDataItem.id}
                         className="recommend-article-card bg-light rounded-2 border-bottom border-2 border-lg-4 border-primary"
                       >
-                        <a
-                          href="#"
+                        <Link
+                          to={`/article/${recommendArticleDataItem.id}`}
                           className="d-flex py-4 px-5 py-lg-7 px-lg-9"
                         >
                           <img
@@ -334,7 +334,7 @@ const ArticleListPage = () => {
                               {recommendArticleDataItem.description}
                             </p>
                           </div>
-                        </a>
+                        </Link>
                       </li>
                     );
                   })}
