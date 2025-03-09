@@ -5,9 +5,9 @@ import Marquee from "react-fast-marquee";
 import "swiper/scss/pagination";
 import "swiper/css/navigation";
 import "swiper/css/autoplay";
-// import Footer from "../../component/Footer/Footer";
 import ReviewCard from "../../component/ReviewCard/ReviewCard";
 import ArticleCard from "../../component/ArticleCard/ArticleCard";
+import { Link } from "react-router-dom";
 import banner_1 from "../../assets/images/banner/banner-1.png";
 import banner_2 from "../../assets/images/banner/banner-2.png";
 import banner_3 from "../../assets/images/banner/banner-3.png";
@@ -219,12 +219,11 @@ const HomePage = () => {
               </SwiperSlide>
             </Swiper>
           </div>
-          <button
-            type="button"
+          <Link to="/articleList" 
             className="btn btn-lg btn-primary lh-sm mx-auto hover-shadow"
           >
             點我看更多
-          </button>
+          </Link>
         </div>
       </section>
       <section className="homepage-section bg-secondary">
