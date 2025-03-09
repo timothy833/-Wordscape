@@ -139,7 +139,6 @@ const ArticlePage = () => {
   //判斷訂閱需要取得articleData中作者的資料，用useEffect確保setState的值正確取得
   useEffect(() => {
     if (articleData) {
-      checkIsSubscribed();
       getAutherData();
     }
   }, [articleData]);
@@ -147,6 +146,7 @@ const ArticlePage = () => {
     if (isAuthorized) {
       checkIsLikeArticle();
       checkIsFavorites();
+      checkIsSubscribed();
     } else if (!isAuthorized) {
       setIsLike(null);
       setIsFavorite(false);
@@ -278,6 +278,7 @@ const ArticlePage = () => {
                 commentData={commentItem}
                 articleId={articleId}
                 getComment={getComment}
+                isAuthorized={isAuthorized}
                 isAuther={commentItem.user_id === articleData?.user_id}
                 isCurrentUser={commentItem.user_id === userId}
                 hasReplie={commentItem.replies.some(
@@ -290,6 +291,7 @@ const ArticlePage = () => {
                       key={replieItem.id}
                       loginUserId={userId}
                       commentData={replieItem}
+                      isAuthorized={isAuthorized}
                       getComment={getComment}
                       isAuther={replieItem.user_id === articleData?.user_id}
                       isCurrentUser={replieItem.user_id === userId}
@@ -300,6 +302,7 @@ const ArticlePage = () => {
             );
           })}
           <form
+            className={`${!isAuthorized && 'd-none'}`}
             onSubmit={(e) => {
               e.preventDefault();
               isAuthorized ? postComment() : alert("請先登入");

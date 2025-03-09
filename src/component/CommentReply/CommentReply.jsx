@@ -8,7 +8,8 @@ const CommentReply = ({
   isAuther,
   isCurrentUser,
   getComment,
-  loginUserId
+  loginUserId,
+  isAuthorized
 }) => {
   const [commentLikeData, setCommentLikeData] = useState(null);
   const [currentComment, setCurrentComment] = useState(commentData.content);
@@ -92,7 +93,7 @@ const CommentReply = ({
             } gap-1`}
             onClick={(e) => {
               e.preventDefault();
-              postCommentLike();
+              isAuthorized ? postCommentLike() : alert("請先登入");
             }}
           >
             <span className="material-symbols-outlined icon-fill fs-6">

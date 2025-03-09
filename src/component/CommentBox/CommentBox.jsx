@@ -13,6 +13,7 @@ const CommentBox = ({
   isAuther,
   hasReplie,
   isCurrentUser,
+  isAuthorized
 }) => {
   const [commentLikeData, setCommentLikeData] = useState(null);
   const [isReviewOpen, setIsReviewOpen] = useState(false);
@@ -43,7 +44,7 @@ const CommentBox = ({
   const postReviewComment = async () => {
     try {
       if(commentData?.id){
-        const res = await axios.post(`${API_BASE_URL}/comments`, {
+        await axios.post(`${API_BASE_URL}/comments`, {
           post_id: articleId,
           parent_comment_id: commentData.id,
           content: review,
@@ -147,7 +148,7 @@ const CommentBox = ({
             } gap-1`}
             onClick={(e) => {
               e.preventDefault();
-              postCommentLike();
+              isAuthorized ? postCommentLike() : alert("請先登入");
             }}
           >
             <span className="material-symbols-outlined icon-fill fs-6">
@@ -162,7 +163,7 @@ const CommentBox = ({
             } gap-1`}
             onClick={(e) => {
               e.preventDefault();
-              setIsReviewOpen(!isReviewOpen);
+              isAuthorized ? setIsReviewOpen(!isReviewOpen) : alert("請先登入");
             }}
           >
             <span className="material-symbols-outlined icon-fill fs-6">
@@ -213,7 +214,7 @@ const CommentBox = ({
             className="text-gray"
             onClick={(e) => {
               e.preventDefault();
-              setIsReviewOpen(!isReviewOpen);
+              isAuthorized ? setIsReviewOpen(!isReviewOpen) : alert("請先登入");
             }}
           >
             回覆
