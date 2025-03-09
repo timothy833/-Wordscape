@@ -149,7 +149,7 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
             <div className="container-fluid h-100">
                 <div className="row h-100 w-100 justify-content-center">
                     {/* 左側區域 */}
-                    <div className="d-none d-lg-flex col-md-4 ps-5" style={{ marginTop: '25vh' }}>
+                    <div className="d-none flex-column  d-lg-flex col-md-4 ps-5" style={{ marginTop: '25vh' }}>
                         <div className="h1 fw-bold mb-3 text-dark">歡迎回來！</div>
                         <div className="fs-3 fw-normal mb-4 text-dark">立即探索更多精彩內容</div>
                         <div className="d-flex flex-column">
