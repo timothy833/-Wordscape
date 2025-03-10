@@ -5,6 +5,7 @@ import "quill/dist/quill.snow.css"; // ✅ Quill 樣式
 // import "highlight.js/styles/github.css"; // ✅ 確保 Syntax 高亮樣式可用
 import axios from "axios";
 import { Modal } from "bootstrap";
+import PropTypes from "prop-types";
 
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -19,14 +20,19 @@ const getCookie = (name) => {
 
 
   
-const NewPostModal = ()=> {
+const NewPostModal = ({ getBlogArticle })=> {
     const [token , setToken] =useState("");
     const [title, setTitle] = useState("");
-    const [categoryId, setCategoryId] = useState(""); // ✅ 分類
     const [imagePreview, setImagePreview] = useState(null); // ✅ 預覽圖片
     const [externalImage, setExternalImage] = useState(""); // ✅ 外部圖片 URL（手動輸入）
     const [selectedFile, setSelectedFile] = useState(null); // ✅ 暫存本地選擇的圖片
     const [content, setContent] = useState(""); // ✅ 確保 Quill 內容被更新
+    const [tag, setTag] = useState(""); //儲存輸入新增tag標籤
+    const [tags, setTags] =  useState([]); //暫存新增文章 tag 列表
+    const [categories, setCategories] = useState([]); //存分類列表
+    const [categoryId, setCategoryId] = useState(""); // ✅ 當前選擇分類
+    const [description, setDescription] = useState("");//設定文章簡介
+    
 
     const editorRef = useRef(null);
     const fileInputRef = useRef(null); // ✅ 用來清空 file input
@@ -37,7 +43,7 @@ const NewPostModal = ()=> {
 
     //在元件載入時讀取token
     useEffect(()=>{
-        const storedToken = getCookie("Wordscape");
+        const storedToken = getCookie("WS_token");
         setToken(storedToken);
     }, []);
 
@@ -60,6 +66,7 @@ const NewPostModal = ()=> {
     }, []); 
 
 
+    //初始化Quill工具內容
     useEffect(() => {
         if (!editorRef.current) return;
         quillInstance.current = new Quill(editorRef.current, {
@@ -83,6 +90,43 @@ const NewPostModal = ()=> {
         });
     }, []);
 
+    //初始化載入分類列表
+    useEffect(()=>{
+        const fetchCategories = async ()=>{
+            try {
+                const res = await axios.get(`${API_BASE_URL}/categories`);
+                setCategories(res.data.data || []); //設定分類資料
+            } catch (error) {
+                console.log("載入分類失敗", error);
+            }
+        }
+
+        fetchCategories();
+    }, [])
+
+    // 選擇分類
+    const handleCategoryChange = (e) => {
+        setCategoryId(e.target.value);
+    };
+
+
+    //處理輸入框tag狀態儲存
+    const handleTagChange = (e) => {
+        setTag(e.target.value);
+    }
+
+    //新增標籤(不發API，只存到`useState`)
+    const handleAddTag = ()=> {
+        if (!tag.trim() || tags.includes(tag.trim())) return; //避免空標籤或重複
+        setTags([...tags, tag.trim()]);//加到`useState`
+        setTag(""); //清空輸入框
+    }
+
+    //刪除標籤
+    const handleDeleteTag = (tagName) =>{
+        setTags( tags.filter((t)=> t !== tagName)); //從useState刪除
+    }
+
 
     // ✅ **手動關閉 Modal，清空所有輸入資料**
     const handleClose = () => {
@@ -91,6 +135,9 @@ const NewPostModal = ()=> {
         setImagePreview(null); 
         setExternalImage(""); 
         setSelectedFile(null);
+        setTag("");
+        setTags([]);
+        setDescription("");
             
         // // ✅ 清空 Quill 內容
         if (quillInstance.current) {
@@ -147,32 +194,28 @@ const NewPostModal = ()=> {
         }
     };
 
-    // 選擇分類
-    const handleCategoryChange = (e) => {
-        setCategoryId(e.target.value);
-    };
+  
 
+    // const checkOrCreateCategory = async (name) => {
+    //     try {
+    //         if (!name.trim()) return null; // ✅ 無輸入則直接回傳 null
 
-    const checkOrCreateCategory = async (name) => {
-        try {
-            if (!name.trim()) return null; // ✅ 無輸入則直接回傳 null
+    //         // 1️⃣ **先查詢分類是否存在**
+    //         const res = await axios.get(`${API_BASE_URL}/categories/get-category/`,  {
+    //             params: { name }
+    //           });
+    //         if (res.data.data) return res.data.data.id; // ✅ 若已存在，回傳分類 UUID
 
-            // 1️⃣ **先查詢分類是否存在**
-            const res = await axios.get(`${API_BASE_URL}/categories/get-category/`,  {
-                params: { name }
-              });
-            if (res.data.data) return res.data.data.id; // ✅ 若已存在，回傳分類 UUID
-
-            // 2️⃣ **若不存在，則建立分類**
-            const createRes = await axios.post(`${API_BASE_URL}/categories`, { name }, { 
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            return createRes.data.data.id;
-        } catch (error) {
-            console.error("分類查詢或建立失敗", error);
-            return null;
-        }
-    };
+    //         // 2️⃣ **若不存在，則建立分類**
+    //         const createRes = await axios.post(`${API_BASE_URL}/categories`, { name }, { 
+    //             headers: { Authorization: `Bearer ${token}` }
+    //         });
+    //         return createRes.data.data.id;
+    //     } catch (error) {
+    //         console.error("分類查詢或建立失敗", error);
+    //         return null;
+    //     }
+    // };
  
     //監聽quill輸入內容變化
     // useEffect(() => {
@@ -192,7 +235,7 @@ const NewPostModal = ()=> {
             // 1️⃣ **上傳封面圖到 R2（如果有選擇本地圖片）**
             let uploadFinalImage = selectedFile ? await uploadImageToR2() : externalImage;
 
-            const finalCategoryId = await checkOrCreateCategory(categoryId); // ✅ 確保分類存在，否則傳 `null`
+            // const finalCategoryId = await checkOrCreateCategory(categoryId); // ✅ 確保分類存在，否則傳 `null`
 
             // 創建一個臨時 `div` 來解析 HTML(Quill 內部 Base64 圖片)
             const tempDiv = document.createElement("div");
@@ -244,22 +287,39 @@ const NewPostModal = ()=> {
             }
 
              // 5️⃣ 送出文章資料
-            await axios.post(`${API_BASE_URL}/posts`, {
+           const  postResponse =  await axios.post(`${API_BASE_URL}/posts`, {
                 title,
                 content: tempDiv.innerHTML, // 內含已轉換的圖片 R2 URL
                 image_url: uploadFinalImage || "" , // R2 封面圖片 URL
-                category_id: finalCategoryId, // ✅ 增加分類
+                category_id: categoryId,// ✅ 增加分類
+                description,
                 status: "published"
             }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 }
             })
+
+            console.log(postResponse);
+            const newPostId = postResponse.data.data.id;
+
+            // 發送 API 把所有標籤加到文章**
+            if(tags.length > 0) {
+               const resTag =  await axios.post(`${API_BASE_URL}/posts/${newPostId}/tags`, { tags }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                });
+                console.log(resTag);
+            }
+            
             alert("文章發布成功");
             handleClose(); // 發布成功後，關閉 modal 並清空輸入內容
+            getBlogArticle();
+            
         } catch (error) {
             console.error("發布失敗", error);
-            handleClose(); // 發布成功後，關閉 modal 並清空輸入內容
+            handleClose(); //關閉 modal 並清空輸入內容
         }
     }
 
@@ -274,15 +334,61 @@ const NewPostModal = ()=> {
                         <button type="button" className="btn-close"  data-bs-dismiss="modal" aria-label="Close" onClick={ handleClose}></button>
                     </div>
                     <div className="modal-body">
-                        <label htmlFor="封面圖片" className="form-label">封面圖片</label>
-                        <input ref={fileInputRef} id="封面圖片" type="file" className="form-control mb-2" accept="image/*"  onChange={handleImageChange} />
-                        <input type="text" className="form-control mb-2" placeholder="輸入封面圖片 URL" value={externalImage} onChange={handleExternalImage} />
+                         <label htmlFor="封面圖片" className="form-label fw-medium">封面圖片</label>
+                        <div className="d-flex gap-2">
+                            <input ref={fileInputRef} id="封面圖片" type="file" className="form-control mb-2" accept="image/*"  onChange={handleImageChange} />
+                            <input type="text" className="form-control mb-2" placeholder="輸入封面圖片 URL" value={externalImage} onChange={handleExternalImage} />
+                        </div>
+                      
                         {imagePreview && <img src={imagePreview} alt="預覽圖片" className="img-fluid mb-3"/>}
+
                         <input type="text" className="form-control mb-2" placeholder="文章標題" value={title} onChange={(e)=> setTitle(e.target.value)} />
-                        <input type="text" className="form-control mb-2" placeholder="文章分類標籤" value={categoryId} onChange={ handleCategoryChange} />
+                        <input type="text" className="form-control mb-2" placeholder="文章簡介(少於100字)" value={description} onChange={(e)=> setDescription(e.target.value)} />
+
+                        <div className="d-flex gap-2">
+                            <div className="mb-2">
+                                <label className="form-label fw-medium">文章分類</label>
+                                {/* 下拉選單 */}
+                                <select className="form-select" value={categoryId} onChange={handleCategoryChange}>
+                                    <option value="" disabled>請選擇分類</option>
+                                    {categories.map((category)=>(
+                                        <option key={category.id} value={category.id}>
+                                            {category.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="mb-2">
+                                <label htmlFor="文章tag標籤"  className="form-label fw-medium">文章標籤</label>
+
+                                <div className="d-flex gap-2">
+                                    <input id="文章tag標籤" type="text" className="form-control mb-2"  placeholder="文章tag標籤" value={tag} onChange={handleTagChange} style={{width: "160px",}}/>
+                                    <button className="btn btn-primary mb-2" onClick={handleAddTag}>
+                                        新增標籤
+                                    </button>
+                                </div>
+
+                                {/* 顯示已新增的標籤 */}
+                                <div className="d-flex flex-wrap gap-2">
+                                    {tags.map((t)=>(
+                                        <span key={t} className="badge bg-secondary fw-medium text-muted border" style={{fontSize: "14px",}}>
+                                            {t}
+                                            <button className="btn btn-sm btn-danger ms-2" onClick={()=> handleDeleteTag(t)}>
+                                                x
+                                            </button>
+                                        </span>
+                                    ))}
+                                </div>
+                               
+
+                            </div>
+
+                        
+                        </div>
                                      
                         {/* ✅ 修正 Quill 工具列問題 */}
-                        <div  ref={editorRef}><div/>
+                        <div  ref={editorRef} ><div/>
                     </div>
                     </div>
                     <div className="modal-footer">
@@ -295,6 +401,9 @@ const NewPostModal = ()=> {
     )
 };
 
-
+NewPostModal.propTypes = {
+    getBlogArticle: PropTypes.func
+}
+  
 
 export default NewPostModal;

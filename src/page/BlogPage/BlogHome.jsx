@@ -119,6 +119,7 @@ const BlogHome = () => {
       console.error("取得blog文章列表失敗", error);
     }
   }
+
   //處理文章列表api 在元件載入時讀取token
   useEffect(()=>{
     const storedToken = getCookie("WS_token");
@@ -466,7 +467,7 @@ const BlogHome = () => {
         </div>
       </div>
 
-      <NewPostModal  />
+      <NewPostModal   getBlogArticle = {()=> getBlogArticle() }/>
     </>
   );
 };
