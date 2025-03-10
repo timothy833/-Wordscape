@@ -178,213 +178,232 @@ const ArticleListPage = () => {
         <div className="container">
           <div className="row">
             <div className="col-12 col-lg-7">
-              <h2 className="text-primary fs-6 fs-lg-3 fw-bold mb-3 mb-lg-7 p-0 p-lg-2"></h2>
-              <ul className="list-unstyled mb-6 d-flex flex-column gap-3 gap-lg-6 ">
-                {hotArticleData
-                  .slice((currentPage - 1) * 3, (currentPage - 1) * 3 + 3)
-                  .map((hotArticleDataItem) => {
-                    return (
-                      <li
-                        className="hot-article-card"
-                        key={hotArticleDataItem.id}
-                      >
-                        <Link
-                          to={`/article/${hotArticleDataItem.id}`}
-                          className="card border-0 gap-1 gap-lg-2"
-                        >
-                          <img
-                            src={
-                              hotArticleDataItem.image_url ||
-                              "https://github.com/wfox5510/wordSapce-imgRepo/blob/main/banner-1.png?raw=true"
-                            }
-                            className="card-img-top object-fit-cover"
-                            alt="..."
-                          />
-                          <div className="card-body p-0">
-                            <h3 className="card-title fw-bold text-truncate">
-                              {hotArticleDataItem.title}
-                            </h3>
-                            <p className="card-text text-truncate fs-9 fs-lg-8">
-                              {hotArticleDataItem.description}
-                            </p>
-                          </div>
-                          <div className="card-footer border-0 p-0 bg-light">
-                            <span className="me-2">
-                              {hotArticleDataItem.author_name} |
-                            </span>
-                            <span>{hotArticleDataItem.category_name}</span>
-                          </div>
-                        </Link>
-                      </li>
-                    );
-                  })}
-              </ul>
-              <nav className="d-none d-lg-block" aria-label="Page navigation">
-                <ul className="hot-article-pagination pagination justify-content-center gap-2 mb-0">
-                  <li className="page-item" disable="true">
-                    <a
-                      className={`page-link material-symbols-outlined p-0 ps-1 pt-1 rounded-1 ${
-                        currentPage === 1 && "disabled"
-                      }`}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setCurrentPage(currentPage - 1);
-                      }}
-                    >
-                      arrow_back_ios
-                    </a>
-                  </li>
-                  {Array.from({
-                    length: Math.ceil(hotArticleData.length / 3),
-                  }).map((item, index) => {
-                    const totalPage = Math.ceil(hotArticleData.length / 3);
-                    if (
-                      currentPage - index - 1 <= 2 &&
-                      currentPage - index - 1 >= -2
-                    )
-                      return (
-                        <li className="page-item" key={index}>
-                          <a
-                            className={`page-link rounded-1 p-0 ${
-                              currentPage === index + 1 && "active"
-                            }`}
-                            href="#"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              setCurrentPage(index + 1);
-                            }}
+              <h2 className="text-primary fs-6 fs-lg-3 fw-bold mb-3 mb-lg-7 p-0 p-lg-2">
+                熱門文章
+              </h2>
+              {hotArticleData.length === 0 ? (
+                <span className="fs-6 fw-bold text-gray">
+                  目前沒有相關的熱門文章
+                </span>
+              ) : (
+                <>
+                  <ul className="list-unstyled mb-6 d-flex flex-column gap-3 gap-lg-6 ">
+                    {hotArticleData
+                      .slice((currentPage - 1) * 3, (currentPage - 1) * 3 + 3)
+                      .map((hotArticleDataItem) => {
+                        return (
+                          <li
+                            className="hot-article-card"
+                            key={hotArticleDataItem.id}
                           >
-                            {index + 1}
-                          </a>
-                        </li>
-                      );
-                    else if (
-                      currentPage < totalPage - 2 &&
-                      index + 1 === totalPage
-                    )
-                      return (
-                        <Fragment key={index}>
-                          <li className="page-item">
-                            <a
-                              className={`page-link rounded-1 p-0`}
-                              href="#"
-                              onClick={(e) => {
-                                e.preventDefault();
-                              }}
+                            <Link
+                              to={`/article/${hotArticleDataItem.id}`}
+                              className="card border-0 gap-1 gap-lg-2"
                             >
-                              ...
-                            </a>
+                              <img
+                                src={
+                                  hotArticleDataItem.image_url ||
+                                  "https://github.com/wfox5510/wordSapce-imgRepo/blob/main/banner-1.png?raw=true"
+                                }
+                                className="card-img-top object-fit-cover"
+                                alt="..."
+                              />
+                              <div className="card-body p-0">
+                                <h3 className="card-title fw-bold text-truncate">
+                                  {hotArticleDataItem.title}
+                                </h3>
+                                <p className="card-text text-truncate fs-9 fs-lg-8">
+                                  {hotArticleDataItem.description}
+                                </p>
+                              </div>
+                              <div className="card-footer border-0 p-0 bg-light">
+                                <span className="me-2">
+                                  {hotArticleDataItem.author_name} |
+                                </span>
+                                <span>{hotArticleDataItem.category_name}</span>
+                              </div>
+                            </Link>
                           </li>
-                          <li className="page-item">
-                            <a
-                              className={`page-link rounded-1 p-0 ${
-                                currentPage === index + 1 && "active"
-                              }`}
-                              href="#"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                setCurrentPage(index + 1);
-                              }}
-                            >
-                              {index + 1}
-                            </a>
-                          </li>
-                        </Fragment>
-                      );
-                    else if (currentPage > 3 && index === 0)
-                      return (
-                        <Fragment key={index}>
-                          <li className="page-item">
-                            <a
-                              className={`page-link rounded-1 p-0 ${
-                                currentPage === index + 1 && "active"
-                              }`}
-                              href="#"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                setCurrentPage(index + 1);
-                              }}
-                            >
-                              {index + 1}
-                            </a>
-                          </li>
-                          <li className="page-item">
-                            <a
-                              className={`page-link rounded-1 p-0`}
-                              href="#"
-                              onClick={(e) => {
-                                e.preventDefault();
-                              }}
-                            >
-                              ...
-                            </a>
-                          </li>
-                        </Fragment>
-                      );
-                  })}
-                  <li className="page-item">
-                    <a
-                      className={`page-link material-symbols-outlined rounded-1 p-0 ${
-                        currentPage === Math.ceil(hotArticleData.length / 3) &&
-                        "disabled"
-                      }`}
-                      href="#"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setCurrentPage(currentPage + 1);
-                      }}
-                    >
-                      arrow_forward_ios
-                    </a>
-                  </li>
-                </ul>
-              </nav>
+                        );
+                      })}
+                  </ul>
+                  <nav
+                    className="d-none d-lg-block"
+                    aria-label="Page navigation"
+                  >
+                    <ul className="hot-article-pagination pagination justify-content-center gap-2 mb-0">
+                      <li className="page-item" disable="true">
+                        <a
+                          className={`page-link material-symbols-outlined p-0 ps-1 pt-1 rounded-1 ${
+                            currentPage === 1 && "disabled"
+                          }`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCurrentPage(currentPage - 1);
+                          }}
+                        >
+                          arrow_back_ios
+                        </a>
+                      </li>
+                      {Array.from({
+                        length: Math.ceil(hotArticleData.length / 3),
+                      }).map((item, index) => {
+                        const totalPage = Math.ceil(hotArticleData.length / 3);
+                        if (
+                          currentPage - index - 1 <= 2 &&
+                          currentPage - index - 1 >= -2
+                        )
+                          return (
+                            <li className="page-item" key={index}>
+                              <a
+                                className={`page-link rounded-1 p-0 ${
+                                  currentPage === index + 1 && "active"
+                                }`}
+                                href="#"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setCurrentPage(index + 1);
+                                }}
+                              >
+                                {index + 1}
+                              </a>
+                            </li>
+                          );
+                        else if (
+                          currentPage < totalPage - 2 &&
+                          index + 1 === totalPage
+                        )
+                          return (
+                            <Fragment key={index}>
+                              <li className="page-item">
+                                <a
+                                  className={`page-link rounded-1 p-0`}
+                                  href="#"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                  }}
+                                >
+                                  ...
+                                </a>
+                              </li>
+                              <li className="page-item">
+                                <a
+                                  className={`page-link rounded-1 p-0 ${
+                                    currentPage === index + 1 && "active"
+                                  }`}
+                                  href="#"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    setCurrentPage(index + 1);
+                                  }}
+                                >
+                                  {index + 1}
+                                </a>
+                              </li>
+                            </Fragment>
+                          );
+                        else if (currentPage > 3 && index === 0)
+                          return (
+                            <Fragment key={index}>
+                              <li className="page-item">
+                                <a
+                                  className={`page-link rounded-1 p-0 ${
+                                    currentPage === index + 1 && "active"
+                                  }`}
+                                  href="#"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    setCurrentPage(index + 1);
+                                  }}
+                                >
+                                  {index + 1}
+                                </a>
+                              </li>
+                              <li className="page-item">
+                                <a
+                                  className={`page-link rounded-1 p-0`}
+                                  href="#"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                  }}
+                                >
+                                  ...
+                                </a>
+                              </li>
+                            </Fragment>
+                          );
+                      })}
+                      <li className="page-item">
+                        <a
+                          className={`page-link material-symbols-outlined rounded-1 p-0 ${
+                            currentPage ===
+                              Math.ceil(hotArticleData.length / 3) && "disabled"
+                          }`}
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCurrentPage(currentPage + 1);
+                          }}
+                        >
+                          arrow_forward_ios
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
+                </>
+              )}
             </div>
             <div className="col-12 col-lg-5">
               <h2 className="text-primary fs-6 fs-lg-3 fw-bold mb-3 mb-lg-7 p-0 p-lg-2">
                 推薦專欄
               </h2>
-              <ul className="list-unstyled d-flex flex-column gap-6">
-                {recommendArticleData
-                  .slice(0, 4)
-                  .map((recommendArticleDataItem) => {
-                    return (
-                      <li
-                        key={recommendArticleDataItem.id}
-                        className="recommend-article-card bg-light rounded-2 border-bottom border-2 border-lg-4 border-primary"
-                      >
-                        <Link
-                          to={`/article/${recommendArticleDataItem.id}`}
-                          className="d-flex py-4 px-5 py-lg-7 px-lg-9"
+              {recommendArticleData.length === 0 ? (
+                <span className="fs-6 fw-bold text-gray">
+                  目前沒有相關的推薦文章
+                </span>
+              ) : (
+                <ul className="list-unstyled d-flex flex-column gap-6">
+                  {recommendArticleData
+                    .slice(0, 4)
+                    .map((recommendArticleDataItem) => {
+                      return (
+                        <li
+                          key={recommendArticleDataItem.id}
+                          className="recommend-article-card bg-light rounded-2 border-bottom border-2 border-lg-4 border-primary"
                         >
-                          <img
-                            className="card-img me-3 me-lg-6 object-fit-cover"
-                            src={
-                              recommendArticleDataItem.image_url ||
-                              "https://github.com/wfox5510/wordSapve-imgRepo/blob/main/articleList-recommend1.png?raw=true"
-                            }
-                            alt=""
-                          />
-                          <div className="card-body d-flex flex-column gap-2 gap-lg-3">
-                            <span className="fw-bold">
-                              {recommendArticleDataItem.author_name} |
-                              <span className="ms-2">
-                                {recommendArticleDataItem.category_name}
+                          <Link
+                            to={`/article/${recommendArticleDataItem.id}`}
+                            className="d-flex py-4 px-5 py-lg-7 px-lg-9"
+                          >
+                            <img
+                              className="card-img me-3 me-lg-6 object-fit-cover"
+                              src={
+                                recommendArticleDataItem.image_url ||
+                                "https://github.com/wfox5510/wordSapve-imgRepo/blob/main/articleList-recommend1.png?raw=true"
+                              }
+                              alt=""
+                            />
+                            <div className="card-body d-flex flex-column gap-2 gap-lg-3">
+                              <span className="fw-bold">
+                                {recommendArticleDataItem.author_name} |
+                                <span className="ms-2">
+                                  {recommendArticleDataItem.category_name}
+                                </span>
                               </span>
-                            </span>
 
-                            <h4 className="card-title text-primary fw-bold text-truncate-2lines lh-sm">
-                              {recommendArticleDataItem.title}
-                            </h4>
-                            <p className="card-text text-truncate-2lines fs-9 fs-lg-8">
-                              {recommendArticleDataItem.description}
-                            </p>
-                          </div>
-                        </Link>
-                      </li>
-                    );
-                  })}
-              </ul>
+                              <h4 className="card-title text-primary fw-bold text-truncate-2lines lh-sm">
+                                {recommendArticleDataItem.title}
+                              </h4>
+                              <p className="card-text text-truncate-2lines fs-9 fs-lg-8">
+                                {recommendArticleDataItem.description}
+                              </p>
+                            </div>
+                          </Link>
+                        </li>
+                      );
+                    })}
+                </ul>
+              )}
             </div>
           </div>
         </div>
