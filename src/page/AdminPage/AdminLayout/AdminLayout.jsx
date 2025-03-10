@@ -17,7 +17,7 @@ const AdminLayout = () => {
       });
       setUserInfo({
         username: res.data.username,
-        profile_picture: res.data.profile_picture || "",
+        profile_picture: res.data.profile_picture || avatar,
       });
     } catch (error) {
       console.error("無法取得使用者資訊", error);
@@ -52,7 +52,7 @@ const AdminLayout = () => {
               <div className="admin_wrap pt-10 pb-5 px-5 rounded-3 border border-gray_light">
                 <div className="admin-mobile-header d-md-none">
                   <div className="d-flex align-items-center flex-column border-bottom border-gray_light mb-5">
-                    <img className="admin-avatar mb-2" src={avatar} alt="avatar" />
+                    <img className="admin-avatar mb-2" src={userInfo.profile_picture} alt="avatar" />
                     <p className="mb-2">super123</p>
                     <p className="text-primary mb-5">編輯個人主頁</p>
                   </div>

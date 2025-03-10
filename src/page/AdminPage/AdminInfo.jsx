@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useOutletContext } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import avatar from "../../assets/images/avatar-1.png";
 const { VITE_API_BASE_URL } = import.meta.env;
 
 const AdminInfo = () => {
@@ -37,7 +38,7 @@ const AdminInfo = () => {
         setValue("bio", res.data.bio);
         setValue("profile_picture", res.data.profile_picture || "");
 
-        setPreviewImage(res.data.profile_picture || "/default-avatar.png");
+        setPreviewImage(res.data.profile_picture || avatar);
       } catch (error) {
         console.log(error);
       } finally {
