@@ -158,7 +158,7 @@ const ArticleListPage = () => {
               return (
                 <li key={categoriesDataItem.id}>
                   <a
-                    className={`article-tag lh-lg fs-9 fs-lg-8 rounded-pill ${
+                    className={`article-tag pe-open lh-lg fs-9 fs-lg-8 rounded-pill ${
                       categoriesSelector.some(
                         (categoriesSelectorItem) =>
                           categoriesSelectorItem === categoriesDataItem.id
