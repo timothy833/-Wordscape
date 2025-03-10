@@ -450,8 +450,7 @@ const ArticleListPage = () => {
                             </span>
                           </span>
                           {isAuthorized && (
-                            <a
-                              href="#"
+                            <span
                               className={`${
                                 favorite.some(
                                   (favoriteItem) =>
@@ -469,7 +468,7 @@ const ArticleListPage = () => {
                               <span className="material-symbols-outlined icon-fill">
                                 bookmark
                               </span>
-                            </a>
+                            </span>
                           )}
                         </div>
                       </div>
