@@ -1,0 +1,31 @@
+.subscription-pagination {
+  .page-link.material-symbols-outlined {
+    color: #c4cdd5;
+    &.disabled {
+      background-color: #919EAB;
+      border-color: #919EAB;
+    }
+  }
+  .page-link {
+    user-select: none;
+    border: 1px solid #dfe3e8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    width: 32px;
+    height: 32px;
+    &.active {
+      background-color: $light;
+      color: $primary;
+      border: 1px solid $primary;
+    }
+    &:hover,
+    :focus {
+      background-color: $primary;
+      color: $light;
+      border: 1px solid $primary;
+    }
+  }
+}

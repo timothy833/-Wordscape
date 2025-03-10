@@ -1,0 +1,8 @@
+.currentSubscription-card  .card-footer{
+  @include media-breakpoint-up(lg) {
+    width: 45%;
+  }
+  @include media-breakpoint-up(xl) {
+    width: 35%;
+  }
+}

@@ -1,28 +1,172 @@
-import CurrentSubscriptionCard from "../../component/SubscriptionCard/CurrentSubscriptionCard";
+import { useSelector } from "react-redux";
+//import CurrentSubscriptionCard from "../../component/SubscriptionCard/CurrentSubscriptionCard";
 import SubscriptionHistoryCard from "../../component/SubscriptionCard/SubscriptionHistoryCard";
+import axios from "axios";
+import { useEffect, useState } from "react";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const AdminSubscription = () => {
+  const [paymentReceivedData, setPaymentReceivedData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const getPaymentReceivedData = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/payments/received`);
+      setPaymentReceivedData(res.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getPaymentReceivedData();
+  }, []);
   return (
     <>
       <div className="d-none d-md-flex justify-content-between align-items-center">
-        <h1 className="fs-4 fs-md-1 text-primary fw-bold mb-5 mb-md-10">訂閱紀錄</h1>
-        <a href="#" className="link-primary-hover">問題回報</a>
+        <h1 className="fs-4 fs-md-1 text-primary fw-bold mb-5 mb-md-10">
+          訂閱紀錄
+        </h1>
+        <a href="#" className="link-primary-hover">
+          問題回報
+        </a>
       </div>
-      <div className="current-subscription border-bottom border-gray_light mb-5">
-        <p className="mb-5">目前訂閱</p>
-        <CurrentSubscriptionCard />
-        <CurrentSubscriptionCard />
-        <CurrentSubscriptionCard />
-      </div>
+
       <div className="subscription-history">
         <p className="mb-5">訂閱紀錄</p>
-        <SubscriptionHistoryCard />
-        <SubscriptionHistoryCard />
-        <SubscriptionHistoryCard />
+        {paymentReceivedData
+          .slice((currentPage - 1) * 10 + 1, currentPage * 10)
+          .map((paymentReceivedDataItem) => {
+            return (
+              <SubscriptionHistoryCard
+                key={paymentReceivedDataItem.id}
+                payerId={paymentReceivedDataItem.user_id}
+                paymentDate={paymentReceivedDataItem.created_at}
+                amount={paymentReceivedDataItem.amount}
+              />
+            );
+          })}
         <div className="text-center my-5 pt-1 d-md-none">
-          <a href="#" className="link-primary-hover">問題回報</a>
+          <a href="#" className="link-primary-hover">
+            問題回報
+          </a>
         </div>
       </div>
+      <nav className="d-none d-lg-block" aria-label="Page navigation">
+        <ul className="subscription-pagination pagination justify-content-center gap-2 mb-0">
+          <li className="page-item" disable="true">
+            <a
+              className={`page-link material-symbols-outlined p-0 ps-1 pt-1 rounded-1 ${
+                currentPage === 1 && "disabled"
+              }`}
+              onClick={(e) => {
+                e.preventDefault();
+                setCurrentPage(currentPage - 1);
+              }}
+            >
+              arrow_back_ios
+            </a>
+          </li>
+          {Array.from({
+            length: Math.ceil(paymentReceivedData.length / 10),
+          }).map((item, index) => {
+            if (currentPage > 3 && index === 0)
+              return (
+                <Fragment key={index}>
+                  <li className="page-item">
+                    <a
+                      className={`page-link rounded-1 p-0 ${
+                        currentPage === index + 1 && "active"
+                      }`}
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCurrentPage(index + 1);
+                      }}
+                    >
+                      {index + 1}
+                    </a>
+                  </li>
+                  <li className="page-item">
+                    <a
+                      className={`page-link rounded-1 p-0`}
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                      }}
+                    >
+                      ...
+                    </a>
+                  </li>
+                </Fragment>
+              );
+            else if (currentPage < 10 - 2 && index === 9)
+              return (
+                <Fragment key={index}>
+                  <li className="page-item">
+                    <a
+                      className={`page-link rounded-1 p-0`}
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                      }}
+                    >
+                      ...
+                    </a>
+                  </li>
+                  <li className="page-item">
+                    <a
+                      className={`page-link rounded-1 p-0 ${
+                        currentPage === index + 1 && "active"
+                      }`}
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCurrentPage(index + 1);
+                      }}
+                    >
+                      {index + 1}
+                    </a>
+                  </li>
+                </Fragment>
+              );
+            else if (
+              currentPage - index - 1 <= 2 &&
+              currentPage - index - 1 >= -2
+            )
+              return (
+                <li className="page-item" key={index}>
+                  <a
+                    className={`page-link rounded-1 p-0 ${
+                      currentPage === index + 1 && "active"
+                    }`}
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setCurrentPage(index + 1);
+                    }}
+                  >
+                    {index + 1}
+                  </a>
+                </li>
+              );
+          })}
+          <li className="page-item">
+            <a
+              className={`page-link material-symbols-outlined rounded-1 p-0 ${
+                currentPage === Math.ceil(paymentReceivedData.length / 10) &&
+                "disabled"
+              }`}
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                setCurrentPage(currentPage + 1);
+              }}
+            >
+              arrow_forward_ios
+            </a>
+          </li>
+        </ul>
+      </nav>
     </>
   );
 };
