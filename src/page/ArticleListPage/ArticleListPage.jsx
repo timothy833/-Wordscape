@@ -76,6 +76,7 @@ const ArticleListPage = () => {
   useEffect(() => {
     setHotArticleData(filterHotArticleData(allArticleData));
     setRecommendArticleData(filterRecommendArticleData(allArticleData));
+    setCurrentPage(1);
   }, [categoriesSelector]);
 
   //下半部文章列表相關邏輯
@@ -236,67 +237,8 @@ const ArticleListPage = () => {
                   {Array.from({
                     length: Math.ceil(hotArticleData.length / 3),
                   }).map((item, index) => {
-                    if (currentPage > 3 && index === 0)
-                      return (
-                        <Fragment key={index}>
-                          <li className="page-item">
-                            <a
-                              className={`page-link rounded-1 p-0 ${
-                                currentPage === index + 1 && "active"
-                              }`}
-                              href="#"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                setCurrentPage(index + 1);
-                              }}
-                            >
-                              {index + 1}
-                            </a>
-                          </li>
-                          <li className="page-item">
-                            <a
-                              className={`page-link rounded-1 p-0`}
-                              href="#"
-                              onClick={(e) => {
-                                e.preventDefault();
-                              }}
-                            >
-                              ...
-                            </a>
-                          </li>
-                        </Fragment>
-                      );
-                    else if (currentPage < 10 - 2 && index === 9)
-                      return (
-                        <Fragment key={index}>
-                          <li className="page-item">
-                            <a
-                              className={`page-link rounded-1 p-0`}
-                              href="#"
-                              onClick={(e) => {
-                                e.preventDefault();
-                              }}
-                            >
-                              ...
-                            </a>
-                          </li>
-                          <li className="page-item">
-                            <a
-                              className={`page-link rounded-1 p-0 ${
-                                currentPage === index + 1 && "active"
-                              }`}
-                              href="#"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                setCurrentPage(index + 1);
-                              }}
-                            >
-                              {index + 1}
-                            </a>
-                          </li>
-                        </Fragment>
-                      );
-                    else if (
+                    const totalPage = Math.ceil(hotArticleData.length / 3);
+                    if (
                       currentPage - index - 1 <= 2 &&
                       currentPage - index - 1 >= -2
                     )
@@ -315,6 +257,69 @@ const ArticleListPage = () => {
                             {index + 1}
                           </a>
                         </li>
+                      );
+                    else if (
+                      currentPage < totalPage - 2 &&
+                      index + 1 === totalPage
+                    )
+                      return (
+                        <Fragment key={index}>
+                          <li className="page-item">
+                            <a
+                              className={`page-link rounded-1 p-0`}
+                              href="#"
+                              onClick={(e) => {
+                                e.preventDefault();
+                              }}
+                            >
+                              ...
+                            </a>
+                          </li>
+                          <li className="page-item">
+                            <a
+                              className={`page-link rounded-1 p-0 ${
+                                currentPage === index + 1 && "active"
+                              }`}
+                              href="#"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setCurrentPage(index + 1);
+                              }}
+                            >
+                              {index + 1}
+                            </a>
+                          </li>
+                        </Fragment>
+                      );
+                    else if (currentPage > 3 && index === 0)
+                      return (
+                        <Fragment key={index}>
+                          <li className="page-item">
+                            <a
+                              className={`page-link rounded-1 p-0 ${
+                                currentPage === index + 1 && "active"
+                              }`}
+                              href="#"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setCurrentPage(index + 1);
+                              }}
+                            >
+                              {index + 1}
+                            </a>
+                          </li>
+                          <li className="page-item">
+                            <a
+                              className={`page-link rounded-1 p-0`}
+                              href="#"
+                              onClick={(e) => {
+                                e.preventDefault();
+                              }}
+                            >
+                              ...
+                            </a>
+                          </li>
+                        </Fragment>
                       );
                   })}
                   <li className="page-item">

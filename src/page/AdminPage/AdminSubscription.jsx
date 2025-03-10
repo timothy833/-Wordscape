@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 //import CurrentSubscriptionCard from "../../component/SubscriptionCard/CurrentSubscriptionCard";
 import SubscriptionHistoryCard from "../../component/SubscriptionCard/SubscriptionHistoryCard";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Fragment } from "react";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -52,7 +52,7 @@ const AdminSubscription = () => {
         </div>
       </div>
       <nav className="d-none d-lg-block" aria-label="Page navigation">
-        <ul className="subscription-pagination pagination justify-content-center gap-2 mb-0">
+        <ul className="hot-article-pagination pagination justify-content-center gap-2 mb-0">
           <li className="page-item" disable="true">
             <a
               className={`page-link material-symbols-outlined p-0 ps-1 pt-1 rounded-1 ${
@@ -69,70 +69,8 @@ const AdminSubscription = () => {
           {Array.from({
             length: Math.ceil(paymentReceivedData.length / 10),
           }).map((item, index) => {
-            if (currentPage > 3 && index === 0)
-              return (
-                <Fragment key={index}>
-                  <li className="page-item">
-                    <a
-                      className={`page-link rounded-1 p-0 ${
-                        currentPage === index + 1 && "active"
-                      }`}
-                      href="#"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setCurrentPage(index + 1);
-                      }}
-                    >
-                      {index + 1}
-                    </a>
-                  </li>
-                  <li className="page-item">
-                    <a
-                      className={`page-link rounded-1 p-0`}
-                      href="#"
-                      onClick={(e) => {
-                        e.preventDefault();
-                      }}
-                    >
-                      ...
-                    </a>
-                  </li>
-                </Fragment>
-              );
-            else if (currentPage < 10 - 2 && index === 9)
-              return (
-                <Fragment key={index}>
-                  <li className="page-item">
-                    <a
-                      className={`page-link rounded-1 p-0`}
-                      href="#"
-                      onClick={(e) => {
-                        e.preventDefault();
-                      }}
-                    >
-                      ...
-                    </a>
-                  </li>
-                  <li className="page-item">
-                    <a
-                      className={`page-link rounded-1 p-0 ${
-                        currentPage === index + 1 && "active"
-                      }`}
-                      href="#"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setCurrentPage(index + 1);
-                      }}
-                    >
-                      {index + 1}
-                    </a>
-                  </li>
-                </Fragment>
-              );
-            else if (
-              currentPage - index - 1 <= 2 &&
-              currentPage - index - 1 >= -2
-            )
+            const totalPage = Math.ceil(paymentReceivedData.length / 10);
+            if (currentPage - index - 1 <= 2 && currentPage - index - 1 >= -2)
               return (
                 <li className="page-item" key={index}>
                   <a
@@ -148,6 +86,66 @@ const AdminSubscription = () => {
                     {index + 1}
                   </a>
                 </li>
+              );
+            else if (currentPage < totalPage - 2 && index + 1 === totalPage)
+              return (
+                <Fragment key={index}>
+                  <li className="page-item">
+                    <a
+                      className={`page-link rounded-1 p-0`}
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                      }}
+                    >
+                      ...
+                    </a>
+                  </li>
+                  <li className="page-item">
+                    <a
+                      className={`page-link rounded-1 p-0 ${
+                        currentPage === index + 1 && "active"
+                      }`}
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCurrentPage(index + 1);
+                      }}
+                    >
+                      {index + 1}
+                    </a>
+                  </li>
+                </Fragment>
+              );
+            else if (currentPage > 3 && index === 0)
+              return (
+                <Fragment key={index}>
+                  <li className="page-item">
+                    <a
+                      className={`page-link rounded-1 p-0 ${
+                        currentPage === index + 1 && "active"
+                      }`}
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCurrentPage(index + 1);
+                      }}
+                    >
+                      {index + 1}
+                    </a>
+                  </li>
+                  <li className="page-item">
+                    <a
+                      className={`page-link rounded-1 p-0`}
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                      }}
+                    >
+                      ...
+                    </a>
+                  </li>
+                </Fragment>
               );
           })}
           <li className="page-item">
