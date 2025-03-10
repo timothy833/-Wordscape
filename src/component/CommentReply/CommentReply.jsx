@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -9,7 +10,7 @@ const CommentReply = ({
   isCurrentUser,
   getComment,
   loginUserId,
-  isAuthorized
+  isAuthorized,
 }) => {
   const [commentLikeData, setCommentLikeData] = useState(null);
   const [currentComment, setCurrentComment] = useState(commentData.content);
@@ -69,7 +70,10 @@ const CommentReply = ({
   return (
     <div className="d-flex flex-column gap-3">
       <div className="d-flex">
-        <div className="d-flex align-items-center gap-2 me-5">
+        <Link
+          to={`/blog/:${commentData.user_id}`}
+          className="d-flex align-items-center gap-2 me-5"
+        >
           <img
             className="avatar object-fit-cover rounded-pill"
             src={
@@ -78,9 +82,9 @@ const CommentReply = ({
             }
             alt="avatar"
           />
-          <a href="#">{commentData.user_name}</a>
+          <span>{commentData.user_name}</span>
           {isAuther && <span className="text-gray">作者</span>}
-        </div>
+        </Link>
         <div className="d-flex gap-5 align-items-center">
           <a
             href="#"
