@@ -1,7 +1,13 @@
 import avatar from "../../assets/images/avatar-1.png";
 import PropTypes from "prop-types";
+import { useEffect } from "react";
 const Blog_CommentReply = ({comment, likeComment }) => {
 
+  useEffect(() => {
+    if (!likeComment) {
+      console.warn("⚠️ likeComment 函式未傳遞，請檢查 Blog_ArticleCard.jsx");
+    }
+  }, [likeComment]);
 
   return (
     <div className="d-flex flex-column gap-3 py-5 mt-5 mt-md-0 border-top border-gray_light">
@@ -35,7 +41,7 @@ const Blog_CommentReply = ({comment, likeComment }) => {
       {comment.replies.length >0 && (
          <div className="ms-4 border-start border-gray_light ps-3">
           {comment.replies.map(reply => (
-              <Blog_CommentReply key={reply.id} comment={reply} />
+              <Blog_CommentReply key={reply.id} comment={reply} likeComment={likeComment}/>
             )
           )}
          </div>

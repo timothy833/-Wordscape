@@ -2,12 +2,13 @@
 import PropTypes from "prop-types";
 import Blog_CommentReply from "../BlogPageCommentReply/Blog_CommentReply";
 import axios from "axios";
-import { useState,useEffect } from "react";
-
+import { useEffect, useState} from "react";
+import EditPostModal from "../../page/BlogPage/EditPostModal"
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, token, getBlogArticle}) => {
-  const [commentLikes, setCommentLikes] = useState({}); 
+
+ const [selectedArticle, setSelectedArticle] = useState(null);
 
   useEffect(() => {
     if (!likePost) {
@@ -83,7 +84,7 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, to
                 <div className="">
                   <i className="bi bi-three-dots text-gray fs-6" id="dropdownMenuButton1" data-bs-toggle="dropdown" style={{ cursor: "pointer" }}></i>
                   <ul className="dropdown-menu dropdown-menu-end py-3 px-5 shadow-sm border">
-                    <li className="dropdown-item">編輯</li>
+                    <li className="dropdown-item" onClick={()=> setSelectedArticle(article)} >編輯</li>
                     <li className="dropdown-item">取消發布</li>
                     <li className="dropdown-item">刪除</li>
                   </ul>
@@ -105,6 +106,9 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, to
           <Blog_CommentReply key={comment.id} comment={comment} likeComment={likeComment}  />
         ))}
       </div>
+
+      {/* ✅ 彈出編輯 Modal */} 
+      {selectedArticle && <EditPostModal article={selectedArticle} token={token} getBlogArticle={getBlogArticle}/>}
     </>
   );
 };
