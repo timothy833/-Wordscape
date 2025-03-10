@@ -142,10 +142,11 @@ const ArticlePage = () => {
   };
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     getArticle();
     getComment();
     getAllArticleData();
-  }, []);
+  }, [articleId]);
   //判斷訂閱需要取得articleData中作者的資料，用useEffect確保setState的值正確取得
   useEffect(() => {
     if (articleData) {
