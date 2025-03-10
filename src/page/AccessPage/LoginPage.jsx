@@ -25,7 +25,7 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
 
     useEffect(() => {
         if (isAuthorized) {
-          navigate('/');
+            handleClose();
         }
         return () => {
           if (error) dispatch(clearError());
@@ -168,7 +168,7 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
                                 <div className="col-md-4 d-flex align-items-center h-100 position-relative">
                                 <div className="card shadow-lg rounded-4 border-0 w-100 bg-white login-card mx-5">
                                     <div className="card-body">
-                                        <form id="signupForm" noValidate onSubmit={forgotPassword}>
+                                        <form id="loginForm" noValidate onSubmit={forgotPassword}>
                                             <button type="button" className="btn-close login-btn-close" 
                                             onClick={()=>{
                                                 handleClose();
@@ -206,7 +206,7 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
                             <div className="col-md-4 d-flex align-items-center h-100 position-relative">
                                 <div className="card shadow-lg rounded-4 border-0 w-100 bg-white login-card mx-5">
                                     <div className="card-body">
-                                        <form id="signupForm" noValidate onSubmit={loginHandle}>
+                                        <form id="loginForm-mobile" noValidate onSubmit={loginHandle}>
                                             <button type="button" className="btn-close login-btn-close" 
                                             onClick={()=>{
                                                 handleClose();

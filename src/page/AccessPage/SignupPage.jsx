@@ -22,8 +22,7 @@ const SignupPage = ({ show, handleClose, handleShowLoginModal }) => {
             [name]: value,
         });
     };
-
-        
+ 
     const signUpHandle = async(event) => {
         event.preventDefault();
         
@@ -49,7 +48,7 @@ const SignupPage = ({ show, handleClose, handleShowLoginModal }) => {
                 }
             }
         );
-        console.log('signupRes',signupRes);
+        console.log('signupRes',signUpRes);
         
         alert('註冊成功');
         setFormData({ username: "", email: "", password: "", confirmPassword: "" });
@@ -59,12 +58,13 @@ const SignupPage = ({ show, handleClose, handleShowLoginModal }) => {
         }catch(error){
             console.log('error in sign up', error.response?.data || error.message);
         }
-    }
+    };
+
     const guideToLoginHandle = () =>{
         setFormData({ username: "", email: "", password: "", confirmPassword: "" });
         handleShowLoginModal();
         handleClose();
-    }
+    };
     
     // if (!show) return null; // 不顯示時直接返回null
     

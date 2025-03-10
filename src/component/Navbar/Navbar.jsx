@@ -9,6 +9,7 @@ import { logout } from '../../slice/authSlice';
 import { Link, useNavigate } from 'react-router-dom';
 import SignupPage from "../../page/AccessPage/SignupPage";
 import LoginPage from "../../page/AccessPage/LoginPage";
+// import SponsorButton from "../SponsorButton/SponsorButton";
 
 //手機版collapse需點擊按鈕和列表以外的地方關閉
 
@@ -33,6 +34,7 @@ const Navbar = () => {
   useEffect(() => {
     if (isAuthorized === false) {
       navigate("/"); // 跳轉到首頁
+      window.scrollTo(0, 0);
     }
   }, [isAuthorized, navigate]);
 
@@ -97,6 +99,8 @@ const Navbar = () => {
                 />
               </picture>
             </Link>
+
+            {/* <SponsorButton/> */}
 
             {/* 使用者選單-PC */}
             <div className="d-none d-lg-flex align-items-center gap-4">
