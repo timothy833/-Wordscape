@@ -83,7 +83,7 @@ const ArticleListPage = () => {
   //取得所有文章資料後根據選擇分類篩選資料，用於渲染文章列表
   const [articleListData, setArticleListData] = useState(null);
   const [listSelector, setListSelector] = useState("allArticle");
-  const [articleListDisplayCount, SetArticleListDisplayCount] = useState(5);
+  const [articleListDisplayCount, SetArticleListDisplayCount] = useState(10);
 
   const getArticleListData = async () => {
     try {
@@ -128,7 +128,7 @@ const ArticleListPage = () => {
         document.documentElement.scrollHeight &&
         articleListData?.length > articleListDisplayCount &&
         SetArticleListDisplayCount((prev) => {
-          return prev + 5;
+          return prev + 10;
         });
     };
     window.addEventListener("scroll", handleScroll);
