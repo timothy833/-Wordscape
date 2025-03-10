@@ -114,6 +114,7 @@ const ArticleListPage = () => {
     try {
       await axios.post(`${API_BASE_URL}/posts/favorites/${id}`);
       getFavoriteArticle();
+      getArticleListData();
     } catch (error) {
       console.log(error);
     }
@@ -451,20 +452,23 @@ const ArticleListPage = () => {
                           {isAuthorized && (
                             <a
                               href="#"
-                              className={`material-symbols-outlined ${
+                              className={`${
                                 favorite.some(
                                   (favoriteItem) =>
                                     favoriteItem.id === articleListDataItem.id
                                 )
                                   ? "text-primary"
                                   : "text-gray"
-                              } ms-2 pb-1 icon-fill`}
+                              } pb-1 d-flex align-items-center gap-1`}
                               onClick={(e) => {
                                 e.preventDefault();
                                 postFavorites(articleListDataItem.id);
                               }}
                             >
-                              bookmark
+                              {articleListDataItem.favorites_count}
+                              <span className="material-symbols-outlined icon-fill">
+                                bookmark
+                              </span>
                             </a>
                           )}
                         </div>
