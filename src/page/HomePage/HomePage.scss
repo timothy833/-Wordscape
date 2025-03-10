@@ -88,9 +88,3 @@
   margin-left: 12px;
   margin-right: 12px;
 }
-
-.hover-shadow:hover {
-  transform: translateY(-1px);
-  box-shadow: 0.2rem 0.2rem 0.75rem rgba(#c18700, 0.15);
-  transition: all 0.2s ease-in-out;
-}
