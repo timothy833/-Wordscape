@@ -152,8 +152,8 @@ const ArticleListPage = () => {
     <>
       <section>
         <div className="container pt-6 pb-3 pt-lg-17 pb-lg-10">
-          <h2 className="fs-8 fs-lg-7 fw-bold text-dark mb-3">類別選擇</h2>
-          <ul className="article-taglist list-unstyled d-flex flex-wrap gap-1 gap-lg-2 mb-2 mb-lg-3">
+          <h2 className="fs-8 fs-lg-7 fw-bold text-dark">類別選擇</h2>
+          <ul className="article-taglist list-unstyled d-flex flex-wrap gap-1 gap-lg-2 mb-2 mb-lg-3 pt-3">
             {categoriesData?.map((categoriesDataItem) => {
               return (
                 <li key={categoriesDataItem.id}>
