@@ -237,8 +237,8 @@ const ArticlePage = () => {
                 >
                   {isFavorite ? "已收藏" : "收藏"}
                 </a>
-                <span
-                  className={` d-flex align-items-center gap-1 ${
+                <a
+                  className={`user-select-none pe-open d-flex align-items-center gap-1 ${
                     isLike ? "text-primary" : "text-gray"
                   } `}
                   onClick={() =>
@@ -249,7 +249,7 @@ const ArticlePage = () => {
                     favorite
                   </span>
                   {articleData?.likes_count}
-                </span>
+                </a>
                 <span className="text-gray">
                   {articleData?.created_at !== undefined &&
                     `發佈於 ${new Date(

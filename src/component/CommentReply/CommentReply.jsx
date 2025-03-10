@@ -84,7 +84,7 @@ const CommentReply = ({
         <div className="d-flex gap-5 align-items-center">
           <a
             href="#"
-            className={`d-flex align-items-center ${
+            className={`d-flex align-items-center user-select-none pe-open ${
               commentLikeData?.some(
                 (LikeDataItem) => LikeDataItem.user_id === loginUserId
               )

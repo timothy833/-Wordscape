@@ -139,7 +139,7 @@ const CommentBox = ({
         <div className="d-flex gap-5">
           <a
             href="#"
-            className={`d-flex align-items-center ${
+            className={`d-flex align-items-center user-select-none pe-open ${
               commentLikeData?.some(
                 (LikeDataItem) => LikeDataItem.user_id === loginUserId
               )
@@ -158,7 +158,7 @@ const CommentBox = ({
           </a>
           <a
             href="#"
-            className={`d-flex align-items-center ${
+            className={`d-flex align-items-center user-select-none pe-open ${
               hasReplie ? "text-primary" : "text-gray"
             } gap-1`}
             onClick={(e) => {
@@ -174,7 +174,7 @@ const CommentBox = ({
           {isCurrentUser && (
             <div className="comment-dropdown dropdown">
               <a
-                className="text-gray"
+                className="text-gray user-select-none pe-open"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
