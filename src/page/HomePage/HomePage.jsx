@@ -17,9 +17,25 @@ import banner_3_sm from "../../assets/images/banner/banner-3-sm.png";
 import avatar from "../../assets/images/avatar-1.png";
 import about_us from "../../assets/images/about-us.png";
 import commentData from "./HomePageCommentData";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const HomePage = () => {
+  const [allArticleData, setAllArticleData] = useState([]);
+  const getAllArticleData = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/posts/full`);
+      setAllArticleData(res.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const [commentCount, setCommentCount] = useState(3);
+  useEffect(() => {
+    getAllArticleData();
+  }, []);
   return (
     <>
       <header>
@@ -193,18 +209,18 @@ const HomePage = () => {
             精選文章，趕快來發掘！
           </span>
           <div className="d-none d-md-flex row row-cols-2 row-cols-xl-4 g-lg-6 g-3 mb-10">
-            <div className="col">
-              <ArticleCard />
-            </div>
-            <div className="col">
-              <ArticleCard />
-            </div>
-            <div className="col">
-              <ArticleCard />
-            </div>
-            <div className="col">
-              <ArticleCard />
-            </div>
+            {allArticleData
+              .filter(
+                (allArticleDataItem) => allArticleDataItem.views_count > 5
+              )
+              .slice(0, 4)
+              .map((allArticleDataItem) => {
+                return (
+                  <div className="col">
+                    <ArticleCard articleData={allArticleDataItem} />
+                  </div>
+                );
+              })}
           </div>
           <div className="d-block d-md-none">
             <Swiper
@@ -225,18 +241,18 @@ const HomePage = () => {
               loop={true}
               spaceBetween={"24px"}
             >
-              <SwiperSlide>
-                <ArticleCard />
-              </SwiperSlide>
-              <SwiperSlide>
-                <ArticleCard />
-              </SwiperSlide>
-              <SwiperSlide>
-                <ArticleCard />
-              </SwiperSlide>
-              <SwiperSlide>
-                <ArticleCard />
-              </SwiperSlide>
+              {allArticleData
+                .filter(
+                  (allArticleDataItem) => allArticleDataItem.views_count > 5
+                )
+                .slice(0, 4)
+                .map((allArticleDataItem) => {
+                  return (
+                    <SwiperSlide>
+                      <ArticleCard articleData={allArticleDataItem} />
+                    </SwiperSlide>
+                  );
+                })}
             </Swiper>
           </div>
           <Link
