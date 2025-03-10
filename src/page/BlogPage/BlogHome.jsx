@@ -8,7 +8,7 @@ import Blog_ArticleCard from "../../component/BlogPageArticleCard/Blog_ArticleCa
 
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination, Navigation, Autoplay, Keyboard } from "swiper/modules";
+import { Pagination, Navigation, Autoplay} from "swiper/modules";
 import "swiper/scss/pagination";
 import "swiper/css/navigation";
 import "swiper/css/autoplay";
@@ -31,6 +31,9 @@ import { useEffect, useState, useRef} from "react";
 import { Modal } from "bootstrap";
 //處理發布文章modal
 import NewPostModal from "../BlogPage/CreatePostModal";
+import Quill from "quill";
+import "quill/dist/quill.snow.css"; // ✅ Quill 樣式
+
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -51,15 +54,19 @@ const BlogHome = () => {
   const [subtitle, setSubtitle] = useState("") //設定傳送Blog Banner副標
   const [imageUrl, setImageUrl] = useState(""); //設定傳送Banner圖源
   const [imagePreview, setImagePreview] = useState("") //設定預覽圖片
-  const modalBannerRef = useRef(null); //綁定modal div的容器
-  let modalInstanceRef = useRef(null); // 存 `Modal` 實體
   const modalTriggerRef = useRef(null); // 綁定觸發 modal 的按鈕
   const [articles, setArticles] = useState([]); //處理文章列表資料
   const [blogUser, setBlogUser] = useState({}); //存放blog使用者資料
   const [comments, setComments] = useState({}); //處理文章留言資料 初始化 comments 應該是 {}
   const [pinnerArticles, setPinnedArticles] = useState([]); //切換置頂文章排序狀態
-  // const [articleLikes, setArticleLikes] = useState({}); //處理文章按讚
+  const [selectedArticle, setSelectedArticle] = useState(null);  // 🚀 **管理當前編輯文章**
 
+  const modalBannerRef = useRef(null); //綁定modal div的容器
+  let modalInstanceBannerRef = useRef(null); // 存 `Modal` 實體
+
+
+
+  
   // 處理文章按讚
   const likePost = async (postId) => {
     await axios.post(`${API_BASE_URL}/posts/post_likes/${postId}`,{}, {
@@ -101,13 +108,6 @@ const BlogHome = () => {
   
   }, [userId]);
 
-  
-
-
-
-
-
-
   //加載blog擁有者文章api
   const getBlogArticle = async ()=>{
     try {
@@ -124,7 +124,8 @@ const BlogHome = () => {
   useEffect(()=>{
     const storedToken = getCookie("WS_token");
     setToken(storedToken);
-    setUerId("dc576098-dc26-46a4-aede-6bc5c8f300ea")
+    setUerId("dc576098-dc26-46a4-aede-6bc5c8f300ea");
+
     const fetchArticle = async()=>{
       try {
         const res = await axios.get(`${API_BASE_URL}/posts`);
@@ -239,16 +240,17 @@ const BlogHome = () => {
     setImagePreview(e.target.value);
   }
 
-  //處理Modal開關
+  //處理BannerModal開關
   useEffect(()=>{
     const modalElement = modalBannerRef.current;
     if (!modalElement) return;
 
     
-      modalInstanceRef.current = new Modal(modalElement, {backdrop: "true", Keyboard: true});
+      modalInstanceBannerRef.current = new Modal(modalElement, {backdrop: "true", Keyboard: true});
 
       const handleModalHidden = ()=> {
         resetForm();// ✅ Modal 關閉時清空輸入欄位
+        setSelectedArticle(null); //清除編輯Modal內容
         const animationFrameId  = requestAnimationFrame(()=>{
           if(modalTriggerRef.current){
             modalTriggerRef.current.focus();
@@ -271,15 +273,15 @@ const BlogHome = () => {
   },[])
 
   const openModal = () => {
-    if(!modalInstanceRef.current) {
-      modalInstanceRef.current = new Modal(modalBannerRef.current, {backdrop: "true", Keyboard: true});
+    if(!modalInstanceBannerRef.current) {
+      modalInstanceBannerRef.current = new Modal(modalBannerRef.current, {backdrop: "true", Keyboard: true});
     }
-    modalInstanceRef.current.show();
+    modalInstanceBannerRef.current.show();
   }
   
   const closeModal = ()=> {
-    if(modalInstanceRef.current) {
-      modalInstanceRef.current.hide();
+    if(modalInstanceBannerRef.current) {
+      modalInstanceBannerRef.current.hide();
     }
 
   }
@@ -293,7 +295,194 @@ const BlogHome = () => {
   }
 
 
+  
+//這邊以下開始專門處理編輯文章Modal
 
+const [titleEdit, setTitleEdit] = useState("");
+const [descriptionEdit, setDescriptionEdit] = useState("");
+const [contentEdit, setContentEdit] = useState("");
+const [imagePreviewEdit, setImagePreviewEdit] = useState("");
+const [selectedFileEdit, setSelectedFileEdit] = useState(null);
+const [externalImageEdit  ,setExternalImageEdit] = useState("");
+
+
+const modalRef = useRef(null); //管理編輯文章實體化modal位置
+const modalInstanceRef = useRef(null);//管理編輯文章實體化
+const quillInstance = useRef(null); // Quill 編輯器
+const editorRef = useRef(null); // 綁定 Quill DOM
+const fileInputRef = useRef(null);
+
+//處理編輯modal實體化
+useEffect(()=>{
+  const modalElement = modalRef.current;
+  if (!modalElement) return;
+
+  modalInstanceRef.current = new Modal(modalElement, {backdrop: "true", Keyboard: true});
+
+},[])
+
+useEffect(() => {
+  if (!selectedArticle) return;
+  
+  setTitleEdit(selectedArticle.title || "");
+  setDescriptionEdit(selectedArticle.description || "");
+  setContentEdit(selectedArticle.content || "");
+  setImagePreviewEdit(selectedArticle.image_url || "");
+
+  // ✅ 確保 Quill 編輯器初始化
+  if (editorRef.current && !quillInstance.current) {
+    quillInstance.current = new Quill(editorRef.current, {
+      theme: "snow",
+      modules: {
+        toolbar: [
+          [{ font: [] }, { size: [] }],
+          ["bold", "italic", "underline", "strike"],
+          [{ color: [] }, { background: [] }],
+          [{ align: [] }],
+          [{ list: "ordered" }, { list: "bullet" }],
+          ["blockquote", "code-block"],
+          ["link", "image", "video"],
+          ["clean"],
+        ],
+      },
+    });
+
+    quillInstance.current.on("text-change", () => {
+      setContentEdit(quillInstance.current.root.innerHTML);
+    });
+  }
+
+  // ✅ 載入文章內容到 Quill
+  if (quillInstance.current) {
+    quillInstance.current.root.innerHTML = selectedArticle.content || "";
+  }
+}, [selectedArticle]);
+
+
+
+//傳進去給articleCard當打開開關
+
+const openEditModal = (article) => {
+  console.log("🔍 文章選擇:", article);
+  setSelectedArticle(article);
+
+  if(!modalInstanceRef.current) {
+    modalInstanceRef.current = new Modal(modalRef.current, {backdrop: "true", Keyboard: true});
+  }
+  modalInstanceRef.current.show();
+}
+
+const closeEditModal = ()=> {
+  if(modalInstanceRef.current) {
+    modalInstanceRef.current.hide();
+  }
+  setSelectedArticle(null);
+}
+
+// ✅ 本地檔案封面圖輸入點
+const handleImageEdit = (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  setImagePreviewEdit("");
+  setExternalImageEdit("");
+  setSelectedFileEdit(file);
+  setImagePreviewEdit(URL.createObjectURL(file));
+};
+
+
+// 外部網址預染封面圖 ✅ 手動輸入封面圖片 URL
+  const handleExternalImageEdit = (e) => {
+    const url = e.target.value.trim();
+    setImagePreviewEdit("");
+    setSelectedFileEdit("");
+    setExternalImageEdit(url);
+    setImagePreviewEdit(url); // ✅ 預覽外部圖片
+};
+
+// ✅ 上傳封面圖到 R2
+const uploadImageToR2 = async () => {
+  if (!selectedFileEdit) return;
+
+  const formData = new FormData();
+  formData.append("cover", selectedFileEdit);
+  try {
+    const res = await axios.post(`${API_BASE_URL}/posts/upload/cover`, formData, {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${token}`,
+    });
+    return res.data.url;
+  } catch (error) {
+    console.error("封面圖片上傳失敗", error);
+    return 
+  }
+};
+
+
+
+  // ✅ 更新文章
+  const handleSubmit = async () => {
+    try {
+      const finalImageUrl = selectedFileEdit? await uploadImageToR2():externalImageEdit;
+
+       // 創建一個臨時 `div` 來解析 HTML(Quill 內部 Base64 圖片)
+       const tempDiv = document.createElement("div");
+
+       // ✅ **確保 Quill 內容是最新的**
+       tempDiv.innerHTML = contentEdit;
+       // ✅ **處理 Base64 圖片並替換**
+       const imgTags = [...tempDiv.getElementsByTagName("img")];
+       
+       // 2️⃣ 找出所有 Base64 編碼的圖片
+       const base64Images = imgTags
+           .map(img => img.getAttribute("src"))
+           .filter(src => src.startsWith("data:image"));
+
+      // 3️⃣ 如果有 Base64 圖片，則批量上傳
+      if(base64Images.length > 0) {
+        try {
+            const res = await axios.post(`${API_BASE_URL}/posts/upload/content`,
+            {files: base64Images},{
+                headers:{
+                    Authorization: `Bearer ${token}`
+                },
+                maxContentLength: 100 * 1024 * 1024, // ✅ 允許最大 100MB
+                maxBodyLength: 100 * 1024 * 1024
+            })
+
+            // 4️⃣ 替換 Quill 內的 Base64 圖片 URL 為 R2 的 URL
+            base64Images.forEach((base64, index)=>{
+                const newUrl = res.data.urls[index];
+                const img = tempDiv.querySelector(`img[src="${base64}"]`);
+                if(img) img.setAttribute("src", newUrl);
+            });
+
+            // setContent(tempDiv.innerHTML); // ✅ **統一更新 `content`**
+            // quill.root.innerHTML = tempDiv.innerHTML; // ✅ 直接更新 Quill 編輯器內容
+        } catch (error) {
+            console.error("文章內圖片上傳失敗", error);
+            return
+        }
+      }
+
+      await axios.patch(`${API_BASE_URL}/posts/${selectedArticle.id}`, {
+        title: titleEdit,
+        description: descriptionEdit,
+        content: tempDiv.innerHTML,
+        image_url: finalImageUrl,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      alert("文章更新成功");
+      getBlogArticle(); // 重新加載文章
+      closeEditModal(); // 關閉 Modal
+    } catch (error) {
+      console.error("文章更新失敗", error);
+      alert("文章更新失敗");
+    }
+  };
 
   return (
     <>
@@ -432,6 +621,7 @@ const BlogHome = () => {
                       likePost={likePost} // 傳遞按讚函式
                       token={token}
                       getBlogArticle = {()=> getBlogArticle() }
+                      onEdit={ openEditModal}  // 🚀 **將開啟 `Modal` 的函式傳下去**
                     />
                   ))}
                 </div>
@@ -451,13 +641,14 @@ const BlogHome = () => {
               <button type="button" className="btn-close" onClick={closeModal}></button>
             </div>
             <div className="modal-body">
-              <label htmlFor="封面圖片" className="form-label">上傳圖片</label>
-              <input type="file" className="form-control mb-2" accept="image/*" onChange={handleImageChange} />
+              <label htmlFor="封面圖片" className="form-label fw-medium">上傳圖片</label>
+              <input id="封面圖片" type="file" className="form-control mb-2" accept="image/*" onChange={handleImageChange} />
               <input type="text" className="form-control mb-2" placeholder="輸入封面圖片 URL" value={imageUrl} onChange={handleExternalImage} />
               {imagePreview && <img src={imagePreview} alt="預覽圖片" className="img-fluid mb-3" />}
-
-              <input type="text" className="form-control mb-2" placeholder="Banner 標題" value={title} onChange={(e) => setTitle(e.target.value)} />
-              <input type="text" className="form-control mb-2" placeholder="Banner 副標題" value={subtitle} onChange={(e) => setSubtitle(e.target.value)} />
+              <label htmlFor="標題" className="form-label fw-medium">Blog主頁標題</label>
+              <input id="標題" type="text" className="form-control mb-2" placeholder="輸入Blog主頁 標題" value={title} onChange={(e) => setTitle(e.target.value)} />
+              <label htmlFor="副標題" className="form-label fw-medium">Blog主頁副標</label>
+              <input id="副標題" type="text" className="form-control mb-2" placeholder="輸入 Blog主頁 副標題" value={subtitle} onChange={(e) => setSubtitle(e.target.value)} />
             </div>
             <div className="modal-footer">
               <button className="btn btn-primary" onClick={handleBannerUpdate}>儲存</button>
@@ -468,6 +659,39 @@ const BlogHome = () => {
       </div>
 
       <NewPostModal   getBlogArticle = {()=> getBlogArticle() }/>
+
+      {/*  ✅ 內嵌的 `EditPostModal`*/}
+      <div className="modal fade" ref={modalRef} id="editPostModal" aria-hidden="true" tabIndex="-1" >
+          <div className="modal-dialog modal-lg">
+            <div className="modal-content">
+              <div className="modal-header">
+                  <h5 className="modal-title">編輯文章</h5>
+                  <button type="button" className="btn-close" onClick={closeEditModal}></button>
+              </div>
+
+              <div className="modal-body">
+                <label htmlFor="封面圖片" className="form-label fw-medium">封面圖片</label>
+                <input type="file" ref={fileInputRef} id="封面圖片" className="form-control mb-2" accept="image/*" onChange={handleImageEdit}/>
+                <input type="text" id="輸入封面圖片Url" className="form-control mb-2" value={externalImageEdit}  placeholder="輸入封面圖片 URL"onChange={handleExternalImageEdit}/>
+                {imagePreviewEdit && <img src={imagePreviewEdit} alt="封面預覽" className="img-fluid mb-3"   />}
+
+                <label htmlFor="title" className="form-label fw-medium">文章標題</label>
+                <input id="title" type="text"  className="form-control mb-2"  value={titleEdit} onChange={(e)=> setTitleEdit(e.target.value) }/>
+                <label htmlFor="description" className="form-label fw-medium">文章簡介</label>
+                <input id="description" type="text"  className="form-control mb-2" value={descriptionEdit} onChange={(e)=> setDescriptionEdit(e.target.value)}/>
+
+                {/* ✅ 這裡用 ref 綁定 Quill */} 
+                <div className="mb-3" ref={editorRef} style={{minHeight: "200px"}}></div>
+              </div>
+
+              <div className="modal-footer">
+                  <button className="btn btn-primary" onClick={handleSubmit}>更新文章</button>
+                  <button className="btn btn-sceondary" onClick={closeEditModal}>關閉</button>
+              </div>
+            </div>
+          </div>   
+      </div>
+
     </>
   );
 };
