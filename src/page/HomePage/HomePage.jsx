@@ -16,7 +16,10 @@ import banner_2_sm from "../../assets/images/banner/banner-2-sm.png";
 import banner_3_sm from "../../assets/images/banner/banner-3-sm.png";
 import avatar from "../../assets/images/avatar-1.png";
 import about_us from "../../assets/images/about-us.png";
+import commentData from "./HomePageCommentData";
+import { useState } from "react";
 const HomePage = () => {
+  const [commentCount, setCommentCount] = useState(3);
   return (
     <>
       <header>
@@ -117,52 +120,69 @@ const HomePage = () => {
           <h2 className="fw-bold fs-5 fs-lg-3 text-primary">好評推薦</h2>
           <span className="fs-7 fw-bold">快來看看大家怎麼說！</span>
           <div className="d-block d-lg-none d-flex flex-column align-items-center mt-10 gap-5">
-            {Array.from({ length: 3 }).map((item, index) => {
-              return (
-                <ReviewCard
-                  reviewStar={(index % 3) + 2}
-                  avatar={avatar}
-                  width="100%"
-                  key={index}
-                />
-              );
-            })}
-            <button
-              type="button"
-              className="btn btn-lg btn-primary fw-bold lh-sm"
-            >
-              載入更多
-            </button>
+            {commentData
+              .slice(0, commentCount)
+              .map((commentDataItem, index) => {
+                return (
+                  <ReviewCard
+                    reviewStar={commentDataItem.rate}
+                    avatar={commentDataItem.profile_picture}
+                    content={commentDataItem.content}
+                    user_name={commentDataItem.user_name}
+                    width="100%"
+                    key={index}
+                  />
+                );
+              })}
+            {commentCount < commentData.length && (
+              <button
+                type="button"
+                className="btn btn-lg btn-primary fw-bold lh-sm"
+                onClick={() => {
+                  setCommentCount(commentCount + 3);
+                }}
+              >
+                載入更多
+              </button>
+            )}
           </div>
         </div>
         <div className="d-none d-lg-block">
           <Marquee className="reviewMarquee py-3 mb-2" speed={30}>
-            {Array.from({ length: 10 }).map((item, index) => {
-              return (
-                <ReviewCard
-                  reviewStar={(index % 3) + 2}
-                  avatar={avatar}
-                  width="306px"
-                  key={index}
-                />
-              );
-            })}
+            {commentData
+              .slice(0, commentData.length / 2)
+              .map((commentDataItem, index) => {
+                return (
+                  <ReviewCard
+                    reviewStar={commentDataItem.rate}
+                    avatar={commentDataItem.profile_picture}
+                    content={commentDataItem.content}
+                    user_name={commentDataItem.user_name}
+                    width="306px"
+                    key={index}
+                  />
+                );
+              })}
           </Marquee>
           <Marquee
             className="reviewMarquee py-3"
             speed={35}
             direction={"right"}
           >
-            {Array.from({ length: 10 }).map((item, index) => {
-              return (
-                <ReviewCard
-                  reviewStar={(index % 3) + 2}
-                  avatar={avatar}
-                  width="306px"
-                  key={index}
-                />
-              );
-            })}
+            {commentData
+              .slice(commentData.length / 2, commentData.length)
+              .map((commentDataItem, index) => {
+                return (
+                  <ReviewCard
+                    reviewStar={commentDataItem.rate}
+                    avatar={commentDataItem.profile_picture}
+                    content={commentDataItem.content}
+                    user_name={commentDataItem.user_name}
+                    width="306px"
+                    key={index}
+                  />
+                );
+              })}
           </Marquee>
         </div>
       </section>
@@ -219,7 +239,8 @@ const HomePage = () => {
               </SwiperSlide>
             </Swiper>
           </div>
-          <Link to="/articleList" 
+          <Link
+            to="/articleList"
             className="btn btn-lg btn-primary lh-sm mx-auto hover-shadow"
           >
             點我看更多
