@@ -364,12 +364,51 @@ const ArticleListPage = () => {
               ) : (
                 <ul className="list-unstyled d-flex flex-column gap-6">
                   {recommendArticleData
-                    .slice(0, 4)
+                    .slice(0, 3)
                     .map((recommendArticleDataItem) => {
                       return (
                         <li
                           key={recommendArticleDataItem.id}
                           className="recommend-article-card bg-light rounded-2 border-bottom border-2 border-lg-4 border-primary"
+                        >
+                          <Link
+                            to={`/article/${recommendArticleDataItem.id}`}
+                            className="d-flex py-4 px-5 py-lg-7 px-lg-9"
+                          >
+                            <img
+                              className="card-img me-3 me-lg-6 object-fit-cover"
+                              src={
+                                recommendArticleDataItem.image_url ||
+                                "https://github.com/wfox5510/wordSapve-imgRepo/blob/main/articleList-recommend1.png?raw=true"
+                              }
+                              alt=""
+                            />
+                            <div className="card-body d-flex flex-column gap-2 gap-lg-3">
+                              <span className="fw-bold">
+                                {recommendArticleDataItem.author_name} |
+                                <span className="ms-2">
+                                  {recommendArticleDataItem.category_name}
+                                </span>
+                              </span>
+
+                              <h4 className="card-title text-primary fw-bold text-truncate-2lines lh-sm">
+                                {recommendArticleDataItem.title}
+                              </h4>
+                              <p className="card-text text-truncate-2lines fs-9 fs-lg-8">
+                                {recommendArticleDataItem.description}
+                              </p>
+                            </div>
+                          </Link>
+                        </li>
+                      );
+                    })}
+                    {recommendArticleData
+                    .slice(3, 5)
+                    .map((recommendArticleDataItem) => {
+                      return (
+                        <li
+                          key={recommendArticleDataItem.id}
+                          className="d-none d-lg-block recommend-article-card bg-light rounded-2 border-bottom border-2 border-lg-4 border-primary"
                         >
                           <Link
                             to={`/article/${recommendArticleDataItem.id}`}
