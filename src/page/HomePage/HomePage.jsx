@@ -216,7 +216,7 @@ const HomePage = () => {
               .slice(0, 4)
               .map((allArticleDataItem) => {
                 return (
-                  <div className="col">
+                  <div className="col" key={allArticleDataItem.id}>
                     <ArticleCard articleData={allArticleDataItem} />
                   </div>
                 );
@@ -248,7 +248,7 @@ const HomePage = () => {
                 .slice(0, 4)
                 .map((allArticleDataItem) => {
                   return (
-                    <SwiperSlide>
+                    <SwiperSlide key={allArticleDataItem.id}>
                       <ArticleCard articleData={allArticleDataItem} />
                     </SwiperSlide>
                   );
