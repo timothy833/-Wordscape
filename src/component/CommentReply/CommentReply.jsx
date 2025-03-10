@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -8,7 +9,8 @@ const CommentReply = ({
   isAuther,
   isCurrentUser,
   getComment,
-  loginUserId
+  loginUserId,
+  isAuthorized,
 }) => {
   const [commentLikeData, setCommentLikeData] = useState(null);
   const [currentComment, setCurrentComment] = useState(commentData.content);
@@ -68,7 +70,10 @@ const CommentReply = ({
   return (
     <div className="d-flex flex-column gap-3">
       <div className="d-flex">
-        <div className="d-flex align-items-center gap-2 me-5">
+        <Link
+          to={`/blog/:${commentData.user_id}`}
+          className="d-flex align-items-center gap-2 me-5"
+        >
           <img
             className="avatar object-fit-cover rounded-pill"
             src={
@@ -77,13 +82,13 @@ const CommentReply = ({
             }
             alt="avatar"
           />
-          <a href="#">{commentData.user_name}</a>
+          <span>{commentData.user_name}</span>
           {isAuther && <span className="text-gray">作者</span>}
-        </div>
+        </Link>
         <div className="d-flex gap-5 align-items-center">
           <a
             href="#"
-            className={`d-flex align-items-center ${
+            className={`d-flex align-items-center user-select-none pe-open ${
               commentLikeData?.some(
                 (LikeDataItem) => LikeDataItem.user_id === loginUserId
               )
@@ -92,7 +97,7 @@ const CommentReply = ({
             } gap-1`}
             onClick={(e) => {
               e.preventDefault();
-              postCommentLike();
+              isAuthorized ? postCommentLike() : alert("請先登入");
             }}
           >
             <span className="material-symbols-outlined icon-fill fs-6">

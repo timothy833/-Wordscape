@@ -11,4 +11,14 @@
 .article-card {
   border: 0px;
   border-bottom: 4px solid #fb9a39;
+  .card-img {
+    aspect-ratio: 2 / 1;
+    width: 100%;
+  }
+  .card-title{
+    height: 3em;
+  }
+  .card-text{
+    height: 3em;
+  }
 }

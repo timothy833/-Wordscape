@@ -1,18 +1,18 @@
 import "./ReviewCard.scss";
-const ReviewCard = ({ reviewStar, avatar, width }) => {
+const ReviewCard = ({ reviewStar, avatar, width, content ,user_name }) => {
   return (
-    <div className="card border-0 shadow" style={{width:width}}>
+    <div className="card border-0 shadow" style={{ width: width }}>
       <div className="card-body">
         <div className="d-flex align-items-center justify-content-between mb-2">
           <div className="d-flex align-items-center">
             <img
               src={avatar}
               alt=""
-              className="me-2"
+              className="me-2 object-fit-cover rounded-pill"
               width="40px"
               height="40px"
             />
-            <span>咖啡香書迷</span>
+            <span>{user_name}</span>
           </div>
           <div className="d-flex align-items-center gap-1">
             {Array.from({ length: reviewStar }).map((item, index) => {
@@ -37,9 +37,7 @@ const ReviewCard = ({ reviewStar, avatar, width }) => {
             })}
           </div>
         </div>
-        <p className="card-text reviewCard-text">
-          優質社群氛圍，作者專業且互動友善，讓學習變得輕鬆又有趣！
-        </p>
+        <p className="card-text reviewCard-text">{content}</p>
       </div>
     </div>
   );

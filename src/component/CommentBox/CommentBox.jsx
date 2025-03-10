@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import "../../../node_modules/bootstrap/js/src/dropdown.js";
+import { Link } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -13,6 +14,7 @@ const CommentBox = ({
   isAuther,
   hasReplie,
   isCurrentUser,
+  isAuthorized,
 }) => {
   const [commentLikeData, setCommentLikeData] = useState(null);
   const [isReviewOpen, setIsReviewOpen] = useState(false);
@@ -42,8 +44,8 @@ const CommentBox = ({
   };
   const postReviewComment = async () => {
     try {
-      if(commentData?.id){
-        const res = await axios.post(`${API_BASE_URL}/comments`, {
+      if (commentData?.id) {
+        await axios.post(`${API_BASE_URL}/comments`, {
           post_id: articleId,
           parent_comment_id: commentData.id,
           content: review,
@@ -92,7 +94,10 @@ const CommentBox = ({
   return (
     <>
       <div className="d-flex flex-column gap-3 mb-5">
-        <div className="d-flex align-items-center gap-2">
+        <Link
+          to={`/blog/:${commentData.user_id}`}
+          className="d-flex align-items-center gap-2"
+        >
           <img
             className="avatar object-fit-cover rounded-pill"
             src={
@@ -101,9 +106,9 @@ const CommentBox = ({
             }
             alt="avatar"
           />
-          <a href="#">{commentData.user_name}</a>
+          <span>{commentData.user_name}</span>
           {isAuther && <span className="text-gray">作者</span>}
-        </div>
+        </Link>
         {/* 編輯目前留言 */}
         {isEdit ? (
           <div
@@ -138,7 +143,7 @@ const CommentBox = ({
         <div className="d-flex gap-5">
           <a
             href="#"
-            className={`d-flex align-items-center ${
+            className={`d-flex align-items-center user-select-none pe-open ${
               commentLikeData?.some(
                 (LikeDataItem) => LikeDataItem.user_id === loginUserId
               )
@@ -147,7 +152,7 @@ const CommentBox = ({
             } gap-1`}
             onClick={(e) => {
               e.preventDefault();
-              postCommentLike();
+              isAuthorized ? postCommentLike() : alert("請先登入");
             }}
           >
             <span className="material-symbols-outlined icon-fill fs-6">
@@ -157,12 +162,12 @@ const CommentBox = ({
           </a>
           <a
             href="#"
-            className={`d-flex align-items-center ${
+            className={`d-flex align-items-center user-select-none pe-open ${
               hasReplie ? "text-primary" : "text-gray"
             } gap-1`}
             onClick={(e) => {
               e.preventDefault();
-              setIsReviewOpen(!isReviewOpen);
+              isAuthorized ? setIsReviewOpen(!isReviewOpen) : alert("請先登入");
             }}
           >
             <span className="material-symbols-outlined icon-fill fs-6">
@@ -173,7 +178,7 @@ const CommentBox = ({
           {isCurrentUser && (
             <div className="comment-dropdown dropdown">
               <a
-                className="text-gray"
+                className="text-gray user-select-none pe-open"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
@@ -213,7 +218,7 @@ const CommentBox = ({
             className="text-gray"
             onClick={(e) => {
               e.preventDefault();
-              setIsReviewOpen(!isReviewOpen);
+              isAuthorized ? setIsReviewOpen(!isReviewOpen) : alert("請先登入");
             }}
           >
             回覆

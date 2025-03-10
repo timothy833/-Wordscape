@@ -43,9 +43,7 @@ const ArticlePage = () => {
     }
   };
   //使用功能確認是否登入
-  const checkIsLogin=()=>{
-    
-  } 
+  const checkIsLogin = () => {};
   //留言相關功能(需登入)
   const getComment = async () => {
     try {
@@ -132,14 +130,26 @@ const ArticlePage = () => {
       console.log(error);
     }
   };
+  //用於處理推薦文章
+  const [allArticleData, setAllArticleData] = useState([]);
+  const getAllArticleData = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/posts/full`);
+      setAllArticleData(res.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
+    window.scrollTo(0, 0);
     getArticle();
     getComment();
-  }, []);
+    getAllArticleData();
+  }, [articleId]);
   //判斷訂閱需要取得articleData中作者的資料，用useEffect確保setState的值正確取得
   useEffect(() => {
     if (articleData) {
-      checkIsSubscribed();
       getAutherData();
     }
   }, [articleData]);
@@ -147,6 +157,7 @@ const ArticlePage = () => {
     if (isAuthorized) {
       checkIsLikeArticle();
       checkIsFavorites();
+      checkIsSubscribed();
     } else if (!isAuthorized) {
       setIsLike(null);
       setIsFavorite(false);
@@ -195,7 +206,7 @@ const ArticlePage = () => {
                     } d-flex align-items-center`}
                     onClick={(e) => {
                       e.preventDefault();
-                      isAuthorized ? postSubscribed() : alert("請先登入")
+                      isAuthorized ? postSubscribed() : alert("請先登入");
                     }}
                     href="#"
                   >
@@ -222,22 +233,24 @@ const ArticlePage = () => {
                   }`}
                   onClick={(e) => {
                     e.preventDefault();
-                    isAuthorized ? postFavorites() : alert("請先登入")
+                    isAuthorized ? postFavorites() : alert("請先登入");
                   }}
                 >
                   {isFavorite ? "已收藏" : "收藏"}
                 </a>
-                <span
-                  className={` d-flex align-items-center gap-1 ${
+                <a
+                  className={`user-select-none pe-open d-flex align-items-center gap-1 ${
                     isLike ? "text-primary" : "text-gray"
                   } `}
-                  onClick={() => isAuthorized ? postArticleLike() : alert("請先登入")()}
+                  onClick={() =>
+                    isAuthorized ? postArticleLike() : alert("請先登入")()
+                  }
                 >
                   <span className="material-symbols-outlined icon-fill">
                     favorite
                   </span>
                   {articleData?.likes_count}
-                </span>
+                </a>
                 <span className="text-gray">
                   {articleData?.created_at !== undefined &&
                     `發佈於 ${new Date(
@@ -278,6 +291,7 @@ const ArticlePage = () => {
                 commentData={commentItem}
                 articleId={articleId}
                 getComment={getComment}
+                isAuthorized={isAuthorized}
                 isAuther={commentItem.user_id === articleData?.user_id}
                 isCurrentUser={commentItem.user_id === userId}
                 hasReplie={commentItem.replies.some(
@@ -290,6 +304,7 @@ const ArticlePage = () => {
                       key={replieItem.id}
                       loginUserId={userId}
                       commentData={replieItem}
+                      isAuthorized={isAuthorized}
                       getComment={getComment}
                       isAuther={replieItem.user_id === articleData?.user_id}
                       isCurrentUser={replieItem.user_id === userId}
@@ -300,6 +315,7 @@ const ArticlePage = () => {
             );
           })}
           <form
+            className={`${!isAuthorized && "d-none"}`}
             onSubmit={(e) => {
               e.preventDefault();
               isAuthorized ? postComment() : alert("請先登入");
@@ -331,7 +347,8 @@ const ArticlePage = () => {
       <section>
         <div className="container py-10 py-lg-15">
           <h3 className="fs-5 fs-lg-3 text-primary fw-bold mb-5">相關文章</h3>
-          <nav className="related-articles nav mb-5 gap-5">
+          {/* 因應API功能調整，暫時不使用tag選擇文章 */}
+          {/* <nav className="related-articles nav mb-5 gap-5">
             <a className="nav-link p-0 active" aria-current="page" href="#">
               數位時代
             </a>
@@ -341,20 +358,25 @@ const ArticlePage = () => {
             <a className="nav-link p-0" href="#">
               未來創作
             </a>
-          </nav>
+          </nav> */}
           <div className="d-none d-md-flex row row-cols-2 row-cols-xl-4 g-lg-6 g-3 mb-10">
-            <div className="col">
-              <ArticleCard />
-            </div>
-            <div className="col">
-              <ArticleCard />
-            </div>
-            <div className="col">
-              <ArticleCard />
-            </div>
-            <div className="col">
-              <ArticleCard />
-            </div>
+            {allArticleData
+              .filter(
+                (allArticleDataItem) =>
+                  allArticleDataItem.id !== articleData?.id
+              )
+              .filter(
+                (allArticleDataItem) =>
+                  allArticleDataItem.category_name === articleData?.category_name
+              )
+              .slice(0, 4)
+              .map((allArticleDataItem) => {
+                return (
+                  <div className="col" key={allArticleDataItem.id}>
+                    <ArticleCard articleData={allArticleDataItem} />
+                  </div>
+                );
+              })}
           </div>
           <div className="d-block d-md-none">
             <Swiper
@@ -374,18 +396,24 @@ const ArticlePage = () => {
               }}
               spaceBetween={"24px"}
             >
-              <SwiperSlide>
-                <ArticleCard />
-              </SwiperSlide>
-              <SwiperSlide>
-                <ArticleCard />
-              </SwiperSlide>
-              <SwiperSlide>
-                <ArticleCard />
-              </SwiperSlide>
-              <SwiperSlide>
-                <ArticleCard />
-              </SwiperSlide>
+              {allArticleData
+                .filter(
+                  (allArticleDataItem) =>
+                    allArticleDataItem.id !== articleData?.id
+                )
+                .filter(
+                  (allArticleDataItem) =>
+                    allArticleDataItem.category_name ===
+                    articleData?.category_name
+                )
+                .slice(0, 4)
+                .map((allArticleDataItem) => {
+                  return (
+                    <SwiperSlide key={allArticleDataItem.id}>
+                      <ArticleCard articleData={allArticleDataItem} />
+                    </SwiperSlide>
+                  );
+                })}
             </Swiper>
           </div>
         </div>
