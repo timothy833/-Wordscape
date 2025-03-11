@@ -73,7 +73,7 @@ const CommentReply = ({
     <div className="d-flex flex-column gap-3">
       <div className="d-flex">
         <Link
-          to={`/blog/:${commentData.user_id}`}
+          to={`/blog/${commentData.user_id}`}
           className="d-flex align-items-center gap-2 me-5"
         >
           <img
