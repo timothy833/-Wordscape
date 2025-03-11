@@ -4,6 +4,10 @@ import { useSelector, useDispatch } from "react-redux";
 import { updateUserInfo } from "../../slice/authSlice";
 import { useForm } from "react-hook-form";
 const { VITE_API_BASE_URL } = import.meta.env;
+import Swal from "sweetalert2";
+import { alertMsgForAdminInfo } from "../../utils/alertMsg";
+import { alertMsgForAdminError } from "../../utils/alertMsg";
+import { alertMsgForVerify } from "../../utils/alertMsg";
 
 const AdminInfo = () => {
   const dispatch = useDispatch();
@@ -17,7 +21,7 @@ const AdminInfo = () => {
   useEffect(() => {
     (async () => {
       if (!token) {
-        alert("驗證錯誤，請重新登入");
+        Swal.fire(alertMsgForVerify);
         return;
       };
       try {
@@ -65,7 +69,7 @@ const AdminInfo = () => {
 
   const onSubmit = async (data) => {
     if (!token) {
-      alert("Token 無效，請重新登入");
+      Swal.fire(alertMsgForVerify);
       return;
     }
 
@@ -100,10 +104,10 @@ const AdminInfo = () => {
         },
       });
 
-      alert("資料更新成功");
+      Swal.fire(alertMsgForAdminInfo);
       dispatch(updateUserInfo({ username: data.username, userAvatar: profileImageUrl }));
     } catch (error) {
-      alert("更新失敗");
+      Swal.fire(alertMsgForAdminError);
       console.error(error);
     }
   };
