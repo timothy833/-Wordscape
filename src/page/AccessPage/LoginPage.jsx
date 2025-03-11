@@ -147,9 +147,9 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
     };
 
     return (
-        <div className={`modal-container ${show ? "show" : ""} w-100 h-100`}>
+        <div className={`access-modal-container ${show ? "show" : ""} w-100 h-100`}>
             <div 
-            className="modal-content h-100">
+            className="access-modal-content h-100">
                 <div className="login position-relative h-100">
                     <div className="container-fluid h-100">
                         <div className="row h-100 w-100 justify-content-center">
@@ -165,7 +165,7 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
                             
                             {/* 右側區域 */}
                             {isForgot ? (
-                                <div className="col-md-4 d-flex align-items-center h-100 position-relative">
+                            <div className="col-md-4 d-flex align-items-center h-100 position-relative">
                                 <div className="card shadow-lg rounded-4 border-0 w-100 bg-white login-card mx-5">
                                     <div className="card-body">
                                         <form id="loginForm" noValidate onSubmit={forgotPassword}>
@@ -266,7 +266,7 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
                                     </div>
                                 </div>
                             </div>
-                        )}
+                            )}
                         </div>
                     </div>
                     <div className="pattern-container">

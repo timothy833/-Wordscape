@@ -104,9 +104,9 @@ const SignupPage = ({ show, handleClose, handleShowLoginModal }) => {
     };
 
     return (
-        <div className={`modal-container ${show ? "show" : ""} w-100 h-100`}>
+        <div className={`access-modal-container ${show ? "show" : ""} w-100 h-100`}>
             <div 
-            className="modal-content h-100">
+            className="access-modal-content h-100">
                 <div className="login position-relative h-100">
                     <div className="container-fluid h-100">
                         <div className="row h-100 w-100 justify-content-center">
