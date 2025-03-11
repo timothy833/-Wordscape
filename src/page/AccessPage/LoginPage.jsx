@@ -86,15 +86,22 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
         setFormErrors({});
     }
 
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+
     const forgotPassword = async(event) => {
         event.preventDefault();
         let newFormErrors = {};
+        let formIsValid = true;
         
-        if (!formData.email || !emailRegex.test(formData.email)) {
+        if (!resetEmail.email || !emailRegex.test(resetEmail.email)) {
             newFormErrors.email = '請輸入有效的 Email 格式';
+            formIsValid = false;
             setFormErrors(newFormErrors);
             return;
         }
+
+        console.log('email', resetEmail.email);
 
         try{
             const url = `${VITE_API_BASE_URL}/users/forgot-password`;
@@ -124,9 +131,6 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
         handleClose();
     }
 
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-
     // 驗證表單
     const validateForm = () => {
         let formIsValid = true;
@@ -147,9 +151,9 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
     };
 
     return (
-        <div className={`modal-container ${show ? "show" : ""} w-100 h-100`}>
+        <div className={`access-modal-container ${show ? "show" : ""} w-100 h-100`}>
             <div 
-            className="modal-content h-100">
+            className="access-modal-content h-100">
                 <div className="login position-relative h-100">
                     <div className="container-fluid h-100">
                         <div className="row h-100 w-100 justify-content-center">
@@ -165,7 +169,7 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
                             
                             {/* 右側區域 */}
                             {isForgot ? (
-                                <div className="col-md-4 d-flex align-items-center h-100 position-relative">
+                            <div className="col-md-4 d-flex align-items-center h-100 position-relative">
                                 <div className="card shadow-lg rounded-4 border-0 w-100 bg-white login-card mx-5">
                                     <div className="card-body">
                                         <form id="loginForm" noValidate onSubmit={forgotPassword}>
@@ -253,20 +257,20 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
                                             <span className="text-gray fw-light">或以其他平台登入</span>
                                         </div>
                                         <div className="d-flex justify-content-center gap-5">
-                                            <a href="#" target="_blank">
-                                            <img src="/src/assets/images/AccessPage/Facebook-icon.png" width="40px" height="40px" alt="facebook-login" />
+                                            <a style={{cursor: 'pointer'}}>
+                                            <img src="/src/assets/images/AccessPage/Facebook-icon.png" width="40px" height="40px" alt="facebook-login"/>
                                             </a>
-                                            <a href="#" target="_blank">
+                                            <a style={{cursor: 'pointer'}}>
                                                 <img src="/src/assets/images/AccessPage/Apple-icon.png" width="40px" height="40px" alt="apple-login" />
                                             </a>
-                                            <a href="#" target="_blank">
+                                            <a style={{cursor: 'pointer'}}>
                                                 <img src="/src/assets/images/AccessPage/Google-icon.png" width="40px" height="40px" alt="google-login" />
                                             </a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        )}
+                            )}
                         </div>
                     </div>
                     <div className="pattern-container">

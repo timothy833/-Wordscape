@@ -82,6 +82,7 @@ export const logout = createAsyncThunk(
         delete axios.defaults.headers.common["Authorization"];
         localStorage.removeItem('WS_id');
         localStorage.removeItem('WS_username');
+        localStorage.removeItem('WS_avatar'); 
         
         alert(logoutRes.data.message || '登出成功');
         return { success: true };
@@ -102,6 +103,40 @@ export const logout = createAsyncThunk(
       
       return rejectWithValue(error.response?.data || error.message);
     };
+  }
+);
+
+// 獲取用戶頭像
+export const fetchUserAvatar = createAsyncThunk(
+  'auth/fetchUserAvatar',
+  async (_, { getState, rejectWithValue }) => {
+    try {
+      const token = getState().auth.token;
+      const userId = getState().auth.id;
+      
+      if (!token || !userId) {
+        return rejectWithValue('未登入狀態');
+      }
+      
+      const url = `${VITE_API_BASE_URL}/users/${userId}`;
+      const response = await axios.get(url, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      const avatarUrl = response.data.profile_picture; // 根據你的 API 回應結構調整
+      const updateUsername = response.data.username;
+      
+      // 保存到 localStorage
+      localStorage.setItem('WS_avatar', avatarUrl);
+      localStorage.setItem('WS_avatar', updateUsername);
+      
+      return { avatarUrl, updateUsername };
+    } catch (error) {
+      console.log('獲取頭像失敗', error.response?.data || error.message);
+      return rejectWithValue(error.response?.data || '獲取頭像失敗');
+    }
   }
 );
 
@@ -144,7 +179,11 @@ export const authSlice = createSlice({
       state.id = id;
       state.username = username;
       state.isAuthorized = !!id;
-    }
+    },
+    setAvatar: (state, action) => {
+      state.userAvatar = action.payload;
+      localStorage.setItem('WS_avatar', action.payload);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -158,6 +197,7 @@ export const authSlice = createSlice({
         state.id = action.payload.id;
         state.username = action.payload.username;
         state.isAuthorized = true;
+        state.userAvatar = null;
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
@@ -168,9 +208,14 @@ export const authSlice = createSlice({
         state.id = null;
         state.username = null;
         state.isAuthorized = false;
-      });
+        state.userAvatar = null; 
+      })
+      .addCase(fetchUserAvatar.fulfilled, (state, action) => {
+        state.userAvatar = action.payload.avatarUrl;
+        state.username = action.payload.updateUsername;
+      })
   }
 });
 
-export const { clearError, setUserInfo } = authSlice.actions;
+export const { clearError, setUserInfo, setAvatar } = authSlice.actions;
 export default authSlice.reducer;
