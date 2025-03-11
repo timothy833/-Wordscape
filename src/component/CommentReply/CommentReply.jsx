@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
+import { alertMsgForVerify } from "../../utils/alertMsg";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -97,7 +99,7 @@ const CommentReply = ({
             } gap-1`}
             onClick={(e) => {
               e.preventDefault();
-              isAuthorized ? postCommentLike() : alert("請先登入");
+              isAuthorized ? postCommentLike() : Swal.fire(alertMsgForVerify);;
             }}
           >
             <span className="material-symbols-outlined icon-fill fs-6">
