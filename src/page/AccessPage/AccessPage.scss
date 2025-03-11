@@ -1,4 +1,4 @@
-.modal-container {
+.access-modal-container {
     position: fixed;
     top: 0;
     left: 0;
@@ -9,12 +9,12 @@
     z-index: 10000;
   }
   
-  .modal-container.show {
+  .access-modal-container.show {
     opacity: 1;
     visibility: visible;
   }
   
-  .modal-content {
+  .access-modal-content {
     transition: transform 0.5s ease-in-out;
     transform: translateY(-20px);
   }

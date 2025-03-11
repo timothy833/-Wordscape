@@ -1,20 +1,21 @@
-import { Dropdown, Collapse } from "bootstrap";
+import { Collapse } from "bootstrap";
 import logo from "../../assets/images/logo.svg";
 import logo_sm from "../../assets/images/logo-sm.svg";
-import avatar from "../../assets/images/avatar-1.png";
 
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../../slice/authSlice';
-import { Link, useNavigate } from 'react-router-dom';
+import { logout, fetchUserAvatar } from '../../slice/authSlice';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import SignupPage from "../../page/AccessPage/SignupPage";
 import LoginPage from "../../page/AccessPage/LoginPage";
-// import SponsorButton from "../SponsorButton/SponsorButton";
+import SponsorModal from "../SponsorModal/SponsorModal";
 
 //手機版collapse需點擊按鈕和列表以外的地方關閉
 
 const Navbar = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation(); 
   const [showSignupModal, setShowSignupModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
 
@@ -23,20 +24,38 @@ const Navbar = () => {
   const handleShowLoginModal = () => setShowLoginModal(true);
   const handleCloseLoginModal = () => setShowLoginModal(false);
   
-  const { isAuthorized, username, id } = useSelector(state => state.auth);
+  const { isAuthorized, username, id, userAvatar } = useSelector(state => state.auth);
   
   const logoutHandle = () => {
      dispatch(logout());
      console.log("logout",isAuthorized);
   };
 
-  const navigate = useNavigate();
+  // 監聽登入狀態變化
   useEffect(() => {
-    if (isAuthorized === false) {
+    if (isAuthorized && !userAvatar) {
+      dispatch(fetchUserAvatar());
+    }
+  }, [isAuthorized, userAvatar, dispatch]);
+
+  useEffect(() => {
+    // 需要登入才能訪問的路徑列表
+    const protectedRoutes = ['/admin'];
+    
+    // 檢查當前路徑是否需要登入權限
+    const currentPath = location.pathname;
+    const isProtectedRoute = protectedRoutes.some(route => 
+      currentPath === route || currentPath.startsWith(`${route}/`)
+    );
+    
+    // 僅在保護路徑且未登入時跳轉
+    if (isAuthorized === false && isProtectedRoute) {
       navigate("/"); // 跳轉到首頁
       window.scrollTo(0, 0);
+      // 可選：顯示提示信息
+      alert('請先登入以訪問此頁面');
     }
-  }, [isAuthorized, navigate]);
+  }, [isAuthorized, navigate, location]);
 
   // Collapse
   useEffect(() => {
@@ -100,8 +119,6 @@ const Navbar = () => {
               </picture>
             </Link>
 
-            {/* <SponsorButton/> */}
-
             {/* 使用者選單-PC */}
             <div className="d-none d-lg-flex align-items-center gap-4">
               <div className="d-none d-lg-flex align-items-center gap-4">
@@ -132,7 +149,7 @@ const Navbar = () => {
                 ) : (
                   // 已登入狀態：顯示用戶資訊
                   <div className="d-flex ms-3">
-                    <img className="avatar me-2" src={avatar} alt="" />
+                    <img className="avatar me-2 rounded-circle" src={userAvatar} alt="" />
                     <div className="dropdown my-auto">
                       <a
                         id="dropdownUserMenu"
@@ -140,7 +157,7 @@ const Navbar = () => {
                         data-bs-toggle="dropdown"
                         href="#"
                       >
-                        {username}
+                        <p className="nav-username text-nowrap">{username}</p>
                         <span className="material-symbols-outlined ms-2">
                           keyboard_arrow_down
                         </span>
@@ -258,8 +275,8 @@ const Navbar = () => {
               <>
                 <li>
                   <div className="d-flex justify-content-center align-items-center border-top border-bottom border-gray_light py-3">
-                    <img className="avatar me-3" src={avatar} alt="" />
-                    <p className="m-0">{username}</p>
+                    <img className="avatar me-3 rounded-circle" src={userAvatar} alt="" />
+                    <p className="m-0 nav-username">{username}</p>
                   </div>
                 </li>
                 <li>

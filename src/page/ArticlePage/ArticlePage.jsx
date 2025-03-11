@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import DOMParserReact from "dom-parser-react";
+import Swal from "sweetalert2";
+import { alertMsgForVerify } from "../../utils/alertMsg";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -206,7 +208,9 @@ const ArticlePage = () => {
                     } d-flex align-items-center`}
                     onClick={(e) => {
                       e.preventDefault();
-                      isAuthorized ? postSubscribed() : alert("請先登入");
+                      isAuthorized
+                        ? postSubscribed()
+                        : Swal.fire(alertMsgForVerify);
                     }}
                     href="#"
                   >
@@ -233,7 +237,7 @@ const ArticlePage = () => {
                   }`}
                   onClick={(e) => {
                     e.preventDefault();
-                    isAuthorized ? postFavorites() : alert("請先登入");
+                    isAuthorized ? postFavorites() : Swal.fire(alertMsgForVerify);;
                   }}
                 >
                   {isFavorite ? "已收藏" : "收藏"}
@@ -243,7 +247,7 @@ const ArticlePage = () => {
                     isLike ? "text-primary" : "text-gray"
                   } `}
                   onClick={() =>
-                    isAuthorized ? postArticleLike() : alert("請先登入")()
+                    isAuthorized ? postArticleLike() : Swal.fire(alertMsgForVerify)
                   }
                 >
                   <span className="material-symbols-outlined icon-fill">
@@ -318,7 +322,7 @@ const ArticlePage = () => {
             className={`${!isAuthorized && "d-none"}`}
             onSubmit={(e) => {
               e.preventDefault();
-              isAuthorized ? postComment() : alert("請先登入");
+              isAuthorized ? postComment() : Swal.fire(alertMsgForVerify);;
             }}
           >
             <label className="d-none" htmlFor="comment">
@@ -367,7 +371,8 @@ const ArticlePage = () => {
               )
               .filter(
                 (allArticleDataItem) =>
-                  allArticleDataItem.category_name === articleData?.category_name
+                  allArticleDataItem.category_name ===
+                  articleData?.category_name
               )
               .slice(0, 4)
               .map((allArticleDataItem) => {
