@@ -108,11 +108,13 @@ const Admin_ArticleCard = () => {
                   </div>
                 </div>
                 <div className="col-lg-4">
-                  <img
-                    src={item.image_url}
-                    className="card-img-top rounded-1 mb-5"
-                    alt="articleImg"
-                  />
+                  {item.image_url && (
+                    <img
+                      src={item.image_url}
+                      className="card-img-top rounded-1 mb-5"
+                      alt="articleImg"
+                    />
+                  )}
                 </div>
               </div>
             </div>
