@@ -15,7 +15,7 @@ import SponsorModal from "../SponsorModal/SponsorModal";
 const Navbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation(); 
+  const location = useLocation();
   const [showSignupModal, setShowSignupModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
 
@@ -23,12 +23,12 @@ const Navbar = () => {
   const handleCloseSignupModal = () => setShowSignupModal(false);
   const handleShowLoginModal = () => setShowLoginModal(true);
   const handleCloseLoginModal = () => setShowLoginModal(false);
-  
+
   const { isAuthorized, username, id, userAvatar } = useSelector(state => state.auth);
-  
+
   const logoutHandle = () => {
-     dispatch(logout());
-     console.log("logout",isAuthorized);
+    dispatch(logout());
+    console.log("logout", isAuthorized);
   };
 
   // 監聽登入狀態變化
@@ -41,13 +41,13 @@ const Navbar = () => {
   useEffect(() => {
     // 需要登入才能訪問的路徑列表
     const protectedRoutes = ['/admin'];
-    
+
     // 檢查當前路徑是否需要登入權限
     const currentPath = location.pathname;
-    const isProtectedRoute = protectedRoutes.some(route => 
+    const isProtectedRoute = protectedRoutes.some(route =>
       currentPath === route || currentPath.startsWith(`${route}/`)
     );
-    
+
     // 僅在保護路徑且未登入時跳轉
     if (isAuthorized === false && isProtectedRoute) {
       navigate("/"); // 跳轉到首頁
@@ -62,40 +62,40 @@ const Navbar = () => {
     const handleDocumentClick = (e) => {
       const isSearchCollapse = document.getElementById('collapseSearch');
       const isUserCollapse = document.getElementById('collapseUserMenu');
-      
-      if (isSearchCollapse?.classList.contains('show') && 
-          !e.target.closest('#collapseSearch') && 
-          !e.target.closest('[data-bs-target="#collapseSearch"]')) {
+
+      if (isSearchCollapse?.classList.contains('show') &&
+        !e.target.closest('#collapseSearch') &&
+        !e.target.closest('[data-bs-target="#collapseSearch"]')) {
         new Collapse(isSearchCollapse).hide()
       }
-      
-      if (isUserCollapse?.classList.contains('show') && 
-          !e.target.closest('#collapseUserMenu') && 
-          !e.target.closest('[data-bs-target="#collapseUserMenu"]')) {
+
+      if (isUserCollapse?.classList.contains('show') &&
+        !e.target.closest('#collapseUserMenu') &&
+        !e.target.closest('[data-bs-target="#collapseUserMenu"]')) {
         new Collapse(isUserCollapse).hide()
       }
     }
-  
+
     document.addEventListener('click', handleDocumentClick)
     return () => document.removeEventListener('click', handleDocumentClick)
   }, [])
 
   // Search
   const [searchQuery, setSearchQuery] = useState('');
-  
+
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       console.log('搜尋:', searchQuery);
-      if(searchQuery==""){
+      if (searchQuery == "") {
         alert("請輸入搜尋文字")
-      }else{
+      } else {
 
-    }
+      }
       // 執行搜尋邏輯
     }
   };
-  
+
 
   return (
     <section className="pt-19 pt-lg-20 ">
@@ -149,7 +149,7 @@ const Navbar = () => {
                 ) : (
                   // 已登入狀態：顯示用戶資訊
                   <div className="d-flex ms-3">
-                    <img className="avatar me-2 rounded-circle" src={userAvatar} alt="" />
+                    <img className="avatar me-2 rounded-circle" src={userAvatar || "https://raw.githubusercontent.com/wfox5510/wordSapce-imgRepo/695229fa8c60c474d3d9dc0d60b25f9539ac74d9/default-avatar.svg"} alt="" />
                     <div className="dropdown my-auto">
                       <a
                         id="dropdownUserMenu"
@@ -184,33 +184,33 @@ const Navbar = () => {
               </div>
             </div>
 
-          {/* 使用者選單-mobile */}
-          <div className="d-lg-none">
-            <a
-              className="me-4"
-              data-bs-toggle="collapse"
-              href="#collapseSearch"
-              role="button"
-              aria-expanded="false"
-              aria-controls="collapseSearch"
-            >
-              <span className="material-symbols-outlined text-primary fs-2">
-                search
-              </span>
-            </a>
-            <a
-              data-bs-toggle="collapse"
-              href="#collapseUserMenu"
-              role="button"
-              aria-expanded="false"
-              aria-controls="collapseUserMenu"
-            >
-              <span className="material-symbols-outlined text-primary fs-2">
-                menu
-              </span>
-            </a>
-            
-          </div>
+            {/* 使用者選單-mobile */}
+            <div className="d-lg-none">
+              <a
+                className="me-4"
+                data-bs-toggle="collapse"
+                href="#collapseSearch"
+                role="button"
+                aria-expanded="false"
+                aria-controls="collapseSearch"
+              >
+                <span className="material-symbols-outlined text-primary fs-2">
+                  search
+                </span>
+              </a>
+              <a
+                data-bs-toggle="collapse"
+                href="#collapseUserMenu"
+                role="button"
+                aria-expanded="false"
+                aria-controls="collapseUserMenu"
+              >
+                <span className="material-symbols-outlined text-primary fs-2">
+                  menu
+                </span>
+              </a>
+
+            </div>
           </div>
         </div>{/* container-end */}
 
@@ -219,12 +219,12 @@ const Navbar = () => {
           className="collapse homepage-collapse bg-light w-100 z-3 d-lg-none  border-top"
           id="collapseSearch"
           style={{ position: 'fixed', top: '56px' }}
-          >
+        >
           <div className="container">
             <ul
               className="text-left list-unstyled mb-0"
               aria-labelledby="dropdownUserMenu"
-              >
+            >
               <li className="input-group input-group-sm py-3">
                 <span className="material-symbols-outlined searchbar-icon text-gray fs-6">
                   search
@@ -233,7 +233,7 @@ const Navbar = () => {
                   type="text"
                   className="search-bar form-control fs-8 ps-11 w-100"
                   placeholder="搜尋..."
-                  />
+                />
               </li>
               <li>
                 <a className="dropdown-item py-1 px-3 text-gray" href="#">
@@ -260,22 +260,22 @@ const Navbar = () => {
         </div>
         {/*menu-list*/}
         <div
-            className="collapse homepage-collapse bg-light w-100 z-3 d-lg-none"
-            id="collapseUserMenu"
-            style={{ position: 'fixed', top: '56px' }}
+          className="collapse homepage-collapse bg-light w-100 z-3 d-lg-none"
+          id="collapseUserMenu"
+          style={{ position: 'fixed', top: '56px' }}
         >
-          <ul 
-          className="text-center list-unstyled mb-0"
-          aria-labelledby="dropdownUserMenu"
+          <ul
+            className="text-center list-unstyled mb-0"
+            aria-labelledby="dropdownUserMenu"
           >
-            
+
             {/* 根據登入狀態顯示不同的選項 */}
             {isAuthorized ? (
               // 已登入狀態
               <>
                 <li>
                   <div className="d-flex justify-content-center align-items-center border-top border-bottom border-gray_light py-3">
-                    <img className="avatar me-3 rounded-circle" src={userAvatar} alt="" />
+                    <img className="avatar me-3 rounded-circle" src={userAvatar || "https://raw.githubusercontent.com/wfox5510/wordSapce-imgRepo/695229fa8c60c474d3d9dc0d60b25f9539ac74d9/default-avatar.svg"} alt="" />
                     <p className="m-0 nav-username">{username}</p>
                   </div>
                 </li>
@@ -302,13 +302,13 @@ const Navbar = () => {
                 </li>
                 <li>
                   <button onClick={handleShowLoginModal}
-                  className="dropdown-item py-2 px-5" href="#">
+                    className="dropdown-item py-2 px-5" href="#">
                     登入
                   </button>
                 </li>
                 <li>
                   <button onClick={handleShowSignupModal}
-                  className="dropdown-item py-2 px-5" href="#">
+                    className="dropdown-item py-2 px-5" href="#">
                     註冊
                   </button>
                 </li>
@@ -320,7 +320,7 @@ const Navbar = () => {
 
       </div>
       {/* Modal */}
-      <LoginPage show={showLoginModal} handleClose={handleCloseLoginModal} handleShowSignupModal={handleShowSignupModal}/>
+      <LoginPage show={showLoginModal} handleClose={handleCloseLoginModal} handleShowSignupModal={handleShowSignupModal} />
       <SignupPage show={showSignupModal} handleClose={handleCloseSignupModal} handleShowLoginModal={handleShowLoginModal} />
     </section>
   );
