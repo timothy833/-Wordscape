@@ -153,6 +153,7 @@ const ArticlePage = () => {
   useEffect(() => {
     if (articleData) {
       getAutherData();
+      checkIsSubscribed();
     }
   }, [articleData]);
   useEffect(() => {
@@ -166,6 +167,7 @@ const ArticlePage = () => {
       setIsSubscribed(null);
     }
   }, [isAuthorized]);
+
   return (
     <>
       <header>
@@ -237,7 +239,9 @@ const ArticlePage = () => {
                   }`}
                   onClick={(e) => {
                     e.preventDefault();
-                    isAuthorized ? postFavorites() : Swal.fire(alertMsgForVerify);;
+                    isAuthorized
+                      ? postFavorites()
+                      : Swal.fire(alertMsgForVerify);
                   }}
                 >
                   {isFavorite ? "已收藏" : "收藏"}
@@ -247,7 +251,9 @@ const ArticlePage = () => {
                     isLike ? "text-primary" : "text-gray"
                   } `}
                   onClick={() =>
-                    isAuthorized ? postArticleLike() : Swal.fire(alertMsgForVerify)
+                    isAuthorized
+                      ? postArticleLike()
+                      : Swal.fire(alertMsgForVerify)
                   }
                 >
                   <span className="material-symbols-outlined icon-fill">
@@ -322,7 +328,7 @@ const ArticlePage = () => {
             className={`${!isAuthorized && "d-none"}`}
             onSubmit={(e) => {
               e.preventDefault();
-              isAuthorized ? postComment() : Swal.fire(alertMsgForVerify);;
+              isAuthorized ? postComment() : Swal.fire(alertMsgForVerify);
             }}
           >
             <label className="d-none" htmlFor="comment">
