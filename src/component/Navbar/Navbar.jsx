@@ -1,7 +1,6 @@
-import { Dropdown, Collapse } from "bootstrap";
+import { Collapse } from "bootstrap";
 import logo from "../../assets/images/logo.svg";
 import logo_sm from "../../assets/images/logo-sm.svg";
-import avatar from "../../assets/images/avatar-1.png";
 
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -119,8 +118,6 @@ const Navbar = () => {
                 />
               </picture>
             </Link>
-
-            <SponsorModal/>
 
             {/* 使用者選單-PC */}
             <div className="d-none d-lg-flex align-items-center gap-4">
