@@ -140,7 +140,7 @@ const AdminInfo = () => {
             </div>
           </div>
           <div className="col-md-4 d-flex flex-column align-items-center mb-5 mb-md-0">
-            <p className="mb-3">個人照片</p>
+            <p className="mb-3 fw-bold">個人照片</p>
             <img
               src={previewImage}
               alt="profile"
@@ -148,7 +148,7 @@ const AdminInfo = () => {
               style={{ width: "150px", height: "150px", objectFit: "cover" }}
             />
             <div className="mt-3">
-              <label className="btn btn-outline-primary">
+              <button className="btn btn-primary">
                 上傳圖片
                 <input
                   type="file"
@@ -156,12 +156,12 @@ const AdminInfo = () => {
                   accept="image/*"
                   onChange={handleImageChange}
                 />
-              </label>
+              </button>
             </div>
             <p className="my-3">或貼上圖片網址</p>
             <input
               type="text"
-              className="form-control"
+              className="form-control w-50"
               placeholder="輸入圖片網址"
               {...register("profile_picture")}
               value={watch("profile_picture")}

@@ -36,7 +36,7 @@ const AdminLayout = () => {
             <div className="col-md-3 d-none d-md-block">
               <aside className="admin-pc_nav admin_wrap py-10 px-5 rounded-3 border border-gray_light">
                 <div className="d-flex align-items-center flex-column border-bottom border-gray_light mb-5">
-                  <img className="admin-avatar mb-2" src={userInfo.profile_picture} alt="avatar" />
+                  <img className="admin-avatar mb-2 rounded-circle" src={userInfo.profile_picture} alt="avatar" />
                   <p className="mb-2">{userInfo.username}</p>
                   <p className="text-primary mb-5">編輯個人主頁</p>
                 </div>

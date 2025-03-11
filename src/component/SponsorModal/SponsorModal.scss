@@ -1,0 +1,34 @@
+.sponsor-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    transition: all 0.3s ease;
+    width: 70px;
+  }
+
+.sponsor-btn{
+  display: block;
+  transition: all 0.3s ease;
+}
+
+.sponsor-text {
+  width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+  display: none;
+}
+
+.sponsor-btn:hover .sponsor-text {
+  width: auto;
+  display: block;
+}
+
+.sponsor-btn:hover .sponsor-icon{
+  display: none;
+}
+
+.sponsor-modal{
+  z-index: 1090;
+}
