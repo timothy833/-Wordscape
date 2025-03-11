@@ -1,3 +1,4 @@
+@import "../../style/variables";  // 確保變數被載入
 .blog_swiper {
   img {
     height: clamp(226px, 50vw, 400px);
@@ -60,12 +61,20 @@
 }
 
 .modal-content {
-  max-height: 90vh; /* 最大高度 90% 視窗 */
   overflow-y: auto; /* 讓內部文字區域滾動 */
 }
 
+.max-h {
+  height: 90vh !important;
+}
+
+.ql-container {
+  height: auto !important;
+}
+
 .ql-editor {
-  max-height: 350px; /* 限制最大高度 */
+  min-height: 200px;
+  max-height: 350px !important; /* 限制最大高度 */
   overflow-y: auto !important;  /* 讓內部文字區域滾動 */
 }
 
@@ -79,4 +88,13 @@
 
 .ql-formats{
  margin-right: 5px !important;
+}
+
+.custom-link{
+  color: inherit; // 初始狀態跟父層一樣
+  text-decoration: none;
+  
+  &:hover{
+    color: $primary_hover; // 使用 SCSS 變數
+  }
 }

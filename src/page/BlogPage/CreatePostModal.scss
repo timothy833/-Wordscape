@@ -1,11 +1,20 @@
 .modal-content {
-    max-height: 90vh; /* 最大高度 90% 視窗 */
     overflow-y: auto; /* 讓內部文字區域滾動 */
 }
 
+.max-h {
+    height: 90vh !important;
+}
+
+
+.ql-container {
+    height: auto !important;
+}
+  
+
 .ql-editor {
     min-height: 200px;
-    max-height: 350px; /* 限制最大高度 */
+    max-height: 350px !important; /* 限制最大高度 */
     overflow-y: auto !important;  /* 讓內部文字區域滾動 */
 }
 
