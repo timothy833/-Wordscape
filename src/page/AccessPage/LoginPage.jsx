@@ -86,15 +86,22 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
         setFormErrors({});
     }
 
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+
     const forgotPassword = async(event) => {
         event.preventDefault();
         let newFormErrors = {};
+        let formIsValid = true;
         
-        if (!formData.email || !emailRegex.test(formData.email)) {
+        if (!resetEmail.email || !emailRegex.test(resetEmail.email)) {
             newFormErrors.email = '請輸入有效的 Email 格式';
+            formIsValid = false;
             setFormErrors(newFormErrors);
             return;
         }
+
+        console.log('email', resetEmail.email);
 
         try{
             const url = `${VITE_API_BASE_URL}/users/forgot-password`;
@@ -123,9 +130,6 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
         handleShowSignupModal();
         handleClose();
     }
-
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
 
     // 驗證表單
     const validateForm = () => {
@@ -253,13 +257,13 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
                                             <span className="text-gray fw-light">或以其他平台登入</span>
                                         </div>
                                         <div className="d-flex justify-content-center gap-5">
-                                            <a href="#" target="_blank">
-                                            <img src="/src/assets/images/AccessPage/Facebook-icon.png" width="40px" height="40px" alt="facebook-login" />
+                                            <a style={{cursor: 'pointer'}}>
+                                            <img src="/src/assets/images/AccessPage/Facebook-icon.png" width="40px" height="40px" alt="facebook-login"/>
                                             </a>
-                                            <a href="#" target="_blank">
+                                            <a style={{cursor: 'pointer'}}>
                                                 <img src="/src/assets/images/AccessPage/Apple-icon.png" width="40px" height="40px" alt="apple-login" />
                                             </a>
-                                            <a href="#" target="_blank">
+                                            <a style={{cursor: 'pointer'}}>
                                                 <img src="/src/assets/images/AccessPage/Google-icon.png" width="40px" height="40px" alt="google-login" />
                                             </a>
                                         </div>

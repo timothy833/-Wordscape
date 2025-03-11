@@ -203,13 +203,13 @@ const SignupPage = ({ show, handleClose, handleShowLoginModal }) => {
                                             <span className="text-gray fw-light">或以其他平台註冊</span>
                                         </div>
                                         <div className="d-flex justify-content-center gap-5">
-                                            <a href="#" target="_blank">
+                                            <a style={{cursor: 'pointer'}}>
                                             <img src="/src/assets/images/AccessPage/Facebook-icon.png" width="40px" height="40px" alt="facebook-login" />
                                             </a>
-                                            <a href="#" target="_blank">
+                                            <a style={{cursor: 'pointer'}}>
                                                 <img src="/src/assets/images/AccessPage/Apple-icon.png" width="40px" height="40px" alt="apple-login" />
                                             </a>
-                                            <a href="#" target="_blank">
+                                            <a style={{cursor: 'pointer'}}>
                                                 <img src="/src/assets/images/AccessPage/Google-icon.png" width="40px" height="40px" alt="google-login" />
                                             </a>
                                         </div>

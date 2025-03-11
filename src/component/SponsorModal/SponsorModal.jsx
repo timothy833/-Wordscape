@@ -7,7 +7,7 @@ import { useParams, useLocation } from 'react-router-dom';
 const { VITE_API_BASE_URL } = import.meta.env;
 
 const SponsorModal = () => {
-  const { username, token } = useSelector(state => state.auth);
+  const { isAuthorized, username, token } = useSelector(state => state.auth);
   const sponsorModalRef = useRef(null);
   const [ isNextStep, setIsNextStep] = useState(false);
   const [paymentData, setPaymentData] = useState({
@@ -20,16 +20,38 @@ const SponsorModal = () => {
   const { user_id, id } = useParams(); // 從 URL 取得對應的參數
   const location = useLocation(); // 取得當前的路徑
   const [sponsorId, setSponsorId] = useState(null);
+  const [sponsorName, setSponsorName ] = useState('');
 
   // Modal Create & Functions
   useEffect(() => {
     new Modal(sponsorModalRef.current, {backdrop: false}); 
   },[]);
 
-  const openSponsorModal = () => {
-    const sponsorModal = Modal.getInstance(sponsorModalRef.current);
-    sponsorModal.show();
+  // 預設放置在blog和artical頁面
+  const openSponsorModal = async() => {
+    if(isAuthorized){
+      const receiverName = await getAutherData();
+      setSponsorName(receiverName);
+      const sponsorModal = Modal.getInstance(sponsorModalRef.current);
+      sponsorModal.show();
+    }else{
+      alert('請先登入')
+    }
   }
+  
+  const getAutherData = async () => {
+    const recieverId = await getUserIdForSponsor();
+    try {
+      const res = await axios.get(
+        `${VITE_API_BASE_URL}/users/${recieverId}`
+      );
+      const authName = res.data.username;
+      console.log(authName);
+      return authName;
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const closeSponsorModal = () => {
     const sponsorModal = Modal.getInstance(sponsorModalRef.current);
@@ -176,7 +198,7 @@ const SponsorModal = () => {
       const actualAmount = paymentData.amount === "custom" ? 
         parseInt(paymentData.customAmount) : 
         parseInt(paymentData.amount);
-      const recieverId = await getUserIdForSponsor();
+
       const url = `${VITE_API_BASE_URL}/payments`;
       const data = {
         "amount": actualAmount,
@@ -229,12 +251,15 @@ const SponsorModal = () => {
       <div className="modal-dialog">
         <div className="modal-content rounded px-4">
           <div className="modal-header">
-            <h1 className="modal-title fs-5" id="sponsorModal">支持作者</h1>
+            <div className="modal-title fs-5 text-primary" id="sponsorModal">
+              <i class="bi bi-gift-fill"></i>
+               <span className="ms-2">支持{sponsorName}</span>
+            </div>
             {/* <button onClick={closeSponsorModal} type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> */}
           </div>
           {!isNextStep ? (
             <div className="modal-body">
-              <div className="h4">選擇贊助金額</div>
+              <div className="h4 mb-3">選擇贊助金額</div>
               <div className="form-check">
                 <input 
                   className="form-check-input" 
@@ -244,7 +269,7 @@ const SponsorModal = () => {
                   checked={paymentData.amount === "50"}
                   onChange={handleAmountChange}
                 />
-                <label className="form-check-label" htmlFor="support50">
+                <label className="form-check-label mb-1" htmlFor="support50">
                   50元
                 </label>
               </div>
@@ -257,7 +282,7 @@ const SponsorModal = () => {
                   checked={paymentData.amount === "100"}
                   onChange={handleAmountChange}
                 />
-                <label className="form-check-label" htmlFor="support100">
+                <label className="form-check-label mb-1" htmlFor="support100">
                   100元
                 </label>
               </div>
@@ -270,7 +295,7 @@ const SponsorModal = () => {
                   checked={paymentData.amount === "200"}
                   onChange={handleAmountChange}
                 />
-                <label className="form-check-label" htmlFor="support200">
+                <label className="form-check-label mb-1" htmlFor="support200">
                   200元
                 </label>
               </div>
@@ -283,9 +308,9 @@ const SponsorModal = () => {
                   checked={paymentData.amount === "custom"}
                   onChange={handleAmountChange}
                 />
-                <label className="form-check-label" htmlFor="supportCustom">
+                <label className="form-check-label mb-2" htmlFor="supportCustom">
                   自訂金額
-                  <div className="input-group input-group-sm mb-3">
+                  <div className="input-group input-group-sm mb-3 mt-2">
                     <input 
                       type="text" 
                       className="form-control" 
@@ -300,7 +325,7 @@ const SponsorModal = () => {
                 </label>
               </div>
   
-              <div className="h4">選擇付款方式</div>
+              <div className="h4 mb-3">選擇付款方式</div>
               <div className="form-check">
                 <input 
                   className="form-check-input" 
@@ -312,7 +337,7 @@ const SponsorModal = () => {
                 />
                 <label className="form-check-label" htmlFor="cardPay">
                 信用卡付款：
-                  <div className="form-check">
+                  <div className="form-check mt-2">
                     <input 
                       className="form-check-input" 
                       type="radio" 

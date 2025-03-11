@@ -15,7 +15,7 @@ const ResetPassword = () => {
   useEffect(() => {
     if (!Resettoken) {
       alert("無效的重設密碼連結");
-      navigate("/"); // 若沒有 token，導回登入頁
+      // navigate("/"); // 若沒有 token，導回登入頁 
     }
   }, [Resettoken, navigate]);
   
