@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 import DOMParserReact from "dom-parser-react";
 import Swal from "sweetalert2";
 import { alertMsgForVerify } from "../../utils/alertMsg";
-
+import { Link } from "react-router-dom";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ArticlePage = () => {
@@ -191,7 +191,7 @@ const ArticlePage = () => {
             </h1>
             <div className="d-flex gap-5 flex-column flex-lg-row">
               <div className="d-flex align-items-center gap-5">
-                <div className="d-flex align-items-center">
+                <Link to={`/blog/${autherData?.id}`} className="d-flex align-items-center">
                   <img
                     className="avatar object-fit-cover rounded-pill me-2"
                     src={
@@ -201,7 +201,7 @@ const ArticlePage = () => {
                     alt="avatar"
                   />
                   <span>{autherData?.username}</span>
-                </div>
+                </Link>
                 {/* 當目前user為作者時，不顯示追蹤按鈕 */}
                 {userId !== articleData?.user_id && (
                   <a
