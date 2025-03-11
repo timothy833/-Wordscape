@@ -13,7 +13,7 @@ import BlogPage from "../page/BlogPage/BlogPage";
 import TestLoginPage from "../page/BlogPage/TestLoginPage";
 import TestArticlePage from "../page/BlogPage/TestArticlePage";
 import ResetPassword from "../page/AccessPage/ResetPassword";
-
+import ErrorPage from "../page/ErrorPage/ErrorPage";
 const router = [
   {
     path: "/",
@@ -74,6 +74,10 @@ const router = [
         path: "/testArticle/:id",
         element: <TestArticlePage />,
       },
+      {
+        path:"*",
+        element: <ErrorPage />,
+      }
     ],
   },
 ];
