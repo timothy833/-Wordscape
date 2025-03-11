@@ -97,7 +97,7 @@ const CommentBox = ({
     <>
       <div className="d-flex flex-column gap-3 mb-5">
         <Link
-          to={`/blog/:${commentData.user_id}`}
+          to={`/blog/${commentData.user_id}`}
           className="d-flex align-items-center gap-2"
         >
           <img
