@@ -3,6 +3,9 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 const { VITE_API_BASE_URL } = import.meta.env;
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
+import { alertMsgForVerify } from "../../utils/alertMsg";
+import { alertMsgForCancelFavorites } from "../../utils/alertMsg";
 
 
 const Admin_ArticleCard = () => {
@@ -12,7 +15,7 @@ const Admin_ArticleCard = () => {
   useEffect(() => {
     (async () => {
       if (!token) {
-        console.log("驗證錯誤，請重新登入");
+        Swal.fire(alertMsgForVerify);
         return;
       };
       try {
@@ -31,7 +34,7 @@ const Admin_ArticleCard = () => {
   }, []);
   const cancelFavorites = async (id) => {
     if (!token) {
-      console.log("驗證錯誤，請重新登入");
+      Swal.fire(alertMsgForVerify);
       return;
     };
     try {
@@ -43,7 +46,7 @@ const Admin_ArticleCard = () => {
       if (res.data.status === "success") {
         setFavorites((prevFavorites) => prevFavorites.filter((item) => item.id !== id));
       }
-      alert(res.data.status);
+      Swal.fire(alertMsgForCancelFavorites);
     } catch (error) {
       console.log(error);
     }
@@ -105,11 +108,13 @@ const Admin_ArticleCard = () => {
                   </div>
                 </div>
                 <div className="col-lg-4">
-                  <img
-                    src={item.image_url}
-                    className="card-img-top rounded-1 mb-5"
-                    alt="articleImg"
-                  />
+                  {item.image_url && (
+                    <img
+                      src={item.image_url}
+                      className="card-img-top rounded-1 mb-5"
+                      alt="articleImg"
+                    />
+                  )}
                 </div>
               </div>
             </div>

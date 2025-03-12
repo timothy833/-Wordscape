@@ -1,22 +1,27 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useOutletContext } from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { updateUserInfo } from "../../slice/authSlice";
 import { useForm } from "react-hook-form";
 const { VITE_API_BASE_URL } = import.meta.env;
+import Swal from "sweetalert2";
+import { alertMsgForAdminInfo } from "../../utils/alertMsg";
+import { alertMsgForAdminError } from "../../utils/alertMsg";
+import { alertMsgForVerify } from "../../utils/alertMsg";
 
 const AdminInfo = () => {
-  const { fetchUserInfo } = useOutletContext();  // 通知父層
-  const { isAuthorized, id, username, token } = useSelector(state => state.auth);
+  const dispatch = useDispatch();
+  const { isAuthorized, id, username, token, userAvatar } = useSelector(state => state.auth);
   const [loading, setLoading] = useState(true);
   const [previewImage, setPreviewImage] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
+  const fileInputRef = useRef(null);
 
   const { register, handleSubmit, setValue, watch } = useForm();
   useEffect(() => {
     (async () => {
       if (!token) {
-        alert("驗證錯誤，請重新登入");
+        Swal.fire(alertMsgForVerify);
         return;
       };
       try {
@@ -37,7 +42,7 @@ const AdminInfo = () => {
         setValue("bio", res.data.bio);
         setValue("profile_picture", res.data.profile_picture || "");
 
-        setPreviewImage(res.data.profile_picture || "/default-avatar.png");
+        setPreviewImage(res.data.profile_picture || "https://raw.githubusercontent.com/wfox5510/wordSapce-imgRepo/695229fa8c60c474d3d9dc0d60b25f9539ac74d9/default-avatar.svg");
       } catch (error) {
         console.log(error);
       } finally {
@@ -64,22 +69,23 @@ const AdminInfo = () => {
 
   const onSubmit = async (data) => {
     if (!token) {
-      alert("Token 無效，請重新登入");
+      Swal.fire(alertMsgForVerify);
       return;
     }
 
     try {
+      let profileImageUrl = data.profile_picture;
       if (selectedFile) {
         const formData = new FormData();
         formData.append("profile_picture", selectedFile);
 
-        await axios.patch(`${VITE_API_BASE_URL}/users/${id}`, formData, {
+        const uploadRes = await axios.patch(`${VITE_API_BASE_URL}/users/${id}`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log("圖片上傳成功");
+        profileImageUrl = uploadRes.data.user.profile_picture;
       }
       const updatedUser = {
         username: data.username,
@@ -88,7 +94,7 @@ const AdminInfo = () => {
         gender: data.gender,
         birthday: `${data.year}-${data.month}-${data.day}T00:00:00.000Z`,
         bio: data.bio,
-        profile_picture: selectedFile ? undefined : data.profile_picture,
+        profile_picture: profileImageUrl,
       };
 
       await axios.patch(`${VITE_API_BASE_URL}/users/${id}`, updatedUser, {
@@ -98,10 +104,10 @@ const AdminInfo = () => {
         },
       });
 
-      alert("資料更新成功");
-      fetchUserInfo();  // 通知父層
+      Swal.fire(alertMsgForAdminInfo);
+      dispatch(updateUserInfo({ username: data.username, userAvatar: profileImageUrl }));
     } catch (error) {
-      alert("更新失敗");
+      Swal.fire(alertMsgForAdminError);
       console.error(error);
     }
   };
@@ -148,10 +154,11 @@ const AdminInfo = () => {
               style={{ width: "150px", height: "150px", objectFit: "cover" }}
             />
             <div className="mt-3">
-              <button className="btn btn-primary">
+              <button type="button" className="btn btn-primary" onClick={() => fileInputRef.current.click()}>
                 上傳圖片
                 <input
                   type="file"
+                  ref={fileInputRef}
                   className="d-none"
                   accept="image/*"
                   onChange={handleImageChange}
