@@ -4,7 +4,7 @@ import { faPodcast, faUserGroup } from "@fortawesome/free-solid-svg-icons";
 import { faFacebookF, faInstagram, faYoutube } from "@fortawesome/free-brands-svg-icons";
 
 import Blog_ArticleCard from "../../component/BlogPageArticleCard/Blog_ArticleCard";
-// import Blog_CommentReply from "../../component/BlogPageCommentReply/Blog_CommentReply";
+
 
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -13,14 +13,7 @@ import "swiper/scss/pagination";
 import "swiper/css/navigation";
 import "swiper/css/autoplay";
 
-// import blogBanner_1 from "../../assets/images/BlogBanner/blog-banner_1.jpg";
-// import blogBanner_2 from "../../assets/images/BlogBanner/blog-banner_2.jpg";
-// import blogBanner_3 from "../../assets/images/BlogBanner/blog-banner_3.jpg";
-// import blogBannerSm_1 from "../../assets/images/BlogBanner/blog-banner-sm_1.jpg";
-// import blogBannerSm_2 from "../../assets/images/BlogBanner/blog-banner-sm_2.jpg";
-// import blogBannerSm_3 from "../../assets/images/BlogBanner/blog-banner-sm_3.jpg";
-// import blogBannerMain from "../../assets/images/BlogBanner/blog-banner_main.jpg";
-// import avatar from "../../assets/images/avatar-1.png";
+
 
 //React方法引用
 import { useParams } from "react-router-dom";
@@ -33,26 +26,30 @@ import { Modal } from "bootstrap";
 import NewPostModal from "../BlogPage/CreatePostModal";
 import Quill from "quill";
 import "quill/dist/quill.snow.css"; // ✅ Quill 樣式
-
+import { Link } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const getCookie = (name) => {
-  return document.cookie
-      .split("; ")
-      .find(row => row.startsWith(name + "="))
-      ?.split("=")[1] || "";
-};
+import { useSelector} from "react-redux";
+
+
+// const getCookie = (name) => {
+//   return document.cookie
+//       .split("; ")
+//       .find(row => row.startsWith(name + "="))
+//       ?.split("=")[1] || "";
+// };
 
 const BlogHome = () => {
   const { user_id } = useParams(); // URL 參數中的 Blog 擁有者 ID
-  const [token, setToken] = useState("");  
+  // const [token, setToken] = useState("");  
   const [banner, setBanner] = useState(null); //儲存回傳banner的資訊
-  const [userId, setUerId] = useState(""); //存放傳進來或登入者userId
+  // const [userId, setUerId] = useState(""); //存放傳進來或登入者userId
   const [isAuthor, setIsAuthor] = useState(false); //確認是否為Blog擁有者
   const [title, setTitle] = useState("") //設定傳送Blog Banner標題
   const [subtitle, setSubtitle] = useState("") //設定傳送Blog Banner副標
-  const [imageUrl, setImageUrl] = useState(""); //設定傳送Banner圖源
+  const [imageFile, setImageFile] = useState(null)//設定傳送R2網址
+  const [imageUrl, setImageUrl] = useState(""); //設定傳送外部網址Banner圖源
   const [imagePreview, setImagePreview] = useState("") //設定預覽圖片
   const modalTriggerRef = useRef(null); // 綁定觸發 modal 的按鈕
   const [articles, setArticles] = useState([]); //處理文章列表資料
@@ -62,9 +59,24 @@ const BlogHome = () => {
   const [selectedArticle, setSelectedArticle] = useState(null);  // 🚀 **管理當前編輯文章**
 
   const modalBannerRef = useRef(null); //綁定modal div的容器
-  let modalInstanceBannerRef = useRef(null); // 存 `Modal` 實體
+  const modalInstanceBannerRef = useRef(null); // 存 `Modal` 實體
+  const bannerRef = useRef(null);
 
+  //狀態管理userId & token
+  // const dispatch = useDispatch();
 
+  // ✅ 從 Redux 取得登入的 user_id 和 token
+  const userId = useSelector((state)=> state.auth.id);
+  const token = useSelector((state)=> state.auth.token);
+
+  //初始化比對userId是否是登入id
+  useEffect(()=>{   
+    if(user_id === userId) {
+      setIsAuthor(true);
+    }
+  
+  }, [userId]);
+    
 
   
   // 處理文章按讚
@@ -78,7 +90,8 @@ const BlogHome = () => {
     getBlogArticle(); 
   };
 
-  
+
+
 
   // 切換釘選狀態
   const togglePin = (articleId) => {
@@ -98,45 +111,43 @@ const BlogHome = () => {
 
 
 
-  //初始化比對userId是否是登入id
-  useEffect(()=>{
- 
-   
-    if(user_id === userId) {
-      setIsAuthor(true);
-    }
-  
-  }, [userId]);
 
   //加載blog擁有者文章api
   const getBlogArticle = async ()=>{
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/user/${user_id}`);
       console.log(res.data);
-      setArticles(res.data.data);
+      if( res.data && Array.isArray(res.data.data)){
+        setArticles(res.data.data);
+      }
+      else{
+        setArticles([]); // 如果 API 沒有返回正確資料，預設為空陣列
+      }
       
     } catch (error) {
       console.error("取得blog文章列表失敗", error);
+      setArticles([]); // 遇到錯誤時，也設置空陣列，避免 undefined 錯誤
     }
   }
 
-  //處理文章列表api 在元件載入時讀取token
+
+  //加載文章導航區文章地圖
+  const categorizedArticles = articles.reduce((acc, article)=>{
+    const {category_id, category_name} = article;
+    if(!acc[category_id]){
+      acc[category_id] = {name: category_name || "未分類", articles: []};
+    }
+    acc[category_id].articles.push(article);
+
+    return acc;
+  }, {});
+
+
+  //加載blog擁有者基本信息 在元件載入時讀取token
   useEffect(()=>{
-    const storedToken = getCookie("WS_token");
-    setToken(storedToken);
-    setUerId("dc576098-dc26-46a4-aede-6bc5c8f300ea");
-
-    const fetchArticle = async()=>{
-      try {
-        const res = await axios.get(`${API_BASE_URL}/posts`);
-        console.log(res.data);
-      } catch (error) {
-        console.error("❌ 文章獲取失敗:", error);
-      }
-    };
-
- 
-
+    // const storedToken = getCookie("WS_token");
+    // setToken(storedToken);
+    // setUerId("dc576098-dc26-46a4-aede-6bc5c8f300ea");
 
     //得到blog擁有者資料
     const getBlogUser = async()=>{
@@ -152,7 +163,6 @@ const BlogHome = () => {
     getBlogArticle();
     getBlogUser();
     getBanner();
-    fetchArticle();
   }, []);
 
 
@@ -182,15 +192,19 @@ const BlogHome = () => {
   }, [articles]);  // 依賴 `articles` 變化後執行
 
 
-    //抓資料庫回傳banner資料渲染
-    const getBanner = ()=>{
-      axios.get(`${API_BASE_URL}/banners/${user_id}`)
-      .then(res => {
-        console.log(res.data);
-        setBanner(res.data)
-      })
-      .catch(error => console.error("沒有 Banner", error));
-    }
+  //抓資料庫回傳banner資料渲染
+  const getBanner = ()=>{
+    axios.get(`${API_BASE_URL}/banners/${user_id}`)
+    .then(res => {
+      console.log(res.data);
+      setBanner(res.data);
+      setTitle(res.data.title);
+      setSubtitle(res.data.subtitle);
+      setImagePreview(res.data.image_url)
+
+    })
+    .catch(error => console.error("沒有 Banner", error));
+  }
 
 
  
@@ -200,19 +214,45 @@ const BlogHome = () => {
       const url = `${API_BASE_URL}/banners`;
       const method = banner ? "put" : "post"; // ✅ 判斷是更新還是建立
 
+      let data;
+      let headers;
+
+      // ✅ 判斷是本地圖片還是外部網址
+      if(imageFile){
+        //🔹 使用 FormData 上傳本地圖片
+        data = new FormData();
+        data.append("title", title);
+        data.append("subtitle", subtitle);
+        data.append("image", imageFile) // ✅ 只上傳圖片檔案
+        headers = {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        };
+      }else if(imageUrl){
+         // 🔹 使用 JSON 格式上傳外部圖片
+        data = {
+          title,
+          subtitle,
+          image_url: imageUrl, // ✅ 只上傳圖片 URL
+        };
+        headers = {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        };
+      }else {
+        console.error("請提供圖片或外部圖片 URL");
+        return;
+      }
+
       const res = await axios({
         method,
         url,
-        headers: {Authorization: `Bearer ${token}`},
-        data: {
-          title,
-          subtitle,
-          image_url: imageUrl
-        }
-      })
+        headers,
+        data
+      });
       console.log(res.data);
       setBanner(res.data);
-
+      alert("banner圖更新成功");
       getBanner();
       //✅關閉Modal 
       closeModal(); // ✅ 成功後關閉
@@ -224,21 +264,34 @@ const BlogHome = () => {
   }
 
 
-  // ✅ 處理圖片上傳 & URL 預覽
+  // ✅ 處理本地檔案banner圖片上傳 & URL 預覽
   const handleImageChange = (e)=> {
     setImagePreview("");
-    const file = e.target.file[0];
+    setImageUrl("");
+    const file = e.target.files[0];
     if(file) {
-      const imageUrl = URL.createObjectURL(file);
-      setImagePreview(imageUrl);
+      setImageFile(file);
+      const imageUrlFile = URL.createObjectURL(file);
+      setImagePreview(imageUrlFile);
     }
   };
 
+  // ✅ 處理banner外部網址輸入
   const handleExternalImage = (e) => {
+    if(bannerRef.current){
+      bannerRef.current.value = ""; 
+    };
     setImagePreview("");
-    setImageUrl(e.target.value);
-    setImagePreview(e.target.value);
+    setImageFile(null);
+    setImageUrl(e.target.value.trim());
   }
+
+  // ✅ 只有在輸入框失去焦點時，才設定預覽圖片
+  const handleExternalImageBlur = () => {
+    if (imageUrl) {
+      setImagePreview(imageUrl);
+    }
+  };
 
   //處理BannerModal開關
   useEffect(()=>{
@@ -250,7 +303,7 @@ const BlogHome = () => {
 
       const handleModalHidden = ()=> {
         resetForm();// ✅ Modal 關閉時清空輸入欄位
-        setSelectedArticle(null); //清除編輯Modal內容
+        closeEditModal(); //清除編輯Modal內容
         const animationFrameId  = requestAnimationFrame(()=>{
           if(modalTriggerRef.current){
             modalTriggerRef.current.focus();
@@ -276,12 +329,14 @@ const BlogHome = () => {
     if(!modalInstanceBannerRef.current) {
       modalInstanceBannerRef.current = new Modal(modalBannerRef.current, {backdrop: "true", Keyboard: true});
     }
+    getBanner();
     modalInstanceBannerRef.current.show();
   }
   
   const closeModal = ()=> {
     if(modalInstanceBannerRef.current) {
       modalInstanceBannerRef.current.hide();
+      resetForm();
     }
 
   }
@@ -296,7 +351,7 @@ const BlogHome = () => {
 
 
   
-//這邊以下開始專門處理編輯文章Modal
+//這邊以下開始專門處理編輯文章Modal---------------------------------
 
 const [titleEdit, setTitleEdit] = useState("");
 const [descriptionEdit, setDescriptionEdit] = useState("");
@@ -321,6 +376,7 @@ useEffect(()=>{
 
 },[])
 
+//初始化編輯modal資料渲染
 useEffect(() => {
   if (!selectedArticle) return;
   
@@ -377,6 +433,13 @@ const closeEditModal = ()=> {
     modalInstanceRef.current.hide();
   }
   setSelectedArticle(null);
+  setExternalImageEdit("");
+  setSelectedFileEdit(null);
+  setTitleEdit("");
+  setDescriptionEdit("");
+  setImagePreviewEdit("");
+  setContentEdit("");
+
 }
 
 // ✅ 本地檔案封面圖輸入點
@@ -392,12 +455,21 @@ const handleImageEdit = (e) => {
 
 // 外部網址預染封面圖 ✅ 手動輸入封面圖片 URL
   const handleExternalImageEdit = (e) => {
+    if(fileInputRef.current){
+      fileInputRef.current.value = ""; 
+    };
     const url = e.target.value.trim();
     setImagePreviewEdit("");
     setSelectedFileEdit("");
     setExternalImageEdit(url);
-    setImagePreviewEdit(url); // ✅ 預覽外部圖片
 };
+
+  // ✅ 只有在輸入框失去焦點時，才設定預覽圖片
+  const handleExternalImageEditBlur = () => {
+    if (externalImageEdit) {
+      setImagePreview(externalImageEdit);
+    }
+  };
 
 // ✅ 上傳封面圖到 R2
 const uploadImageToR2 = async () => {
@@ -484,18 +556,22 @@ const uploadImageToR2 = async () => {
     }
   };
 
+   
+  
+  if(!articles || articles.length === 0){
+    return <p>載入中....</p>
+  }
+
+
   return (
     <>
-      {/* <header>
-        <Navbar />
-      </header> */}
       <main className="bg-secondary pt-10 pb-5">
         <div className="container">
           <div className="row flex-md-row-reverse">
             <div className="col-xl-3 col-md-4 mb-5">
               <div className="blog-home_header d-flex flex-column align-items-center py-10 px-5 rounded-3 border border-gray_light" style={{ backgroundColor: "#FDFBF5" }}>
                 <img className="admin-avatar mb-2 rounded-circle border " src={blogUser.profile_picture
-} alt="avatar" />
+|| "https://raw.githubusercontent.com/wfox5510/wordSapce-imgRepo/695229fa8c60c474d3d9dc0d60b25f9539ac74d9/default-avatar.svg"} alt="大頭貼" />
                 <p className="mb-5">{blogUser.username}</p>
                 <ul className="list-unstyled d-flex gap-5 gap-md-3 gap-lg-5 mb-5">
                   <li><FontAwesomeIcon icon={faEnvelope} size="lg" style={{ color: "#e77605", }} /></li>
@@ -508,10 +584,24 @@ const uploadImageToR2 = async () => {
                 <p className="text-gray pb-5 border-bottom border-gray">{blogUser.bio}</p>
                 <h4 className="text-primary my-5">文章導航區</h4>
                 <ul className="blog-home_nav list-unstyled align-self-baseline d-flex flex-column gap-5">
-                  <li className="text-gray">1.旅遊</li>
-                  <li className="text-gray">1-1.日本秘境深度攻略分享</li>
-                  <li className="text-gray">1-2.當愛上東歐時</li>
-                  <li className="text-gray">1-3. 白日夢冒險王冰島巡禮</li>
+                  {Object.keys(categorizedArticles).map((categoryId, index)=>{
+                    const category = categorizedArticles[categoryId];
+                    return (
+                      <li key={categoryId} className="text-gray">
+                        {index + 1}. {category.name}
+                        <ul className="list-unstyled ms-4">
+                          {category.articles.map((article, subIndex)=>(
+                            <li key={article.id} className="text-gray">
+                              {index + 1}-{subIndex + 1}. 
+                              <Link to={`/article/${article.id}`} className="ms-2 custom-link">
+                                {article.title}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             </div>
@@ -560,55 +650,39 @@ const uploadImageToR2 = async () => {
                        </picture>
                        <div className="blog-banner_content text-light">
                          <h2 className="fw-bold fs-5 fs-md-4 mb-8 mb-md-12 ms-md-5">
+                          <Link to={`/article/${article.id}`} className="custom-link">
                           {article.title}
+                          </Link>
                          </h2>
                        </div>
                      </div>
                    </SwiperSlide>
                   ))}
-                    {/* <SwiperSlide>
-                      <div className="position-relative">
-                        <picture className="banner-img-container w-100">
-                          <source media="(min-width:768px)" srcSet={blogBanner_1} />
-                          <img
-                            src={blogBannerSm_1}
-                            className="w-100 object-fit-cover"
-                            alt="banner-img"
-                          />
-                        </picture>
-                        <div className="blog-banner_content text-light">
-                          <h2 className="fw-bold fs-5 fs-md-4 mb-8 mb-md-12 ms-md-5">
-                            漫遊歐洲之旅實戰分享線下講座
-                          </h2>
-                        </div>
-                      </div>
-                    </SwiperSlide> */}
-               
                   <div className="blog-swiper-pagination d-none d-lg-flex gap-7">
-                  <a className="swiperPrebEl bg-light rounded-pill d-block d-flex align-items-center justify-content-center">
+                  <Link className="swiperPrevEl bg-light rounded-pill d-block d-flex align-items-center justify-content-center">
                       <span className="material-symbols-outlined text-primary ms-2">
                         arrow_back_ios
                       </span>
-                    </a>
-                    <a className="swiperNextEl bg-light rounded-pill d-block d-flex align-items-center justify-content-center">
+                    </Link>
+                    <Link className="swiperNextEl bg-light rounded-pill d-block d-flex align-items-center justify-content-center">
                       <span className="material-symbols-outlined text-primary">
                         arrow_forward_ios
                       </span>
-                    </a>
+                    </Link>
                   </div>
                 </Swiper>
               </section>  
               <div className="blog-home_articleList rounded-3 border border-gray_light py-10 px-5" style={{ backgroundColor: "#FDFBF5" }}>
                 <div className="articleList_header">
                   <h1 className="text-primary fs-4 fs-md-3 mb-5">文章列表</h1>
-                  <div className="d-block d-md-flex justify-content-between align-items-center">
+                  {isAuthor && (<div className="d-block d-md-flex justify-content-between align-items-center">
                     <select className="form-select blog-home_articleSelect py-3 mb-6" defaultValue="全部內容">
                       <option value="全部內容">全部內容</option>
                       <option value="已發佈">已發佈</option>
                       <option value="取消發佈">取消發佈</option>
                     </select>
                     <button type="button" className="btn btn-primary btn-lg mb-5" data-bs-toggle="modal" data-bs-target="#newPostModal">新增文章</button>
-                  </div>
+                  </div> )}
                 </div>
                 <div className="articleList_content">
                   {sortedArticles.map((article)=>(
@@ -622,6 +696,7 @@ const uploadImageToR2 = async () => {
                       token={token}
                       getBlogArticle = {()=> getBlogArticle() }
                       onEdit={ openEditModal}  // 🚀 **將開啟 `Modal` 的函式傳下去**
+                      isAuthor={isAuthor}
                     />
                   ))}
                 </div>
@@ -642,9 +717,13 @@ const uploadImageToR2 = async () => {
             </div>
             <div className="modal-body">
               <label htmlFor="封面圖片" className="form-label fw-medium">上傳圖片</label>
-              <input id="封面圖片" type="file" className="form-control mb-2" accept="image/*" onChange={handleImageChange} />
-              <input type="text" className="form-control mb-2" placeholder="輸入封面圖片 URL" value={imageUrl} onChange={handleExternalImage} />
-              {imagePreview && <img src={imagePreview} alt="預覽圖片" className="img-fluid mb-3" />}
+              <input id="封面圖片" type="file" ref={bannerRef} className="form-control mb-2" accept="image/*" onChange={handleImageChange} />
+              <input type="text" className="form-control mb-2" placeholder="輸入封面圖片 URL" value={imageUrl} onChange={handleExternalImage}  
+              onBlur={handleExternalImageBlur} // ✅ 只有輸入完成時才更新圖片 
+              />
+              {imagePreview && <img src={imagePreview} alt="預覽圖片" className="img-fluid mb-3" 
+                onError={(e) => (e.target.style.display = "none")} // ✅ 圖片錯誤時隱藏
+              />}
               <label htmlFor="標題" className="form-label fw-medium">Blog主頁標題</label>
               <input id="標題" type="text" className="form-control mb-2" placeholder="輸入Blog主頁 標題" value={title} onChange={(e) => setTitle(e.target.value)} />
               <label htmlFor="副標題" className="form-label fw-medium">Blog主頁副標</label>
@@ -663,7 +742,7 @@ const uploadImageToR2 = async () => {
       {/*  ✅ 內嵌的 `EditPostModal`*/}
       <div className="modal fade" ref={modalRef} id="editPostModal" aria-hidden="true" tabIndex="-1" >
           <div className="modal-dialog modal-lg">
-            <div className="modal-content">
+            <div className="modal-content max-h">
               <div className="modal-header">
                   <h5 className="modal-title">編輯文章</h5>
                   <button type="button" className="btn-close" onClick={closeEditModal}></button>
@@ -671,9 +750,11 @@ const uploadImageToR2 = async () => {
 
               <div className="modal-body">
                 <label htmlFor="封面圖片" className="form-label fw-medium">封面圖片</label>
-                <input type="file" ref={fileInputRef} id="封面圖片" className="form-control mb-2" accept="image/*" onChange={handleImageEdit}/>
-                <input type="text" id="輸入封面圖片Url" className="form-control mb-2" value={externalImageEdit}  placeholder="輸入封面圖片 URL"onChange={handleExternalImageEdit}/>
-                {imagePreviewEdit && <img src={imagePreviewEdit} alt="封面預覽" className="img-fluid mb-3"   />}
+                <input type="file" ref={fileInputRef} id="封面圖片" className="form-control mb-2" accept="image/*"  onChange={handleImageEdit}/>
+                <input type="text" id="輸入封面圖片Url" className="form-control mb-2" value={externalImageEdit}  placeholder="輸入封面圖片 URL"onChange={handleExternalImageEdit}
+                onBlur={handleExternalImageEditBlur}
+                />
+                {imagePreviewEdit && <img src={imagePreviewEdit} alt="封面預覽" className="img-fluid mb-3"  onError={(e) => (e.target.style.display = "none")}  />}
 
                 <label htmlFor="title" className="form-label fw-medium">文章標題</label>
                 <input id="title" type="text"  className="form-control mb-2"  value={titleEdit} onChange={(e)=> setTitleEdit(e.target.value) }/>
@@ -681,7 +762,7 @@ const uploadImageToR2 = async () => {
                 <input id="description" type="text"  className="form-control mb-2" value={descriptionEdit} onChange={(e)=> setDescriptionEdit(e.target.value)}/>
 
                 {/* ✅ 這裡用 ref 綁定 Quill */} 
-                <div className="mb-3" ref={editorRef} style={{minHeight: "200px"}}></div>
+                <div className="mb-3" ref={editorRef} ></div>
               </div>
 
               <div className="modal-footer">

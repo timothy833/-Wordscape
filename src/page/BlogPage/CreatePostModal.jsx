@@ -61,7 +61,7 @@ const NewPostModal = ({ getBlogArticle })=> {
     
 
         return () => {
-          modalElement.removeEventListener("hidden.bs.modal", handleHidden);
+          modalElement.removeEventListener("hidden.bs.modal", handleHidden);       
         };
     }, []); 
 
@@ -84,10 +84,34 @@ const NewPostModal = ({ getBlogArticle })=> {
                 ],
             },
         });
+   
+      
+        // ✅ 將 `text-change` 事件處理函數存為變數
+        const handleTextChange = () => {
+            setContent(quillInstance.current.root.innerHTML);
 
-        quillInstance.current.on("text-change", () => {
-            setContent(quillInstance.current.root.innerHTML); // ✅ 更新 `content`
-        });
+            const editor = editorRef.current.querySelector(".ql-editor");
+            if (editor) {
+                editor.scrollTop = editor.scrollHeight;
+            }
+
+            // ✅ 讓 `.modal-content` 滾動到底
+            const modalContent = modalRef.current.querySelector(".modal-content");
+            if (modalContent) {
+                modalContent.scrollTop = modalContent.scrollHeight;
+            }
+        };
+
+        // ✅ 註冊 Quill `text-change` 事件
+        quillInstance.current.on("text-change", handleTextChange);
+
+        // ✅ 移除監聽，防止 Quill 在組件卸載後繼續影響
+        return () => {        
+            if (quillInstance.current) {
+                quillInstance.current.off("text-change", handleTextChange);
+            }
+        };
+
     }, []);
 
     //初始化載入分類列表
@@ -161,7 +185,13 @@ const NewPostModal = ({ getBlogArticle })=> {
         const url = e.target.value.trim();
         setImagePreview("");
         setExternalImage(url);
-        setImagePreview(url); // ✅ 預覽外部圖片
+    };
+
+    // ✅ 只有在輸入框失去焦點時，才設定預覽圖片
+    const handleExternalImageBlur = () => {
+        if (externalImage) {
+        setImagePreview(externalImage);
+        }
     };
 
     //  ✅ **上選擇本地封面圖片（但不立即上傳 R2）**
@@ -328,7 +358,7 @@ const NewPostModal = ({ getBlogArticle })=> {
     return (
         <div className="modal fade" ref={modalRef} id="newPostModal" aria-labelledby="newPostModalLabel" aria-hidden="true"   tabIndex="-1">
             <div className="modal-dialog modal-lg">
-                <div className="modal-content">
+                <div className="modal-content max-h">
                     <div className="modal-header">
                         <h5 className="modal-title">新增文章</h5>
                         <button type="button" className="btn-close"  data-bs-dismiss="modal" aria-label="Close" onClick={ handleClose}></button>
@@ -337,10 +367,10 @@ const NewPostModal = ({ getBlogArticle })=> {
                          <label htmlFor="封面圖片" className="form-label fw-medium">封面圖片</label>
                         <div className="d-flex gap-2">
                             <input ref={fileInputRef} id="封面圖片" type="file" className="form-control mb-2" accept="image/*"  onChange={handleImageChange} />
-                            <input type="text" className="form-control mb-2" placeholder="輸入封面圖片 URL" value={externalImage} onChange={handleExternalImage} />
+                            <input type="text" className="form-control mb-2" placeholder="輸入封面圖片 URL" value={externalImage} onBlur={handleExternalImageBlur} onChange={handleExternalImage} />
                         </div>
                       
-                        {imagePreview && <img src={imagePreview} alt="預覽圖片" className="img-fluid mb-3"/>}
+                        {imagePreview && <img src={imagePreview} alt="預覽圖片" className="img-fluid mb-3" onError={(e) => (e.target.style.display = "none")}/>}
 
                         <input type="text" className="form-control mb-2" placeholder="文章標題" value={title} onChange={(e)=> setTitle(e.target.value)} />
                         <input type="text" className="form-control mb-2" placeholder="文章簡介(少於100字)" value={description} onChange={(e)=> setDescription(e.target.value)} />
@@ -388,8 +418,7 @@ const NewPostModal = ({ getBlogArticle })=> {
                         </div>
                                      
                         {/* ✅ 修正 Quill 工具列問題 */}
-                        <div  ref={editorRef} ><div/>
-                    </div>
+                        <div  ref={editorRef} className="mb-3 "></div>
                     </div>
                     <div className="modal-footer">
                         <button className="btn btn-primary" data-bs-dismiss="modal" aria-label="Close" onClick={handleSubmit}>發布文章</button>

@@ -4,10 +4,10 @@ import Blog_CommentReply from "../BlogPageCommentReply/Blog_CommentReply";
 import axios from "axios";
 import { useEffect} from "react";
 // import EditPostModal from "../../page/BlogPage/EditPostModal"
-
+import { Link } from "react-router-dom";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, token, getBlogArticle, onEdit}) => {
+const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, token, getBlogArticle, onEdit, isAuthor}) => {
 
 //  const [selectedArticle, setSelectedArticle] = useState(null);
 
@@ -58,6 +58,9 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, to
               <p className="card-text mb-5 text-truncate-2lines">
                 {article.description}
               </p>
+              <Link to={`/article/${article.id}`} className=" text-gray blog-card-link">
+                (繼續閱讀...)
+              </Link>
               <div className="blogArticleCardFooter d-flex justify-content-between justify-content-md-start align-items-center gap-3">
                 <p className="text-gray">{new Date(article.created_at).toLocaleString("zh-TW")}</p>
                 
@@ -77,19 +80,19 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, to
                 </div>
 
                 {/* 釘選按鈕 */}
-                <i className={`bi bi-pin-fill text-primary fs-6 ${isPinned ? "text-warning" : ""}`}
+                {isAuthor&& (<i className={`bi bi-pin-fill text-primary fs-6 ${isPinned ? "text-warning" : ""}`}
                    onClick={()=> togglePin(article.id)}
                    style={{cursor: "pointer"}}
-                ></i>
+                ></i>)}
 
-                <div className="">
+                {isAuthor && (<div className="">
                   <i className="bi bi-three-dots text-gray fs-6" id="dropdownMenuButton1" data-bs-toggle="dropdown" style={{ cursor: "pointer" }}></i>
                   <ul className="dropdown-menu dropdown-menu-end py-3 px-5 shadow-sm border">
                     <li className="dropdown-item" onClick={()=> onEdit(article)} >編輯</li>
                     <li className="dropdown-item">取消發布</li>
                     <li className="dropdown-item">刪除</li>
                   </ul>
-                </div>
+                </div>)}
               </div>
             </div>
           </div>
@@ -138,7 +141,8 @@ Blog_ArticleCard.propTypes = {
   likePost: PropTypes.func,
   token: PropTypes.string,
   getBlogArticle: PropTypes.func,
-  onEdit: PropTypes.func
+  onEdit: PropTypes.func,
+  isAuthor:PropTypes.boolhor
 }
 
 
