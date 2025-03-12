@@ -18,7 +18,7 @@ import "swiper/css/autoplay";
 //React方法引用
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { useEffect, useState, useRef} from "react";
+import { useEffect, useState, useRef, useMemo} from "react";
 
 //引入Modal方法
 import { Modal } from "bootstrap";
@@ -46,6 +46,7 @@ const BlogHome = () => {
   const [banner, setBanner] = useState(null); //儲存回傳banner的資訊
   // const [userId, setUerId] = useState(""); //存放傳進來或登入者userId
   const [isAuthor, setIsAuthor] = useState(false); //確認是否為Blog擁有者
+  const [filterStatus, setFilterStatus] = useState(""); // 篩選狀態
   const [title, setTitle] = useState("") //設定傳送Blog Banner標題
   const [subtitle, setSubtitle] = useState("") //設定傳送Blog Banner副標
   const [imageFile, setImageFile] = useState(null)//設定傳送R2網址
@@ -55,12 +56,17 @@ const BlogHome = () => {
   const [articles, setArticles] = useState([]); //處理文章列表資料
   const [blogUser, setBlogUser] = useState({}); //存放blog使用者資料
   const [comments, setComments] = useState({}); //處理文章留言資料 初始化 comments 應該是 {}
-  const [pinnerArticles, setPinnedArticles] = useState([]); //切換置頂文章排序狀態
   const [selectedArticle, setSelectedArticle] = useState(null);  // 🚀 **管理當前編輯文章**
 
   const modalBannerRef = useRef(null); //綁定modal div的容器
   const modalInstanceBannerRef = useRef(null); // 存 `Modal` 實體
   const bannerRef = useRef(null);
+
+
+  // ✅ 釘選狀態（從 localStorage 讀取）
+  const [pinnedArticles, setPinnedArticles] = useState(() => {
+    return JSON.parse(localStorage.getItem("pinnedArticles")) || [];
+  });
 
   //狀態管理userId & token
   // const dispatch = useDispatch();
@@ -95,20 +101,31 @@ const BlogHome = () => {
 
   // 切換釘選狀態
   const togglePin = (articleId) => {
-    setPinnedArticles((prevPinned)=>
-      prevPinned.includes(articleId)
-        ? prevPinned.filter((id)=> id !== articleId) //取消釘選
-        : [...prevPinned, articleId] //釘選
-    );
+    setPinnedArticles((prevPinned)=>{
+      let updatedPins;
+      if (prevPinned.includes(articleId)) {
+        updatedPins = prevPinned.filter((id) => id !== articleId); // 取消釘選
+      } else {
+        updatedPins = [...prevPinned, articleId]; // 釘選
+      }
+
+      // ✅ 存入 localStorage，確保重整後不會消失
+      localStorage.setItem("pinnedArticles", JSON.stringify(updatedPins));
+      return updatedPins;
+
+    });
   };
 
-  // 排序文章列表，釘選的文章排在最前面
-  const sortedArticles = [...articles].sort((a, b)=>{
-    const isPinnedA = pinnerArticles.includes(a.id);
-    const isPinnedB = pinnerArticles.includes(b.id);
-    return isPinnedB - isPinnedA; // 釘選的文章排在最前面
-  })
-
+   // ✅ 計算篩選 & 排序後的文章列表（使用 `useMemo` 優化）
+   const filteredArticles = useMemo(() => {
+    return articles
+      .filter((article) => filterStatus === "" || article.status === filterStatus)
+      .sort((a, b) => {
+        const isPinnedA = pinnedArticles.includes(a.id);
+        const isPinnedB = pinnedArticles.includes(b.id);
+        return isPinnedB - isPinnedA; // 釘選的文章排在最前面
+      });
+  }, [articles, filterStatus, pinnedArticles])
 
 
 
@@ -118,6 +135,17 @@ const BlogHome = () => {
       const res = await axios.get(`${API_BASE_URL}/posts/user/${user_id}`);
       console.log(res.data);
       if( res.data && Array.isArray(res.data.data)){
+        let fetchedArticles = res.data.data;
+
+
+        // 如果不是作者，只顯示已發布文章
+        if (user_id !== userId) {
+          fetchedArticles = fetchedArticles.filter((article) => article.status === "published");
+        }
+
+        // 按照時間排序（最新的文章放最上面）
+        fetchedArticles.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
         setArticles(res.data.data);
       }
       else{
@@ -129,6 +157,7 @@ const BlogHome = () => {
       setArticles([]); // 遇到錯誤時，也設置空陣列，避免 undefined 錯誤
     }
   }
+
 
 
   //加載文章導航區文章地圖
@@ -143,7 +172,7 @@ const BlogHome = () => {
   }, {});
 
 
-  //加載blog擁有者基本信息 在元件載入時讀取token
+  //加載blog擁有者基本信息 渲染文章列表資料
   useEffect(()=>{
     // const storedToken = getCookie("WS_token");
     // setToken(storedToken);
@@ -570,8 +599,8 @@ const uploadImageToR2 = async () => {
           <div className="row flex-md-row-reverse">
             <div className="col-xl-3 col-md-4 mb-5">
               <div className="blog-home_header d-flex flex-column align-items-center py-10 px-5 rounded-3 border border-gray_light" style={{ backgroundColor: "#FDFBF5" }}>
-                <img className="admin-avatar mb-2 rounded-circle border " src={blogUser.profile_picture
-|| "https://raw.githubusercontent.com/wfox5510/wordSapce-imgRepo/695229fa8c60c474d3d9dc0d60b25f9539ac74d9/default-avatar.svg"} alt="大頭貼" />
+                <img className="admin-avatar mb-2 rounded-circle border " src={blogUser?.profile_picture 
+?? "https://raw.githubusercontent.com/wfox5510/wordSapce-imgRepo/695229fa8c60c474d3d9dc0d60b25f9539ac74d9/default-avatar.svg"} alt="大頭貼" />
                 <p className="mb-5">{blogUser.username}</p>
                 <ul className="list-unstyled d-flex gap-5 gap-md-3 gap-lg-5 mb-5">
                   <li><FontAwesomeIcon icon={faEnvelope} size="lg" style={{ color: "#e77605", }} /></li>
@@ -676,22 +705,22 @@ const uploadImageToR2 = async () => {
                 <div className="articleList_header">
                   <h1 className="text-primary fs-4 fs-md-3 mb-5">文章列表</h1>
                   {isAuthor && (<div className="d-block d-md-flex justify-content-between align-items-center">
-                    <select className="form-select blog-home_articleSelect py-3 mb-6" defaultValue="全部內容">
-                      <option value="全部內容">全部內容</option>
-                      <option value="已發佈">已發佈</option>
-                      <option value="取消發佈">取消發佈</option>
+                    <select className="form-select blog-home_articleSelect py-3 mb-6" value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
+                      <option value="">全部內容</option>
+                      <option value="published">已發佈</option>
+                      <option value="draft">取消發佈</option>
                     </select>
                     <button type="button" className="btn btn-primary btn-lg mb-5" data-bs-toggle="modal" data-bs-target="#newPostModal">新增文章</button>
                   </div> )}
                 </div>
                 <div className="articleList_content">
-                  {sortedArticles.map((article)=>(
+                  {filteredArticles.map((article)=>(
                     <Blog_ArticleCard 
                       key={article.id} 
                       article={article} 
                       comments={comments[article.id]||[]}  // 把留言傳給 Blog_ArticleCard
                       togglePin={togglePin} //傳遞函式開關給子組件
-                      isPinned = {pinnerArticles.includes(article.id)} //傳遞是否釘選
+                      isPinned = {pinnedArticles.includes(article.id)} //傳遞是否釘選
                       likePost={likePost} // 傳遞按讚函式
                       token={token}
                       getBlogArticle = {()=> getBlogArticle() }
@@ -723,6 +752,7 @@ const uploadImageToR2 = async () => {
               />
               {imagePreview && <img src={imagePreview} alt="預覽圖片" className="img-fluid mb-3" 
                 onError={(e) => (e.target.style.display = "none")} // ✅ 圖片錯誤時隱藏
+                style={{display:"block"}}
               />}
               <label htmlFor="標題" className="form-label fw-medium">Blog主頁標題</label>
               <input id="標題" type="text" className="form-control mb-2" placeholder="輸入Blog主頁 標題" value={title} onChange={(e) => setTitle(e.target.value)} />
@@ -737,7 +767,7 @@ const uploadImageToR2 = async () => {
         </div>
       </div>
 
-      <NewPostModal   getBlogArticle = {()=> getBlogArticle() }/>
+      <NewPostModal   getBlogArticle = {()=> getBlogArticle() } token={token}/>
 
       {/*  ✅ 內嵌的 `EditPostModal`*/}
       <div className="modal fade" ref={modalRef} id="editPostModal" aria-hidden="true" tabIndex="-1" >

@@ -44,7 +44,38 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, to
 
   };
 
+  // 文章刪除modal功能
+  const articleDelete = async(post_id)=> {
+    try {
+      const res  = await axios.delete(`${API_BASE_URL}/posts/${post_id}`,{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      });
+      console.log("文章刪除成功", res);
+      getBlogArticle();
+      alert("文章刪除成功");
+    } catch (error) {
+      console.error("文章刪除失敗", error);
+    }
+  }
 
+  //切換文章發布狀態
+  const toggleStatus = async (article) => {
+    try {
+      const newStatus = article.status === "published" ? "draft" : "published";
+      await axios.put(`${API_BASE_URL}/posts/${article.id}/status`, { status: newStatus },{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      });
+  
+      // 重新獲取文章
+      getBlogArticle();
+    } catch (error) {
+      console.error("狀態切換失敗:", error);
+    }
+  };
 
   return (
     <>
@@ -80,7 +111,7 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, to
                 </div>
 
                 {/* 釘選按鈕 */}
-                {isAuthor&& (<i className={`bi bi-pin-fill text-primary fs-6 ${isPinned ? "text-warning" : ""}`}
+                {isAuthor&& (<i className={`bi bi-pin-fill text-primary fs-6 ${isPinned ? "text-warning" : "text-primary"}`}
                    onClick={()=> togglePin(article.id)}
                    style={{cursor: "pointer"}}
                 ></i>)}
@@ -89,8 +120,8 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, to
                   <i className="bi bi-three-dots text-gray fs-6" id="dropdownMenuButton1" data-bs-toggle="dropdown" style={{ cursor: "pointer" }}></i>
                   <ul className="dropdown-menu dropdown-menu-end py-3 px-5 shadow-sm border">
                     <li className="dropdown-item" onClick={()=> onEdit(article)} >編輯</li>
-                    <li className="dropdown-item">取消發布</li>
-                    <li className="dropdown-item">刪除</li>
+                    <li className="dropdown-item" onClick={() => toggleStatus(article)} > {article.status === "published" ? "取消發布" : "發布文章"}</li>
+                    <li className="dropdown-item" onClick={()=>articleDelete(article.id)}>刪除</li>
                   </ul>
                 </div>)}
               </div>
@@ -125,7 +156,8 @@ Blog_ArticleCard.propTypes = {
     description: PropTypes.string.isRequired,
     created_at: PropTypes.string, // 選填
     likes_count: PropTypes.string,
-    image_url:PropTypes.string
+    image_url:PropTypes.string,
+    status: PropTypes.string
   }).isRequired,
   comments: PropTypes.arrayOf(
     PropTypes.shape({
@@ -142,7 +174,7 @@ Blog_ArticleCard.propTypes = {
   token: PropTypes.string,
   getBlogArticle: PropTypes.func,
   onEdit: PropTypes.func,
-  isAuthor:PropTypes.boolhor
+  isAuthor:PropTypes.bool
 }
 
 

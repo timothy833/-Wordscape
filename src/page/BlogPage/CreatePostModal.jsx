@@ -11,17 +11,17 @@ import PropTypes from "prop-types";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 
-const getCookie = (name) => {
-    return document.cookie
-        .split("; ")
-        .find(row => row.startsWith(name + "="))
-        ?.split("=")[1] || "";
-};
+// const getCookie = (name) => {
+//     return document.cookie
+//         .split("; ")
+//         .find(row => row.startsWith(name + "="))
+//         ?.split("=")[1] || "";
+// };
 
 
   
-const NewPostModal = ({ getBlogArticle })=> {
-    const [token , setToken] =useState("");
+const NewPostModal = ({ getBlogArticle, token })=> {
+    // const [token , setToken] =useState("");
     const [title, setTitle] = useState("");
     const [imagePreview, setImagePreview] = useState(null); // ✅ 預覽圖片
     const [externalImage, setExternalImage] = useState(""); // ✅ 外部圖片 URL（手動輸入）
@@ -32,6 +32,7 @@ const NewPostModal = ({ getBlogArticle })=> {
     const [categories, setCategories] = useState([]); //存分類列表
     const [categoryId, setCategoryId] = useState(""); // ✅ 當前選擇分類
     const [description, setDescription] = useState("");//設定文章簡介
+    const [status, setStatus] = useState(""); //設定文章公布狀態
     
 
     const editorRef = useRef(null);
@@ -42,10 +43,10 @@ const NewPostModal = ({ getBlogArticle })=> {
 
 
     //在元件載入時讀取token
-    useEffect(()=>{
-        const storedToken = getCookie("WS_token");
-        setToken(storedToken);
-    }, []);
+    // useEffect(()=>{
+    //     const storedToken = getCookie("WS_token");
+    //     setToken(storedToken);
+    // }, []);
 
     // ✅ 監聽 Modal 開關，確保關閉時清除內容
     useEffect(() => {
@@ -323,7 +324,7 @@ const NewPostModal = ({ getBlogArticle })=> {
                 image_url: uploadFinalImage || "" , // R2 封面圖片 URL
                 category_id: categoryId,// ✅ 增加分類
                 description,
-                status: "published"
+                status
             }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -390,6 +391,14 @@ const NewPostModal = ({ getBlogArticle })=> {
                             </div>
 
                             <div className="mb-2">
+                                <label className="form-label fw-medium">文章狀態</label>
+                                <select className="form-select" value={status} onChange={(e) => setStatus(e.target.value)}>
+                                    <option value="published">已發布</option>
+                                    <option value="draft">未發布</option>
+                                </select>
+                            </div>
+
+                            <div className="mb-2">
                                 <label htmlFor="文章tag標籤"  className="form-label fw-medium">文章標籤</label>
 
                                 <div className="d-flex gap-2">
@@ -431,7 +440,8 @@ const NewPostModal = ({ getBlogArticle })=> {
 };
 
 NewPostModal.propTypes = {
-    getBlogArticle: PropTypes.func
+    getBlogArticle: PropTypes.func,
+    token: PropTypes.string
 }
   
 
