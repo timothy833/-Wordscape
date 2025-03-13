@@ -118,7 +118,7 @@ const ResetPassword = () => {
                     <div className="invalid-feedback">{formErrors.confirmPassword}</div>
                 </div>
                 <div className="d-block mb-5 w-100">
-                  <button type="submit" className="btn btn-primary py-3 w-100">設定新密碼</button>
+                  <button type="submit" className="btn btn-primary py-3 w-100 btn-click">設定新密碼</button>
                 </div>
               </div>
             </form>

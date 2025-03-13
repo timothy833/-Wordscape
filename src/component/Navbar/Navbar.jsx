@@ -1,6 +1,8 @@
-import { Collapse } from "bootstrap";
+import { Dropdown, Collapse } from "bootstrap";
 import logo from "../../assets/images/logo.svg";
 import logo_sm from "../../assets/images/logo-sm.svg";
+import axios from 'axios'
+const { VITE_API_BASE_URL } = import.meta.env;
 
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,7 +10,8 @@ import { logout, fetchUserAvatar } from '../../slice/authSlice';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import SignupPage from "../../page/AccessPage/SignupPage";
 import LoginPage from "../../page/AccessPage/LoginPage";
-import SponsorModal from "../SponsorModal/SponsorModal";
+
+// import { debounce } from 'lodash'; // lodash 提供 debounce 方便控制延遲
 
 //手機版collapse需點擊按鈕和列表以外的地方關閉
 
@@ -24,7 +27,13 @@ const Navbar = () => {
   const handleShowLoginModal = () => setShowLoginModal(true);
   const handleCloseLoginModal = () => setShowLoginModal(false);
 
-  const { isAuthorized, username, id, userAvatar } = useSelector(state => state.auth);
+  const { loading, isAuthorized, username, id, userAvatar } = useSelector(state => state.auth);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // useEffect(()=>{
+  //   setIsLoading(loading);
+  //   toggleLoading(isLoading);
+  // },[]);
 
   const logoutHandle = () => {
     dispatch(logout());
@@ -40,7 +49,7 @@ const Navbar = () => {
 
   useEffect(() => {
     // 需要登入才能訪問的路徑列表
-    const protectedRoutes = ['/admin'];
+    const protectedRoutes = ['/admin',`/blog/${id}`];
 
     // 檢查當前路徑是否需要登入權限
     const currentPath = location.pathname;
@@ -58,45 +67,159 @@ const Navbar = () => {
   }, [isAuthorized, navigate, location]);
 
   // Collapse
+  const searchCollapseRef = useRef(null);
+  const userCollapseRef = useRef(null);
+
+  // useEffect(() => {
+  //   const handleDocumentClick = (e) => {
+  //     if (
+  //       searchCollapseRef.current?.classList.contains('show') &&
+  //       !e.target.closest('#collapseSearch') &&
+  //       !e.target.closest('[data-bs-target="#collapseSearch"]')
+  //     ) {
+  //       bootstrap.Collapse.getOrCreateInstance(searchCollapseRef.current).hide();
+  //     }
+
+  //     if (
+  //       userCollapseRef.current?.classList.contains('show') &&
+  //       !e.target.closest('#collapseUserMenu') &&
+  //       !e.target.closest('[data-bs-target="#collapseUserMenu"]')
+  //     ) {
+  //       bootstrap.Collapse.getOrCreateInstance(userCollapseRef.current).hide();
+  //     }
+  //   };
+
+  //   document.addEventListener('click', handleDocumentClick);
+  //   return () => document.removeEventListener('click', handleDocumentClick);
+  // }, []);
+
   useEffect(() => {
     const handleDocumentClick = (e) => {
-      const isSearchCollapse = document.getElementById('collapseSearch');
-      const isUserCollapse = document.getElementById('collapseUserMenu');
-
-      if (isSearchCollapse?.classList.contains('show') &&
+      // Close search collapse if click is outside
+      if (
+        searchCollapseRef.current?.classList.contains('show') &&
         !e.target.closest('#collapseSearch') &&
-        !e.target.closest('[data-bs-target="#collapseSearch"]')) {
-        new Collapse(isSearchCollapse).hide()
+        !e.target.closest('[data-bs-target="#collapseSearch"]')
+      ) {
+        const searchCollapseInstance = new Collapse(searchCollapseRef.current);
+        searchCollapseInstance.hide();
       }
-
-      if (isUserCollapse?.classList.contains('show') &&
+  
+      // Close user menu collapse if click is outside
+      if (
+        userCollapseRef.current?.classList.contains('show') &&
         !e.target.closest('#collapseUserMenu') &&
-        !e.target.closest('[data-bs-target="#collapseUserMenu"]')) {
-        new Collapse(isUserCollapse).hide()
+        !e.target.closest('[data-bs-target="#collapseUserMenu"]')
+      ) {
+        const userCollapseInstance = new Collapse(userCollapseRef.current);
+        userCollapseInstance.hide();
       }
-    }
+    };
+  
+    document.addEventListener('click', handleDocumentClick);
+    return () => document.removeEventListener('click', handleDocumentClick);
+  }, []);
+  
 
-    document.addEventListener('click', handleDocumentClick)
-    return () => document.removeEventListener('click', handleDocumentClick)
-  }, [])
+  useEffect(() => {
+    const dropdownLinks = document.querySelectorAll('.dropdown-item');
+    dropdownLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        if (userCollapseRef.current?.classList.contains('show')) {
+          const userCollapseInstance = new Collapse(userCollapseRef.current);
+          userCollapseInstance.hide();
+        }
+      });
+    });
+  
+    return () => {
+      dropdownLinks.forEach(link => {
+        link.removeEventListener('click', () => {});
+      });
+    };
+  }, []);
+  
+
+
 
   // Search
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // >>>主要按送出後才會搜尋因此先關閉
+  // 使用 debounce 限制請求頻率，提升效能
+  // useEffect(() => {
+  // const delayedSearch = debounce((searchQuery) => {
+  //     if (searchQuery.trim()) {
+  //         navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
+  //     }
+  // }, 300); 
 
-  const handleKeyDown = (e) => {
+  // delayedSearch();
+
+  // return delayedSearch.cancel;
+  // }, [searchQuery]);
+
+  const handleKeyDown = async(e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       console.log('搜尋:', searchQuery);
-      if (searchQuery == "") {
-        alert("請輸入搜尋文字")
-      } else {
-
+      
+      if (searchQuery === "") {
+        alert("請輸入搜尋文字");
+        return;
       }
-      // 執行搜尋邏輯
+      
+      setIsLoading(true);
+      try {
+        const allPosts = await fetchAllPosts(10);
+        // 根據搜尋關鍵字過濾文章
+        const filteredPosts = allPosts.filter(post => 
+          post.title?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+          post.content?.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+        
+        console.log("搜尋結果:", filteredPosts.length);
+        navigate('/search', { state: { results: filteredPosts } });
+
+      } catch (error) {
+        console.error("搜尋失敗", error);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
+  const fetchAllPosts = async (totalPages = 10) => {
+    try {
+      // 使用批次請求而不是同時發送所有請求
+      let allPosts = [];
+      const batchSize = 3; // 每批次請求數量
+      
+      for (let i = 0; i < totalPages; i += batchSize) {
+        const currentBatch = Array.from(
+          { length: Math.min(batchSize, totalPages - i) }, 
+          (_, j) => axios.get(`${VITE_API_BASE_URL}/posts?page=${i + j + 1}`)
+        );
+        
+        const batchResponses = await Promise.all(currentBatch);
+        const batchPosts = batchResponses.flatMap(res => res.data.data || []);
+        allPosts = [...allPosts, ...batchPosts];
+      }
+      
+      console.log("所有文章:", allPosts.length);
+      return allPosts;
+    } catch (error) {
+      console.error("文章載入失敗", error);
+      return [];
+    }
+  };
 
+  
+
+  // function toggleLoading(isLoading) {     
+  //   document.getElementById("loadingScreen").style.display = isLoading ? "flex" : "none";
+  // }
+  
   return (
     <section className="pt-19 pt-lg-20 ">
       <div className="fixed-top bg-light shadow-sm">
@@ -186,6 +309,7 @@ const Navbar = () => {
 
             {/* 使用者選單-mobile */}
             <div className="d-lg-none">
+              {/* Search Icon */}
               <a
                 className="me-4"
                 data-bs-toggle="collapse"
@@ -198,6 +322,8 @@ const Navbar = () => {
                   search
                 </span>
               </a>
+
+              {/* Menu Icon */}
               <a
                 data-bs-toggle="collapse"
                 href="#collapseUserMenu"
@@ -209,22 +335,20 @@ const Navbar = () => {
                   menu
                 </span>
               </a>
-
             </div>
+
           </div>
         </div>{/* container-end */}
 
-        {/* search-list */}
+        {/* Search Collapse */}
         <div
-          className="collapse homepage-collapse bg-light w-100 z-3 d-lg-none  border-top"
+          ref={searchCollapseRef}
+          className="collapse homepage-collapse bg-light w-100 z-3 d-lg-none border-top"
           id="collapseSearch"
           style={{ position: 'fixed', top: '56px' }}
         >
           <div className="container">
-            <ul
-              className="text-left list-unstyled mb-0"
-              aria-labelledby="dropdownUserMenu"
-            >
+            <ul className="text-left list-unstyled mb-0">
               <li className="input-group input-group-sm py-3">
                 <span className="material-symbols-outlined searchbar-icon text-gray fs-6">
                   search
@@ -235,93 +359,68 @@ const Navbar = () => {
                   placeholder="搜尋..."
                 />
               </li>
-              <li>
-                <a className="dropdown-item py-1 px-3 text-gray" href="#">
-                  熱門關鍵字
-                </a>
-              </li>
-              <li>
-                <a className="dropdown-item py-2 px-3" href="#">
-                  拾字間
-                </a>
-              </li>
-              <li>
-                <a className="dropdown-item py-2 px-3" href="#">
-                  專注閱讀
-                </a>
-              </li>
-              <li>
-                <a className="dropdown-item py-2 px-3" href="#">
-                  閱讀體驗
-                </a>
-              </li>
+              {/* Example Items */}
+              <li><a className="dropdown-item py-1 px-3 text-gray" href="#">熱門關鍵字</a></li>
+              <li><a className="dropdown-item py-2 px-3" href="#">拾字間</a></li>
             </ul>
           </div>
         </div>
-        {/*menu-list*/}
+
+        {/* User Menu Collapse */}
         <div
+          ref={userCollapseRef}
           className="collapse homepage-collapse bg-light w-100 z-3 d-lg-none"
           id="collapseUserMenu"
           style={{ position: 'fixed', top: '56px' }}
         >
-          <ul
-            className="text-center list-unstyled mb-0"
-            aria-labelledby="dropdownUserMenu"
-          >
-
-            {/* 根據登入狀態顯示不同的選項 */}
+          <ul className="text-center list-unstyled mb-0">
             {isAuthorized ? (
-              // 已登入狀態
               <>
                 <li>
                   <div className="d-flex justify-content-center align-items-center border-top border-bottom border-gray_light py-3">
-                    <img className="avatar me-3 rounded-circle" src={userAvatar || "https://raw.githubusercontent.com/wfox5510/wordSapce-imgRepo/695229fa8c60c474d3d9dc0d60b25f9539ac74d9/default-avatar.svg"} alt="" />
+                    <img
+                      className="avatar me-3 rounded-circle"
+                      src={userAvatar || "https://raw.githubusercontent.com/wfox5510/wordSapce-imgRepo/695229fa8c60c474d3d9dc0d60b25f9539ac74d9/default-avatar.svg"}
+                      alt=""
+                    />
                     <p className="m-0 nav-username">{username}</p>
                   </div>
                 </li>
-                <li>
-                  <Link to="/articleList" className="dropdown-item py-2 px-5">文章列表</Link>
-                </li>
-                <li>
-                  <Link to="/blogpage" className="dropdown-item py-2 px-5">我的部落格</Link>
-                </li>
-                <li>
-                  <Link to="/admin" className="dropdown-item py-2 px-5">會員中心</Link>
-                </li>
-                <li>
-                  <button onClick={logoutHandle} className="dropdown-item py-2 px-5" href="#">
-                    登出
-                  </button>
-                </li>
+                <li><Link to="/articleList" className="dropdown-item py-2 px-5">文章列表</Link></li>
+                <li><Link to={`/blog/${id}`} className="dropdown-item py-2 px-5">我的部落格</Link></li>
+                <li><Link to="/admin" className="dropdown-item py-2 px-5">會員中心</Link></li>
+                <li><button onClick={logoutHandle} className="dropdown-item py-2 px-5">登出</button></li>
               </>
             ) : (
-              // 未登入狀態
               <>
-                <li>
-                  <Link to="/articleList" className="dropdown-item py-2 px-5">文章列表</Link>
-                </li>
-                <li>
-                  <button onClick={handleShowLoginModal}
-                    className="dropdown-item py-2 px-5" href="#">
-                    登入
-                  </button>
-                </li>
-                <li>
-                  <button onClick={handleShowSignupModal}
-                    className="dropdown-item py-2 px-5" href="#">
-                    註冊
-                  </button>
-                </li>
+                <li><Link to="/articleList" className="dropdown-item py-2 px-5">文章列表</Link></li>
+                <li><button onClick={handleShowLoginModal} className="dropdown-item py-2 px-5">登入</button></li>
+                <li><button onClick={handleShowSignupModal} className="dropdown-item py-2 px-5">註冊</button></li>
               </>
             )}
           </ul>
         </div>
 
-
       </div>
       {/* Modal */}
       <LoginPage show={showLoginModal} handleClose={handleCloseLoginModal} handleShowSignupModal={handleShowSignupModal} />
       <SignupPage show={showSignupModal} handleClose={handleCloseSignupModal} handleShowLoginModal={handleShowLoginModal} />
+
+      {/* <div id="loadingScreen">
+        <div
+          className="d-flex justify-content-center align-items-center"
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(255,255,255,0.5)",
+            zIndex: 999
+          }}
+        >
+          <div className="spinner-border text-secondary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </div> */}
     </section>
   );
 };

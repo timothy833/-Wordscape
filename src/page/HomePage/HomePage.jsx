@@ -153,7 +153,7 @@ const HomePage = () => {
             {commentCount < commentData.length && (
               <button
                 type="button"
-                className="btn btn-lg btn-primary fw-bold lh-sm"
+                className="btn btn-lg btn-primary fw-bold lh-sm btn-click"
                 onClick={() => {
                   setCommentCount(commentCount + 3);
                 }}
@@ -257,7 +257,7 @@ const HomePage = () => {
           </div>
           <Link
             to="/articleList"
-            className="btn btn-lg btn-primary lh-sm mx-auto hover-shadow"
+            className="btn btn-lg btn-primary lh-sm mx-auto hover-shadow btn-click"
           >
             點我看更多
           </Link>

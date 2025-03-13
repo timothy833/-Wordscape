@@ -29,7 +29,7 @@ const SubscriptionHistoryCard = ({ payerId, paymentDate, amount }) => {
           <p className="fw-bold">
             {new Date(paymentDate).toLocaleDateString("fr-CA")}
           </p>
-          <button className="btn btn-primary-hover text-light">
+          <button className="btn btn-primary-hover text-light" style={{cursor: 'default'}}>
             ${amount}
           </button>
         </div>

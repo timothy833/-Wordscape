@@ -9,26 +9,16 @@
     z-index: 10000;
   }
   
-  .access-modal-container.show {
-    opacity: 1;
-    visibility: visible;
-  }
+.access-modal-container.show {
+  opacity: 1;
+  visibility: visible;
+}
   
-  .access-modal-content {
-    transition: transform 0.5s ease-in-out;
-    transform: translateY(-20px);
-  }
-  
-  .modal-container.show .modal-content {
-    transform: translateY(0);
-  }
-  
-
 .login{
     background-color: $secondary;
     position: relative;
     overflow: hidden;
-    background-image: url('/src/assets/images/AccessPage/img-access.png');
+    background-image: url('https://github.com/timothy833/-Wordscape/blob/main/src/assets/images/AccessPage/img-access.png?raw=true');
     background-size: 50%;
     background-position: bottom left; 
     background-repeat: no-repeat;

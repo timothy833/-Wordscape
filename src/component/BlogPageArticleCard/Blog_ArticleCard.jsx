@@ -83,9 +83,11 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, to
         <div className="row flex-column-reverse flex-lg-row">
           <div className="col-lg-8">
             <div className="card-body p-0">
-              <h5 className="card-title text-truncate-2lines fw-bold mb-3 text-primary">
-                {article.title}
-              </h5>
+              <Link to={`/article/${article.id}`}>
+                <h3 className="card-title text-truncate-2lines fw-bold mb-3 text-primary">
+                  {article.title}
+                </h3>
+              </Link>
               <p className="card-text mb-5 text-truncate-2lines">
                 {article.description}
               </p>
@@ -111,7 +113,7 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, to
                 </div>
 
                 {/* 釘選按鈕 */}
-                {isAuthor&& (<i className={`bi bi-pin-fill text-primary fs-6 ${isPinned ? "text-warning" : "text-primary"}`}
+                {isAuthor&& (<i className={`bi bi-pin-fill fs-6 ${isPinned ? "text-primary" : "text-gray"}`}
                    onClick={()=> togglePin(article.id)}
                    style={{cursor: "pointer"}}
                 ></i>)}
@@ -130,7 +132,7 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, to
           <div className="col-lg-4">
             <img
               src={article.image_url}
-              className="card-img-top rounded-1 mb-5"
+              className="card-img-top rounded-3 mb-5"
               alt="articleImg"
             />
           </div>

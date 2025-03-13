@@ -174,15 +174,14 @@ const SponsorModal = () => {
     let sponsorId = null;
     let postId = null;
     if (location.pathname.startsWith("/blog/")) {
-      sponsorId = user_id.slice(1); // `/blog/:user_id`
-      console.log('getUserIdForSponsor in blog page');
+      sponsorId = user_id; // `/blog/:user_id`
+
     } else if (location.pathname.startsWith("/article/")) {
       postId = id; // `/article/:id`
-      console.log('getUserIdForSponsor in article page');
         try {
           const postData = await axios.get(`${VITE_API_BASE_URL}/posts/${postId}`);
           sponsorId = postData.data.data.user_id;
-          // console.log(postData);
+          console.log(postData);
         } catch (error) {
           console.log('error in get userId',error);
         }
@@ -198,7 +197,7 @@ const SponsorModal = () => {
       const actualAmount = paymentData.amount === "custom" ? 
         parseInt(paymentData.customAmount) : 
         parseInt(paymentData.amount);
-
+      const recieverId = await getUserIdForSponsor();
       const url = `${VITE_API_BASE_URL}/payments`;
       const data = {
         "amount": actualAmount,
@@ -227,15 +226,15 @@ const SponsorModal = () => {
    {/*Button trigger modal*/}
     <button 
       type="button" 
-      className="btn btn-primary sponsor-btn"
+      className="btn btn-outline-primary sponsor-btn border border-primary-hover btn-click"
       onClick={async()=>{
         openSponsorModal();
         const userId = await getUserIdForSponsor(); // 確保等到結果
         console.log("Final Sponsor ID:", userId);
       }}
     >
-      <i className="bi bi-gift sponsor-icon"></i>
-      <span className="sponsor-text">贊助</span>
+      <i className="bi bi-gift sponsor-icon fs-8 px-2"></i>
+      <span className="sponsor-text fs-8">贊助</span>
     </button>
 
     {/* Modal*/}
@@ -253,7 +252,7 @@ const SponsorModal = () => {
           <div className="modal-header">
             <div className="modal-title fs-5 text-primary" id="sponsorModal">
               <i class="bi bi-gift-fill"></i>
-               <span className="ms-2">支持{sponsorName}</span>
+               <span className="ms-2">支持 {sponsorName}</span>
             </div>
             {/* <button onClick={closeSponsorModal} type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> */}
           </div>
@@ -421,8 +420,8 @@ const SponsorModal = () => {
             </div>  
             ):(
             <div className="modal-body">
-              <div className="h4">確認您的付款資訊：</div>
-              <div className="h6">付款金額: <span className="fw-normal">{getDisplayAmount()} 元</span></div>
+              <div className="h4 mb-3">確認您的付款資訊：</div>
+              <div className="h6 mb-2">付款金額: <span className="fw-normal">{getDisplayAmount()} 元</span></div>
               <div className="h6">付款方式: <span className="fw-normal">{getDisplayPayment()}</span></div>
               <div className="mt-4 alert alert-info">
                 <p className="mb-0">你的支持將幫助我們提供更多有價值的文章！</p>
@@ -433,12 +432,12 @@ const SponsorModal = () => {
           {!isNextStep ? (
             <>
             <button onClick={closeSponsorModal} type="button" className="btn btn-outline-primary">取消</button>
-            <button onClick={nextStepHandle} type="button" className="btn btn-primary">下一步</button>
+            <button onClick={nextStepHandle} type="button" className="btn btn-primary btn-click">下一步</button>
             </>
           ):(
             <>
-            <button onClick={()=>{setIsNextStep(false)}} type="button" className="btn btn-outline-primary">上一步</button>
-            <button onClick={sponsorHandle} type="button" className="btn btn-primary">確定</button>
+            <button onClick={()=>{setIsNextStep(false)}} type="button" className="btn btn-outline-primary btn-click">上一步</button>
+            <button onClick={sponsorHandle} type="button" className="btn btn-primary btn-click">確定</button>
             </>
           )}
           </div>{/* footer */}

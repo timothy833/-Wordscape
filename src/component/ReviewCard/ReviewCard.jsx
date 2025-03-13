@@ -1,7 +1,7 @@
 import "./ReviewCard.scss";
 const ReviewCard = ({ reviewStar, avatar, width, content ,user_name }) => {
   return (
-    <div className="card border-0 shadow" style={{ width: width }}>
+    <div className="card border-0 shadow bg-light" style={{ width: width }}>
       <div className="card-body">
         <div className="d-flex align-items-center justify-content-between mb-2">
           <div className="d-flex align-items-center">

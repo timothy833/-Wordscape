@@ -151,14 +151,15 @@ const ArticleListPage = () => {
   return (
     <>
       <section>
-        <div className="container pt-6 pb-3 pt-lg-17 pb-lg-10">
-          <h2 className="fs-8 fs-lg-7 fw-bold text-dark">類別選擇</h2>
-          <ul className="article-taglist list-unstyled d-flex flex-wrap gap-1 gap-lg-2 mb-2 mb-lg-3 pt-3">
+        <div className="container pt-6 pb-3 pt-lg-10 pb-lg-10 bg-light">
+          <h2 className="fs-7 fs-md-7 fw-bold text-dark">類別選擇</h2>
+          <ul className="article-taglist list-unstyled d-flex flex-wrap gap-1 gap-lg-2 mb-2 mb-lg-1 pt-3">
             {categoriesData?.map((categoriesDataItem) => {
               return (
                 <li key={categoriesDataItem.id}>
                   <a
-                    className={`article-tag pe-open lh-lg fs-9 fs-lg-8 rounded-pill ${
+                    className={`article-tag pe-open lh-lg fs-8 fs-lg-8 rounded-pill
+                    ${
                       categoriesSelector.some(
                         (categoriesSelectorItem) =>
                           categoriesSelectorItem === categoriesDataItem.id
@@ -458,7 +459,7 @@ const ArticleListPage = () => {
           <div className="d-none d-lg-flex justify-content-between mb-5">
             <div className="article-list-select-wrap">
               <select
-                className="text-dark p-3 border"
+                className="text-dark p-3 border rounded-2"
                 name="article-list-class"
                 id="article-list-class"
                 onChange={(e) => setListSelector(e.target.value)}

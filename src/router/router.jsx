@@ -14,6 +14,8 @@ import TestLoginPage from "../page/BlogPage/TestLoginPage";
 import TestArticlePage from "../page/BlogPage/TestArticlePage";
 import ResetPassword from "../page/AccessPage/ResetPassword";
 import ErrorPage from "../page/ErrorPage/ErrorPage";
+import SearchPage from "../page/SearchPage/SearchPage";
+import { element } from "prop-types";
 const router = [
   {
     path: "/",
@@ -22,6 +24,10 @@ const router = [
       {
         path: "/",
         element: <HomePage />,
+      },
+      {
+        path: "/search",
+        element: <SearchPage />
       },
       {
         path: "/article/:id",
