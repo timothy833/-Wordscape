@@ -80,7 +80,10 @@ const BlogHome = () => {
     if(user_id === userId) {
       setIsAuthor(true);
     }
-  
+    else if(user_id !== userId){
+      setIsAuthor(false);
+    }
+    getBlogArticle();
   }, [userId]);
     
 
@@ -138,15 +141,15 @@ const BlogHome = () => {
         let fetchedArticles = res.data.data;
 
 
-        // 如果不是作者，只顯示已發布文章
-        if (user_id !== userId) {
+        // // ✅ 如果 `userId` 不存在（未登入），或 `user_id !== userId`，則只顯示 `published`
+        if (!userId   || user_id !== userId) {
           fetchedArticles = fetchedArticles.filter((article) => article.status === "published");
         }
 
         // 按照時間排序（最新的文章放最上面）
         fetchedArticles.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
-        setArticles(res.data.data);
+        setArticles(fetchedArticles);
       }
       else{
         setArticles([]); // 如果 API 沒有返回正確資料，預設為空陣列
