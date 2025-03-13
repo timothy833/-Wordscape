@@ -164,7 +164,9 @@ const BlogHome = () => {
 
 
   //加載文章導航區文章地圖
-  const categorizedArticles = articles.reduce((acc, article)=>{
+  const categorizedArticles = useMemo(()=>{
+    
+    return filteredArticles.reduce((acc, article)=>{
     const {category_id, category_name} = article;
     if(!acc[category_id]){
       acc[category_id] = {name: category_name || "未分類", articles: []};
@@ -172,7 +174,7 @@ const BlogHome = () => {
     acc[category_id].articles.push(article);
 
     return acc;
-  }, {});
+  }, {})}, [filteredArticles]); // ✅ 依賴 `articles`，當 `articles` 變更時重新計算
 
 
   //加載blog擁有者基本信息 渲染文章列表資料
@@ -590,9 +592,9 @@ const uploadImageToR2 = async () => {
 
    
   
-  if(!articles || articles.length === 0){
-    return <p>載入中....</p>
-  }
+  // if(!articles && articles.length === 0){
+  //   return <p>載入中....</p>
+  // }
 
 
   return (
@@ -603,7 +605,7 @@ const uploadImageToR2 = async () => {
             <div className="col-xl-3 col-md-4 mb-5">
               <div className="blog-home_header d-flex flex-column align-items-center py-10 px-5 rounded-3 border border-gray_light" style={{ backgroundColor: "#FDFBF5" }}>
                 <img className="admin-avatar mb-2 rounded-circle border " src={blogUser?.profile_picture 
-?? "https://raw.githubusercontent.com/wfox5510/wordSapce-imgRepo/695229fa8c60c474d3d9dc0d60b25f9539ac74d9/default-avatar.svg"} alt="大頭貼" />
+|| "https://raw.githubusercontent.com/wfox5510/wordSapce-imgRepo/695229fa8c60c474d3d9dc0d60b25f9539ac74d9/default-avatar.svg"} alt="大頭貼" />
                 <p className="mb-5">{blogUser.username}</p>
                 <ul className="list-unstyled d-flex gap-5 gap-md-3 gap-lg-5 mb-5">
                   <li><FontAwesomeIcon icon={faEnvelope} size="lg" style={{ color: "#e77605", }} /></li>
