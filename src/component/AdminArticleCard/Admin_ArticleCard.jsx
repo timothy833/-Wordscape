@@ -86,7 +86,7 @@ const Admin_ArticleCard = () => {
                         </Link>
                       </h5>
                       <p className="card-text mb-5 text-truncate-2lines">
-                        {extractFirstParagraphText(item.content)}
+                        {item.description || extractFirstParagraphText(item.content)}
                       </p>
                     </div>
                     <div className="adminArticleCardFooter d-flex  align-items-center gap-3">
