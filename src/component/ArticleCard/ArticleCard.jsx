@@ -40,7 +40,7 @@ const ArticleCard = ({ articleData }) => {
               style={{ maxWidth: "55%" }}
             >
               <img
-                src={autherData?.profile_picture}
+                src={autherData?.profile_picture || "https://raw.githubusercontent.com/wfox5510/wordSapce-imgRepo/695229fa8c60c474d3d9dc0d60b25f9539ac74d9/default-avatar.svg"}
                 className="me-2 object-fit-cover rounded-pill"
                 alt="avartar"
                 width="40px"
