@@ -31,7 +31,8 @@ const ArticleListPage = () => {
   const getAllArticleData = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/full`);
-      setAllArticleData(res.data.data);
+      const filterArticleData = res.data.data.filter((item)=>item.status=="published");
+      setAllArticleData(filterArticleData);
     } catch (error) {
       console.log(error);
     }
@@ -91,8 +92,8 @@ const ArticleListPage = () => {
       setArticleListData(
         res.data.data.filter(
           (articleDataItem) =>
-            articleDataItem.category_id === listSelector ||
-            listSelector === "allArticle"
+            (articleDataItem.category_id === listSelector ||
+            listSelector === "allArticle") && articleDataItem.status == "published"
         )
       );
     } catch (error) {

@@ -139,7 +139,8 @@ const ArticlePage = () => {
   const getAllArticleData = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/full`);
-      setAllArticleData(res.data.data);
+      const filterArticleData = res.data.data.filter((item)=>item.status=="published");
+      setAllArticleData(filterArticleData);
     } catch (error) {
       console.log(error);
     }
