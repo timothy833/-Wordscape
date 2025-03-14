@@ -251,7 +251,7 @@ const SponsorModal = () => {
         <div className="modal-content rounded px-4">
           <div className="modal-header">
             <div className="modal-title fs-5 text-primary" id="sponsorModal">
-              <i class="bi bi-gift-fill"></i>
+              <i className="bi bi-gift-fill"></i>
                <span className="ms-2">支持 {sponsorName}</span>
             </div>
             {/* <button onClick={closeSponsorModal} type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> */}

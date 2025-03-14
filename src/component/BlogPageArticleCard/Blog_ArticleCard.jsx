@@ -177,7 +177,7 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, to
               </div>
                {/* （點擊展開所有留言） */}
               <div className="text-gray" style={{ cursor: "pointer" }} onClick={() => setShowAllComments(!showAllComments)}>
-                {showAllComments ? "隱藏留言" : `查看 ${sortedComments.length} 則留言`}
+                {showAllComments.length > 1? "隱藏留言" : `查看 ${sortedComments.length} 則留言`}
               </div>
             </div>
           </div>
