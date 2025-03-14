@@ -1,4 +1,4 @@
-import { Outlet, NavLink } from "react-router-dom";
+import { Outlet, NavLink,Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const AdminLayout = () => {
@@ -14,7 +14,7 @@ const AdminLayout = () => {
                 <div className="d-flex align-items-center flex-column border-bottom border-gray_light mb-5">
                   <img className="admin-avatar mb-2 rounded-circle" src={userAvatar || "https://raw.githubusercontent.com/wfox5510/wordSapce-imgRepo/695229fa8c60c474d3d9dc0d60b25f9539ac74d9/default-avatar.svg"} alt="avatar" />
                   <p className="mb-2">{username}</p>
-                  <p className="text-primary mb-5">編輯個人主頁</p>
+                  <Link to={`/blog/${id}`} className="text-primary mb-5">編輯個人主頁</Link>
                 </div>
                 <nav className="list-unstyled d-flex flex-column admin-layout_nav mb-6 gap-2 align-items-center">
                   <NavLink to="info" className={({ isActive }) => `py-2 link-gray ${isActive ? "adminLinkActive" : ""}`}>會員資訊</NavLink>
