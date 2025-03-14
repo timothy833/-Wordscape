@@ -163,59 +163,15 @@ const Navbar = () => {
     if (e.key === 'Enter') {
       e.preventDefault();
       console.log('搜尋:', searchQuery);
-      
       if (searchQuery === "") {
         alert("請輸入搜尋文字");
         return;
       }
-      
-      setIsLoading(true);
-      try {
-        const allPosts = await fetchAllPosts(10);
-        // 根據搜尋關鍵字過濾文章
-        const filteredPosts = allPosts.filter(post => 
-          post.title?.toLowerCase().includes(searchQuery.toLowerCase()) || 
-          post.content?.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-        
-        console.log("搜尋結果:", filteredPosts.length);
-        navigate('/search', { state: { results: filteredPosts } });
-
-      } catch (error) {
-        console.error("搜尋失敗", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  };
-
-  const fetchAllPosts = async (totalPages = 10) => {
-    try {
-      // 使用批次請求而不是同時發送所有請求
-      let allPosts = [];
-      const batchSize = 3; // 每批次請求數量
-      
-      for (let i = 0; i < totalPages; i += batchSize) {
-        const currentBatch = Array.from(
-          { length: Math.min(batchSize, totalPages - i) }, 
-          (_, j) => axios.get(`${VITE_API_BASE_URL}/posts?page=${i + j + 1}`)
-        );
-        
-        const batchResponses = await Promise.all(currentBatch);
-        const batchPosts = batchResponses.flatMap(res => res.data.data || []);
-        allPosts = [...allPosts, ...batchPosts];
-      }
-      
-      console.log("所有文章:", allPosts.length);
-      return allPosts;
-    } catch (error) {
-      console.error("文章載入失敗", error);
-      return [];
+      navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
     }
   };
 
   
-
   // function toggleLoading(isLoading) {     
   //   document.getElementById("loadingScreen").style.display = isLoading ? "flex" : "none";
   // }
