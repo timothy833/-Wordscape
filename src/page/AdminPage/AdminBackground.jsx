@@ -4,10 +4,11 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 const { VITE_API_BASE_URL } = import.meta.env;
 import dayjs from "dayjs";
-
+import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 import AdminRevenueChart from "../../component/AdminRevenueChart/AdminRevenueChart";
 
 const AdminBackground = () => {
+  const [isLoading,setIsLoading] = useState(false);
   const { isAuthorized, id, username, token } = useSelector(state => state.auth);
 
   const [followers, setFollowers] = useState(0); // 訂閱人數
@@ -19,9 +20,6 @@ const AdminBackground = () => {
   const [monthlyViewsChange, setMonthlyViewsChange] = useState(0);
   const [monthlyRevenue, setMonthlyRevenue] = useState(0);
 
-
-
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,6 +33,7 @@ const AdminBackground = () => {
 
 
       try {
+        setIsLoading(true);
         const [followersRes, viewsRes, revenueRes] = await Promise.all([
           axios.get(`${VITE_API_BASE_URL}/subscriptions/followers`, {
             headers: { Authorization: `Bearer ${token}` },
@@ -80,7 +79,7 @@ const AdminBackground = () => {
         console.log(error);
 
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       };
     };
     fetchData();
@@ -214,10 +213,9 @@ const AdminBackground = () => {
   const currentArticles = sortedArticles.slice((currentPage - 1) * articlesPerPage, currentPage * articlesPerPage);
 
 
-
-  if (loading) return <p className="text-center text-gray">載入中...</p>;
   return (
     <>
+    {isLoading && <LoadingSpinner />}
       <h1 className="fs-4 fs-md-1 text-primary fw-bold mb-5">管理後臺</h1>
       <div className="admin-background_textData">
         <div className="d-md-flex gap-6">

@@ -3,18 +3,23 @@ import { useSelector } from "react-redux";
 import SubscriptionHistoryCard from "../../component/SubscriptionCard/SubscriptionHistoryCard";
 import axios from "axios";
 import { useEffect, useState, Fragment } from "react";
+import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const AdminSubscription = () => {
+  const [isLoading,setIsLoading] = useState(false);
   const [paymentReceivedData, setPaymentReceivedData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const getPaymentReceivedData = async () => {
     try {
+      setIsLoading(true);
       const res = await axios.get(`${API_BASE_URL}/payments/received`);
       setPaymentReceivedData(res.data.data);
     } catch (error) {
       console.log(error);
+    }finally{
+      setIsLoading(false);
     }
   };
   useEffect(() => {
@@ -22,6 +27,7 @@ const AdminSubscription = () => {
   }, []);
   return (
     <>
+     {isLoading && <LoadingSpinner />}
       <div className="d-none d-md-flex justify-content-between align-items-center">
         <h1 className="fs-4 fs-md-1 text-primary fw-bold mb-5 mb-md-10">
           訂閱紀錄
