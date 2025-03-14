@@ -19,7 +19,7 @@ const AdminLayout = () => {
                 <nav className="list-unstyled d-flex flex-column admin-layout_nav mb-6 gap-2 align-items-center">
                   <NavLink to="info" className={({ isActive }) => `py-2 link-gray ${isActive ? "adminLinkActive" : ""}`}>會員資訊</NavLink>
                   <NavLink to="collection" className={({ isActive }) => `py-2 link-gray ${isActive ? "adminLinkActive" : ""}`}>我的收藏</NavLink>
-                  <NavLink to="subscription" className={({ isActive }) => `py-2 link-gray ${isActive ? "adminLinkActive" : ""}`}>訂閱紀錄</NavLink>
+                  <NavLink to="subscription" className={({ isActive }) => `py-2 link-gray ${isActive ? "adminLinkActive" : ""}`}>收款紀錄</NavLink>
                   <NavLink to="background" className={({ isActive }) => `py-2 link-gray ${isActive ? "adminLinkActive" : ""}`}>管理後臺</NavLink>
                 </nav>
               </aside>
@@ -35,7 +35,7 @@ const AdminLayout = () => {
                   <nav className="list-unstyled d-flex justify-content-between admin-layout_nav mb-6">
                     <NavLink to="info" className={({ isActive }) => `pb-1 link-gray ${isActive ? "adminLinkActive" : ""}`}>會員資訊</NavLink>
                     <NavLink to="collection" className={({ isActive }) => `pb-1 link-gray ${isActive ? "adminLinkActive" : ""}`}>我的收藏</NavLink>
-                    <NavLink to="subscription" className={({ isActive }) => `pb-1 link-gray ${isActive ? "adminLinkActive" : ""}`}>訂閱紀錄</NavLink>
+                    <NavLink to="subscription" className={({ isActive }) => `pb-1 link-gray ${isActive ? "adminLinkActive" : ""}`}>收款紀錄</NavLink>
                     <NavLink to="background" className={({ isActive }) => `pb-1 link-gray ${isActive ? "adminLinkActive" : ""}`}>管理後臺</NavLink>
                   </nav>
                 </div>
