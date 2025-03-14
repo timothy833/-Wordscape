@@ -3,31 +3,23 @@ import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
 import axios from 'axios';
 import { useEffect, useState,useCallback } from 'react';
-
+import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import Swal from 'sweetalert2';
+import { alertMsgForAdminInfo } from "../../utils/alertMsg";
+import { alertMsgForAdminError } from "../../utils/alertMsg";
 
 const SearchPage = () => {
+  const [isLoading,setIsLoading] = useState(false);
   const { isAuthorized } = useSelector(state => state.auth);
   const location = useLocation();
   const [searchResults, setSearchResults] = useState([]);
   const queryParams = new URLSearchParams(location.search);
   const searchQuery = queryParams.get("query");
 
-  // const fetchSearchResults =   async () => {
-  //   try {
-  //     const res = await axios.get(`${API_BASE_URL}/posts/full`);
-  //     const filteredPosts = res.data.data.filter(post =>
-  //       post.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //       post.content?.toLowerCase().includes(searchQuery.toLowerCase())
-  //     );
-  //     setSearchResults(filteredPosts);
-  //   } catch (error) {
-  //     console.error("搜尋失敗", error);
-  //   }
-  // };
-
   const fetchSearchResults = useCallback(async () => {
     try {
+      setIsLoading(true);
       const res = await axios.get(`${API_BASE_URL}/posts/full`);
       const filteredPosts = res.data.data.filter(post =>
         post.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -36,6 +28,8 @@ const SearchPage = () => {
       setSearchResults(filteredPosts);
     } catch (error) {
       console.error("搜尋失敗", error);
+    }finally{
+      setIsLoading(false);
     }
   }, [searchQuery]); 
 
@@ -69,11 +63,16 @@ const SearchPage = () => {
 
   const postFavorites = async (id) => {
     try {
+      setIsLoading(true);
       await axios.post(`${API_BASE_URL}/posts/favorites/${id}`);
       checkIsFavorites();
       fetchSearchResults();
+      Swal.fire(alertMsgForAdminInfo);
     } catch (error) {
-      console.log("❌ 收藏操作失敗", error);
+      Swal.fire(alertMsgForAdminError);
+      console.log("收藏操作失敗", error);
+    }finally{
+      setIsLoading(false);
     }
   };
 
@@ -85,6 +84,8 @@ const SearchPage = () => {
   }, [isAuthorized, searchResults]);
 
   return (
+    <>
+    {isLoading && <LoadingSpinner />}
     <div className='container'>
       {searchResults.length ? (
         <>
@@ -151,8 +152,8 @@ const SearchPage = () => {
       ) : (
         <p className='text-primary fs-6 fs-lg-4 fw-bold mb-3 p-0 p-lg-2'>未找到相關文章</p>
       )}
-
     </div>
+    </>
   );
 };
 

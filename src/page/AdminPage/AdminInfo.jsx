@@ -8,11 +8,13 @@ import Swal from "sweetalert2";
 import { alertMsgForAdminInfo } from "../../utils/alertMsg";
 import { alertMsgForAdminError } from "../../utils/alertMsg";
 import { alertMsgForVerify } from "../../utils/alertMsg";
+import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
+
 
 const AdminInfo = () => {
+  const [isLoading,setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const { isAuthorized, id, username, token, userAvatar } = useSelector(state => state.auth);
-  const [loading, setLoading] = useState(true);
   const [previewImage, setPreviewImage] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const fileInputRef = useRef(null);
@@ -25,6 +27,7 @@ const AdminInfo = () => {
         return;
       };
       try {
+        setIsLoading(true);
         const res = await axios.get(`${VITE_API_BASE_URL}/users/${id}`);
         if (res.data.birthday) {
           const date = new Date(res.data.birthday);
@@ -46,7 +49,7 @@ const AdminInfo = () => {
       } catch (error) {
         console.log(error);
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     })();
   }, []);
@@ -74,6 +77,7 @@ const AdminInfo = () => {
     }
 
     try {
+      setIsLoading(true);
       let profileImageUrl = data.profile_picture;
       if (selectedFile) {
         const formData = new FormData();
@@ -109,12 +113,13 @@ const AdminInfo = () => {
     } catch (error) {
       Swal.fire(alertMsgForAdminError);
       console.error(error);
+    }finally{
+      setIsLoading(false);
     }
   };
-
-  if (loading) return <p className="text-center text-gray">載入中...</p>;
   return (
     <>
+    {isLoading && <LoadingSpinner />}
       <h1 className="fs-4 fs-md-1 text-primary fw-bold mb-5">會員資訊</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="row mb-5 d-flex flex-column-reverse flex-md-row">

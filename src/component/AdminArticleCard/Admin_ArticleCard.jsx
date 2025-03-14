@@ -6,12 +6,13 @@ import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import { alertMsgForVerify } from "../../utils/alertMsg";
 import { alertMsgForCancelFavorites } from "../../utils/alertMsg";
+import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 
 
 const Admin_ArticleCard = () => {
   const { isAuthorized, id, username, token } = useSelector(state => state.auth);
   const [favorites, setFavorites] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoading,setIsLoading] = useState(false);
   useEffect(() => {
     (async () => {
       if (!token) {
@@ -19,6 +20,7 @@ const Admin_ArticleCard = () => {
         return;
       };
       try {
+        setIsLoading(true);
         const res = await axios.get(`${VITE_API_BASE_URL}/posts/favorites`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -28,7 +30,7 @@ const Admin_ArticleCard = () => {
       } catch (error) {
         console.log(error);
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       };
     })();
   }, []);
@@ -38,6 +40,7 @@ const Admin_ArticleCard = () => {
       return;
     };
     try {
+      setIsLoading(true);
       const res = await axios.post(`${VITE_API_BASE_URL}/posts/favorites/${id}`, {}, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -49,11 +52,13 @@ const Admin_ArticleCard = () => {
       Swal.fire(alertMsgForCancelFavorites);
     } catch (error) {
       console.log(error);
+    }finally{
+      setIsLoading(false);
     }
   }
-  if (loading) return <p className="text-center text-gray">載入中...</p>;
   return (
     <>
+    {isLoading && <LoadingSpinner />}
       {favorites.length === 0 ? (
         <h3 className="mt-3 text-gray">目前沒有收藏的文章</h3>
       ) : (
