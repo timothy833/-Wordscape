@@ -168,6 +168,7 @@ const Navbar = () => {
         return;
       }
       navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
+      setSearchQuery("");
     }
   };
 

@@ -23,7 +23,7 @@ const SearchPage = () => {
       const res = await axios.get(`${API_BASE_URL}/posts/full`);
       const filteredPosts = res.data.data.filter(post =>
         post.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        post.content?.toLowerCase().includes(searchQuery.toLowerCase())
+        post.description?.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setSearchResults(filteredPosts);
     } catch (error) {
@@ -89,7 +89,7 @@ const SearchPage = () => {
     <div className='container'>
       {searchResults.length ? (
         <>
-          <h1 className='text-primary fs-6 fs-lg-3 fw-bold mb-3 p-0 p-lg-2'>搜尋結果</h1>
+          <h1 className='text-primary fs-6 fs-lg-3 fw-bold mb-3 p-0 p-lg-2'>搜尋結果 - {searchQuery}</h1>
           <ul className="list-unstyled d-flex flex-column gap-5 px-4 px-lg-0">
             {searchResults.map(post => (
               <li key={post.id} className="rounded-2 border">
