@@ -30,7 +30,7 @@ const AdminSubscription = () => {
      {isLoading && <LoadingSpinner />}
       <div className="d-none d-md-flex justify-content-between align-items-center">
         <h1 className="fs-4 fs-md-1 text-primary fw-bold mb-5 mb-md-10">
-          訂閱紀錄
+          收款紀錄
         </h1>
         <a href="#" className="link-primary-hover">
           問題回報
@@ -38,7 +38,6 @@ const AdminSubscription = () => {
       </div>
 
       <div className="subscription-history">
-        <p className="mb-5">訂閱紀錄</p>
         {paymentReceivedData
           .slice((currentPage - 1) * 10 + 1, currentPage * 10)
           .map((paymentReceivedDataItem) => {
