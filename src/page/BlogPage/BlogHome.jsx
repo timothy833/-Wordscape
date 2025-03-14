@@ -603,8 +603,8 @@ const uploadImageToR2 = async () => {
       <main className="bg-secondary pt-10 pb-5">
         <div className="container">
           <div className="row flex-md-row-reverse">
-            <div className="col-xl-3 col-md-4 mb-5">
-              <div className="blog-home_header d-flex flex-column align-items-center py-10 px-5 rounded-3 border border-gray_light" style={{ backgroundColor: "#FDFBF5" }}>
+            <div className="col-xl-3 col-md-4 mb-5" >
+              <div className="blog-home_header d-flex flex-column align-items-center py-10 px-5 rounded-3 border border-gray_light" style={{ backgroundColor: "#FDFBF5"  ,position: "sticky" , top: "70px" }}>
                 <img className="admin-avatar mb-2 rounded-circle border " src={blogUser?.profile_picture 
 || "https://raw.githubusercontent.com/wfox5510/wordSapce-imgRepo/695229fa8c60c474d3d9dc0d60b25f9539ac74d9/default-avatar.svg"} alt="大頭貼" />
                 <p className="mb-5">{blogUser.username}</p>
@@ -673,7 +673,7 @@ const uploadImageToR2 = async () => {
                   autoplay={{ delay: 5000 }}
                   loop={true}
                 >
-                  {articles.map((article)=>(
+                  {filteredArticles.map((article)=>(
                      <SwiperSlide key={article.id}>
                      <div className="position-relative">
                        <picture className="banner-img-container w-100">
