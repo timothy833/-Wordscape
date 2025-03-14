@@ -197,11 +197,11 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
                                                 <div className="invalid-feedback">{formErrors.email}</div>
                                             </div>
                                             <div className="d-grid">
-                                                <button type="submit" className="btn btn-primary py-3 mb-5">送出</button>
+                                                <button type="submit" className="btn btn-primary py-3 mb-5 btn-click">送出</button>
                                             </div>
                                         </form>
                                         <div className="text-center my-5">
-                                            <a onClick={returnLoginHandle} href='#' className="text-gray small">返回</a>
+                                            <a onClick={returnLoginHandle} href='#' className="text-gray small btn-click">返回</a>
                                         </div>
                                     </div>
                                 </div>
@@ -250,7 +250,7 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
                                                 <a onClick={forgotPasswordHandle} href="#" className="text-gray small">忘記密碼</a>
                                             </div>
                                             <div className="d-grid">
-                                                <button type="submit" className="btn btn-primary py-3 mb-10">登入</button>
+                                                <button type="submit" className="btn btn-primary py-3 mb-10 btn-click">登入</button>
                                             </div>
                                         </form>
                                         <div className="text-center my-5">
@@ -258,13 +258,13 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
                                         </div>
                                         <div className="d-flex justify-content-center gap-5">
                                             <a style={{cursor: 'pointer'}}>
-                                            <img src="/src/assets/images/AccessPage/Facebook-icon.png" width="40px" height="40px" alt="facebook-login"/>
+                                            <img src="https://github.com/timothy833/-Wordscape/blob/main/src/assets/images/AccessPage/Facebook-icon.png?raw=true" width="40px" height="40px" alt="facebook-login"/>
                                             </a>
                                             <a style={{cursor: 'pointer'}}>
-                                                <img src="/src/assets/images/AccessPage/Apple-icon.png" width="40px" height="40px" alt="apple-login" />
+                                                <img src="https://github.com/timothy833/-Wordscape/blob/main/src/assets/images/AccessPage/apple-icon.png?raw=true" width="40px" height="40px" alt="apple-login" />
                                             </a>
                                             <a style={{cursor: 'pointer'}}>
-                                                <img src="/src/assets/images/AccessPage/Google-icon.png" width="40px" height="40px" alt="google-login" />
+                                                <img src="https://github.com/timothy833/-Wordscape/blob/main/src/assets/images/AccessPage/google-icon.png?raw=true" width="40px" height="40px" alt="google-login" />
                                             </a>
                                         </div>
                                     </div>

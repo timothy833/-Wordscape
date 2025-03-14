@@ -154,7 +154,7 @@ const AdminInfo = () => {
               style={{ width: "150px", height: "150px", objectFit: "cover" }}
             />
             <div className="mt-3">
-              <button type="button" className="btn btn-primary" onClick={() => fileInputRef.current.click()}>
+              <button type="button" className="btn btn-primary btn-click" onClick={() => fileInputRef.current.click()}>
                 上傳圖片
                 <input
                   type="file"
@@ -231,7 +231,7 @@ const AdminInfo = () => {
             </span>新增收款帳戶</a>
           </div>
         </div>
-        <button type="submit" className="btn btn-primary btn-lg mt-5">儲存資料</button>
+        <button type="submit" className="btn btn-primary btn-lg mt-5 btn-click">儲存資料</button>
       </form>
     </>
   );

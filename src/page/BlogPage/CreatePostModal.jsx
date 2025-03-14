@@ -403,7 +403,7 @@ const NewPostModal = ({ getBlogArticle, token })=> {
 
                                 <div className="d-flex gap-2">
                                     <input id="文章tag標籤" type="text" className="form-control mb-2"  placeholder="文章tag標籤" value={tag} onChange={handleTagChange} style={{width: "160px",}}/>
-                                    <button className="btn btn-primary mb-2" onClick={handleAddTag}>
+                                    <button className="btn btn-primary mb-2 btn-click" onClick={handleAddTag}>
                                         新增標籤
                                     </button>
                                 </div>
@@ -430,8 +430,8 @@ const NewPostModal = ({ getBlogArticle, token })=> {
                         <div  ref={editorRef} className="mb-3 "></div>
                     </div>
                     <div className="modal-footer">
-                        <button className="btn btn-primary" data-bs-dismiss="modal" aria-label="Close" onClick={handleSubmit}>發布文章</button>
-                        <button className="btn btn-secondary"  data-bs-dismiss="modal" aria-label="Close" onClick={ handleClose} > 關閉 </button>
+                        <button className="btn btn-primary btn-click" data-bs-dismiss="modal" aria-label="Close" onClick={handleSubmit}>發布文章</button>
+                        <button className="btn btn-secondary btn-click"  data-bs-dismiss="modal" aria-label="Close" onClick={ handleClose} > 關閉 </button>
                     </div>
                 </div>
             </div>

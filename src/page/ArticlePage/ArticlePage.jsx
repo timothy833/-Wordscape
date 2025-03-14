@@ -12,6 +12,8 @@ import Swal from "sweetalert2";
 import { alertMsgForVerify } from "../../utils/alertMsg";
 import { Link } from "react-router-dom";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import SponsorModal from "../../component/SponsorModal/SponsorModal";
+
 
 const ArticlePage = () => {
   const { id: articleId } = useParams();
@@ -178,7 +180,7 @@ const ArticlePage = () => {
                 return (
                   <a
                     className="badge rounded-pill bg-primary-hover lh-base"
-                    href="#"
+                    style={{cursor: 'pointer', fontSize : '.9rem'}}
                     key={tagItem.id}
                   >
                     #{tagItem.name}
@@ -186,11 +188,11 @@ const ArticlePage = () => {
                 );
               })}
             </div>
-            <h1 className="text-primary fs-4 fs-lg-1 fw-bold mb-5">
+            <div className="text-primary fs-md-6 fs-4 fs-lg-1 fw-bold mb-5">
               {articleData?.title}
-            </h1>
-            <div className="d-flex gap-5 flex-column flex-lg-row">
-              <div className="d-flex align-items-center gap-5">
+            </div>
+            <div className="d-flex gap-3 flex-column flex-lg-row">
+              <div className="d-flex align-items-center gap-4">
                 <Link to={`/blog/${autherData?.id}`} className="d-flex align-items-center">
                   <img
                     className="avatar object-fit-cover rounded-pill me-2"
@@ -205,7 +207,7 @@ const ArticlePage = () => {
                 {/* 當目前user為作者時，不顯示追蹤按鈕 */}
                 {userId !== articleData?.user_id && (
                   <a
-                    className={`${
+                    className={`me-1 ${
                       isSubscribed ? "text-primary" : "text-gray"
                     } d-flex align-items-center`}
                     onClick={(e) => {
@@ -229,13 +231,14 @@ const ArticlePage = () => {
                   </a>
                 )}
               </div>
-              <div className="d-flex align-items-center gap-5">
+              <div className="d-flex align-items-center gap-4">
+              <SponsorModal />
                 <a
                   href="#"
                   className={`btn ${
                     isFavorite
-                      ? "btn-primary"
-                      : "btn-outline-primary border border-primary-hover"
+                      ? "btn-primary btn-click"
+                      : "btn-outline-primary border border-primary-hover btn-click"
                   }`}
                   onClick={(e) => {
                     e.preventDefault();
@@ -247,7 +250,7 @@ const ArticlePage = () => {
                   {isFavorite ? "已收藏" : "收藏"}
                 </a>
                 <a
-                  className={`user-select-none pe-open d-flex align-items-center gap-1 ${
+                  className={`user-select-none pe-open d-flex align-items-center gap-1 btn-click ${
                     isLike ? "text-primary" : "text-gray"
                   } `}
                   onClick={() =>
@@ -347,7 +350,7 @@ const ArticlePage = () => {
             ></textarea>
             <button
               type="submit"
-              className="btn btn-lg btn-primary lh-sm fw-bold ls-0"
+              className="btn btn-lg btn-primary lh-sm fw-bold ls-0 btn-click rounded-2"
             >
               送出
             </button>

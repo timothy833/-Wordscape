@@ -12,6 +12,7 @@ import { Pagination, Navigation, Autoplay} from "swiper/modules";
 import "swiper/scss/pagination";
 import "swiper/css/navigation";
 import "swiper/css/autoplay";
+import SponsorModal from "../../component/SponsorModal/SponsorModal";
 
 
 
@@ -608,14 +609,15 @@ const uploadImageToR2 = async () => {
 || "https://raw.githubusercontent.com/wfox5510/wordSapce-imgRepo/695229fa8c60c474d3d9dc0d60b25f9539ac74d9/default-avatar.svg"} alt="大頭貼" />
                 <p className="mb-5">{blogUser.username}</p>
                 <ul className="list-unstyled d-flex gap-5 gap-md-3 gap-lg-5 mb-5">
-                  <li><FontAwesomeIcon icon={faEnvelope} size="lg" style={{ color: "#e77605", }} /></li>
-                  <li><FontAwesomeIcon icon={faPodcast} size="lg" style={{ color: "#e77605", }} /></li>
-                  <li><FontAwesomeIcon icon={faUserGroup} size="lg" style={{ color: "#e77605", }} /></li>
-                  <li><FontAwesomeIcon icon={faFacebookF} size="lg" style={{ color: "#e77605", }} /></li>
-                  <li><FontAwesomeIcon icon={faInstagram} size="lg" style={{ color: "#e77605", }} /></li>
-                  <li><FontAwesomeIcon icon={faYoutube} size="lg" style={{ color: "#e77605", }} /></li>
+                  <li><FontAwesomeIcon icon={faEnvelope} size="lg" style={{ color: "#e77605", cursor: 'pointer' }} /></li>
+                  <li><FontAwesomeIcon icon={faPodcast} size="lg" style={{ color: "#e77605", cursor: 'pointer' }} /></li>
+                  <li><FontAwesomeIcon icon={faUserGroup} size="lg" style={{ color: "#e77605", cursor: 'pointer' }} /></li>
+                  <li><FontAwesomeIcon icon={faFacebookF} size="lg" style={{ color: "#e77605", cursor: 'pointer' }} /></li>
+                  <li><FontAwesomeIcon icon={faInstagram} size="lg" style={{ color: "#e77605", cursor: 'pointer' }} /></li>
+                  <li><FontAwesomeIcon icon={faYoutube} size="lg" style={{ color: "#e77605", cursor: 'pointer' }} /></li>
                 </ul>
-                <p className="text-gray pb-5 border-bottom border-gray">{blogUser.bio}</p>
+                <SponsorModal />
+                <p className="text-gray mt-3 pb-5 border-bottom border-gray">{blogUser.bio}</p>
                 <h4 className="text-primary my-5">文章導航區</h4>
                 <ul className="blog-home_nav list-unstyled align-self-baseline d-flex flex-column gap-5">
                   {Object.keys(categorizedArticles).map((categoryId, index)=>{
@@ -647,7 +649,7 @@ const uploadImageToR2 = async () => {
                   <h4 className="mb-5 text-light" style={{ zIndex: "99" }}>{banner?.subtitle || "請點擊編輯設定你的 Banner"}</h4>
 
                   {/* ✅ 只有 Blog 擁有者能看到按鈕 */}
-                  {isAuthor && <button type="button"  ref={modalTriggerRef} className="btn btn-primary btn-lg" style={{ zIndex: "99" }}  onClick={openModal}> 
+                  {isAuthor && <button type="button"  ref={modalTriggerRef} className="btn btn-lg hover-shadow btn-primary btn-click rounded-2" style={{ zIndex: "99" }}  onClick={openModal}> 
                     {banner ? "編輯" : "建立"}
                   </button>}
                 </div>
@@ -706,16 +708,16 @@ const uploadImageToR2 = async () => {
                   </div>
                 </Swiper>
               </section>  
-              <div className="blog-home_articleList rounded-3 border border-gray_light py-10 px-5" style={{ backgroundColor: "#FDFBF5" }}>
+              <div className="blog-home_articleList rounded-3 border border-gray_light py-7 px-8" style={{ backgroundColor: "#FDFBF5" }}>
                 <div className="articleList_header">
-                  <h1 className="text-primary fs-4 fs-md-3 mb-5">文章列表</h1>
+                  <h3 className="text-primary fs-4 fs-md-3 mb-5">文章列表</h3>
                   {isAuthor && (<div className="d-block d-md-flex justify-content-between align-items-center">
                     <select className="form-select blog-home_articleSelect py-3 mb-6" value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
                       <option value="">全部內容</option>
                       <option value="published">已發佈</option>
                       <option value="draft">取消發佈</option>
                     </select>
-                    <button type="button" className="btn btn-primary btn-lg mb-5" data-bs-toggle="modal" data-bs-target="#newPostModal">新增文章</button>
+                    <button type="button" className="btn btn-primary btn-click btn-lg mb-5 rounded-2 hover-shadow" data-bs-toggle="modal" data-bs-target="#newPostModal">新增文章</button>
                   </div> )}
                 </div>
                 <div className="articleList_content">
@@ -765,8 +767,8 @@ const uploadImageToR2 = async () => {
               <input id="副標題" type="text" className="form-control mb-2" placeholder="輸入 Blog主頁 副標題" value={subtitle} onChange={(e) => setSubtitle(e.target.value)} />
             </div>
             <div className="modal-footer">
-              <button className="btn btn-primary" onClick={handleBannerUpdate}>儲存</button>
-              <button className="btn btn-secondary" onClick={closeModal}>關閉</button>
+              <button className="btn btn-primary btn-click" onClick={handleBannerUpdate}>儲存</button>
+              <button className="btn btn-secondary btn-click" onClick={closeModal}>關閉</button>
             </div>
           </div>
         </div>
@@ -801,8 +803,8 @@ const uploadImageToR2 = async () => {
               </div>
 
               <div className="modal-footer">
-                  <button className="btn btn-primary" onClick={handleSubmit}>更新文章</button>
-                  <button className="btn btn-sceondary" onClick={closeEditModal}>關閉</button>
+                  <button className="btn btn-primary btn-click" onClick={handleSubmit}>更新文章</button>
+                  <button className="btn btn-sceondary btn-click" onClick={closeEditModal}>關閉</button>
               </div>
             </div>
           </div>   

@@ -196,7 +196,7 @@ const SignupPage = ({ show, handleClose, handleShowLoginModal }) => {
                                             </div>
                                             
                                             <div className="d-grid mb-5">
-                                                <button type="submit" className="btn btn-primary py-3">註冊</button>
+                                                <button type="submit" className="btn btn-primary py-3 btn-click">註冊</button>
                                             </div>
                                         </form>
                                         <div className="text-center my-5">
@@ -204,13 +204,13 @@ const SignupPage = ({ show, handleClose, handleShowLoginModal }) => {
                                         </div>
                                         <div className="d-flex justify-content-center gap-5">
                                             <a style={{cursor: 'pointer'}}>
-                                            <img src="/src/assets/images/AccessPage/Facebook-icon.png" width="40px" height="40px" alt="facebook-login" />
+                                            <img src="https://github.com/timothy833/-Wordscape/blob/main/src/assets/images/AccessPage/Facebook-icon.png?raw=true" width="40px" height="40px" alt="facebook-login" />
                                             </a>
                                             <a style={{cursor: 'pointer'}}>
-                                                <img src="/src/assets/images/AccessPage/Apple-icon.png" width="40px" height="40px" alt="apple-login" />
+                                                <img src="https://github.com/timothy833/-Wordscape/blob/main/src/assets/images/AccessPage/apple-icon.png?raw=true" width="40px" height="40px" alt="apple-login" />
                                             </a>
                                             <a style={{cursor: 'pointer'}}>
-                                                <img src="/src/assets/images/AccessPage/Google-icon.png" width="40px" height="40px" alt="google-login" />
+                                                <img src="https://github.com/timothy833/-Wordscape/blob/main/src/assets/images/AccessPage/google-icon.png?raw=true" width="40px" height="40px" alt="google-login" />
                                             </a>
                                         </div>
                                         

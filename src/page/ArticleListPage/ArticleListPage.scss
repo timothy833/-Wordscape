@@ -25,12 +25,12 @@
   }
 }
 .recommend-article-section {
-  padding-top: 30px;
-  padding-bottom: 54px;
+  padding-top: 20px;
+  padding-bottom: 30px;
   background-color: rgba(251, 164, 77, 0.33);
   @include media-breakpoint-up(lg) {
-    padding-top: 84px;
-    padding-bottom: 84px;
+    padding-top: 40px;
+    padding-bottom: 50px;
   }
 }
 .hot-article-card {
