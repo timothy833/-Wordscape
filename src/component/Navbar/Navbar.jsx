@@ -312,6 +312,9 @@ const Navbar = () => {
                 <input
                   type="text"
                   className="search-bar form-control fs-8 ps-11 w-100"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={handleKeyDown}
                   placeholder="搜尋..."
                 />
               </li>
