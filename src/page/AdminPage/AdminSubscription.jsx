@@ -39,7 +39,8 @@ const AdminSubscription = () => {
 
       <div className="subscription-history">
         {paymentReceivedData
-          .slice((currentPage - 1) * 10 + 1, currentPage * 10)
+          // .slice((currentPage - 1) * 10 + 1, currentPage * 10)
+          .slice((currentPage - 1) * 10 , currentPage * 10)
           .map((paymentReceivedDataItem) => {
             return (
               <SubscriptionHistoryCard
