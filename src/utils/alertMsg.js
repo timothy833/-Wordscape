@@ -4,6 +4,7 @@ export const alertMsgForVerify = {
   icon: "warning",
   showCloseButton: true,
   showConfirmButton: false,
+  closeButtonColor: "#E77605",
 };
 export const alertMsgForAdminInfo = {
   title: "更新成功",

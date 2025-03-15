@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { Modal } from "bootstrap";
 import { useParams, useLocation } from 'react-router-dom';
 const { VITE_API_BASE_URL } = import.meta.env;
+import Swal from "sweetalert2";
 
 const SponsorModal = () => {
   const { isAuthorized, username, token } = useSelector(state => state.auth);
@@ -35,7 +36,7 @@ const SponsorModal = () => {
       const sponsorModal = Modal.getInstance(sponsorModalRef.current);
       sponsorModal.show();
     }else{
-      alert('請先登入')
+      Swal.fire({alertMsgForVerify});
     }
   }
   
@@ -71,27 +72,49 @@ const SponsorModal = () => {
   const nextStepHandle = () => {
     // 驗證表單
     if (!paymentData.amount) {
-      alert('請選擇贊助金額');
+      Swal.fire({
+        title: "請選擇贊助金額",
+        icon: "warning",
+        confirmButtonColor: "#E77605",
+        confirmButtonText: "確認"
+      });
       return;
     }
     
     if (paymentData.amount === "custom" && !paymentData.customAmount) {
-      alert('請輸入自訂金額');
+      Swal.fire({
+        title: "請輸入自訂金額",
+        icon: "warning",
+        timer: 1500,
+      });
       return;
     }
     
     if (!paymentData.payment) {
-      alert('請選擇付款方式');
+      Swal.fire({
+        title: "請選擇付款方式",
+        icon: "warning",
+        timer: 1500,
+      });
       return;
     }
     
     if (paymentData.payment === "信用卡" && !paymentData.cardType) {
-      alert('請選擇信用卡類型');
+      Swal.fire({
+        title: "請選擇信用卡類型",
+        icon: "warning",
+        timer: 1500,
+      });
       return;
     }
     
     if (paymentData.cardType === "custom" && !paymentData.cardNumber) {
-      alert('請輸入卡號');
+      Swal.fire({
+        title: "請輸入卡號",
+        icon: "warning",
+        timer: 1500,
+      });
+      
       return;
     }
     
@@ -211,11 +234,23 @@ const SponsorModal = () => {
       
       console.log('sponsorRes',sponsorRes);
       if(sponsorRes.data.status === 'success'){
-        alert('贊助成功');
+        Swal.fire({
+          title: "贊助成功!",
+          icon: "success",
+          confirmButtonColor: "#E77605",
+          confirmButtonText: "確認"
+        });
       }
     } catch(error) {
       console.log('error in sponsor', error.response?.data || error.message);
-      alert('贊助失敗，請稍後再試');
+      
+      Swal.fire({
+        title: "贊助失敗!",
+        text:"請稍後再試",
+        icon: "warning",
+        confirmButtonColor: "#E77605",
+        confirmButtonText: "確認"
+      });
     }finally{
       closeSponsorModal(); // 成功後關閉對話框
     }

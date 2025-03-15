@@ -2,7 +2,8 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 const { VITE_API_BASE_URL } = import.meta.env;
-//TODO 頁面跳轉登入
+import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
+import Swal from "sweetalert2";
 
 const SignupPage = ({ show, handleClose, handleShowLoginModal }) => {
     SignupPage.propTypes = {
@@ -14,6 +15,7 @@ const SignupPage = ({ show, handleClose, handleShowLoginModal }) => {
     const [formData, setFormData] = useState({ username:"", email: "", password: "", confirmPassword:"" });
     const [formErrors, setFormErrors] = useState({});
     const [validated, setValidated] = useState(false);
+    const [ isLoading, setIsLoading ] = useState(false);
 
     const formInputChange = (e) => {
         const { name, value } = e.target;
@@ -35,6 +37,7 @@ const SignupPage = ({ show, handleClose, handleShowLoginModal }) => {
         }
         
         try{
+            setIsLoading(true);
             const url = `${VITE_API_BASE_URL}/users/register`;
             const data = {
                 "username": formData.username,
@@ -50,13 +53,21 @@ const SignupPage = ({ show, handleClose, handleShowLoginModal }) => {
         );
         console.log('signupRes',signUpRes);
         
-        alert('註冊成功');
+        Swal.fire({
+            title: "註冊成功!",
+            icon: "success",
+            timer: 1500,
+            showConfirmButton: false,
+          });
+          
         setFormData({ username: "", email: "", password: "", confirmPassword: "" });
         setValidated(false);
         setFormErrors({});
         handleClose(); //成功時再關閉視窗 如果輸入錯誤需要提示
         }catch(error){
             console.log('error in sign up', error.response?.data || error.message);
+        }finally{
+            setIsLoading(false);
         }
     };
 
@@ -104,6 +115,8 @@ const SignupPage = ({ show, handleClose, handleShowLoginModal }) => {
     };
 
     return (
+        <>
+        { isLoading && <LoadingSpinner/>}
         <div className={`access-modal-container ${show ? "show" : ""} w-100 h-100`}>
             <div 
             className="access-modal-content h-100">
@@ -224,6 +237,7 @@ const SignupPage = ({ show, handleClose, handleShowLoginModal }) => {
                 </div>
             </div>
         </div>
+        </>
     );
 };
 

@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios';
 const { VITE_API_BASE_URL } = import.meta.env;
+import Swal from "sweetalert2";
 
 // 從 cookie 中獲取 token
 function getTokenFromCookie() {
@@ -44,13 +45,31 @@ export const login = createAsyncThunk(
       // 設置 axios 預設 header
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      alert('登入成功');
+      Swal.fire({
+        title: "登入成功!",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+
       return { token, username, id };
     } catch (error) {
       if (error.response && error.response.status === 401) {
-        alert("登入失敗：帳號或密碼錯誤。");
+        Swal.fire({
+          title: "登入失敗!",
+          text:"帳號或密碼錯誤",
+          icon: "error",
+          timer: 1500,
+          showConfirmButton: false,
+        });
       } else {
-        alert("登入失敗，請稍後再試。");
+        Swal.fire({
+          title: "登入失敗!",
+          text:"請稍後再試",
+          icon: "error",
+          timer: 1500,
+          showConfirmButton: false,
+        });
       }
 
       return rejectWithValue(error.response?.data || "登入失敗，請稍後再試");
@@ -84,11 +103,23 @@ export const logout = createAsyncThunk(
         localStorage.removeItem('WS_username');
         localStorage.removeItem('WS_avatar');
 
-        alert(logoutRes.data.message || '登出成功');
+        Swal.fire({
+          title: "登出成功!",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+        
         return { success: true };
       } else {
         // 不是 200 狀態碼，視為失敗
-        alert('登出失敗，請稍後再試');
+        Swal.fire({
+          title: "登出失敗!",
+          text:"請稍後再試",
+          icon: "error",
+          confirmButtonColor: "#E77605",
+          confirmButtonText: "確認"
+        });
         return rejectWithValue('伺服器回應非成功狀態');
       }
 
@@ -96,9 +127,22 @@ export const logout = createAsyncThunk(
       console.log('error in logout', error.response?.data || error.message);
 
       if (error.code === 'ECONNABORTED') {
-        alert('登出請求超時，請檢查網絡連接並稍後再試');
+        Swal.fire({
+          title: "登出請求超時!",
+          text:"請檢查網絡連接並稍後再試",
+          icon: "warning",
+          confirmButtonColor: "#E77605",
+          confirmButtonText: "確認"
+        });
+        
       } else {
-        alert('登出失敗：' + (error.response?.data?.message || '請稍後再試'));
+        Swal.fire({
+          title: "登出失敗!",
+          text:"請稍後再試",
+          icon: "error",
+          confirmButtonColor: "#E77605",
+          confirmButtonText: "確認"
+        });
       }
 
       return rejectWithValue(error.response?.data || error.message);

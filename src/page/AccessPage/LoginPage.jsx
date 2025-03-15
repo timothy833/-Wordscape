@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { login, clearError } from '../../slice/authSlice';
 import { useNavigate } from 'react-router-dom';
+import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 const { VITE_API_BASE_URL } = import.meta.env;
-//TODO 頁面跳轉註冊＋忘記密碼設定
-//TODO 清空表單
+import Swal from "sweetalert2";
 
 const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
     LoginPage.propTypes = {
@@ -22,6 +22,7 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [formErrors, setFormErrors] = useState({});
     const [validated, setValidated] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (isAuthorized) {
@@ -68,8 +69,9 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
             return;
         }
         const result = await dispatch(login(formData));  // 等待登入完成
+        
         if (result.payload.token) { // 確保登入成功才關閉 modal
-            setFormData({ email: "", password: "" });
+        setFormData({ email: "", password: "" });
             handleClose();
         }
     };
@@ -101,9 +103,8 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
             return;
         }
 
-        console.log('email', resetEmail.email);
-
         try{
+            setIsLoading(true);
             const url = `${VITE_API_BASE_URL}/users/forgot-password`;
             const data = {
                 "email": resetEmail.email,
@@ -117,11 +118,25 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
             
             console.log("forgot password",forgotPwRes);
             setResetEmail({ email: "" });
-            alert(forgotPwRes.data.message); 
+            // alert(forgotPwRes.data.message); 
+            handleClose();
+            Swal.fire({
+                title: "請檢查Email 以重設密碼",
+                icon: "info",
+                confirmButtonColor: "#E77605",
+                confirmButtonText: "確認"
+            });
 
         }catch(error){
-            alert(error)
+            Swal.fire({
+                title: error,
+                icon: "error",
+                confirmButtonColor: "#E77605",
+                confirmButtonText: "確認"
+              });
             console.log('error in login', error.response?.data || error.message);
+        }finally{
+            setIsLoading(false);
         }
     }
     
@@ -151,6 +166,8 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
     };
 
     return (
+        <>
+        { isLoading && <LoadingSpinner/>}
         <div className={`access-modal-container ${show ? "show" : ""} w-100 h-100`}>
             <div 
             className="access-modal-content h-100">
@@ -278,6 +295,7 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
                 </div>
             </div>
         </div>
+        </>
     );
 };
 
