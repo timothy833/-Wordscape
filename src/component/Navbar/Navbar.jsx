@@ -10,6 +10,8 @@ import { logout, fetchUserAvatar } from '../../slice/authSlice';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import SignupPage from "../../page/AccessPage/SignupPage";
 import LoginPage from "../../page/AccessPage/LoginPage";
+import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
+import Swal from "sweetalert2";
 
 // import { debounce } from 'lodash'; // lodash 提供 debounce 方便控制延遲
 
@@ -28,12 +30,21 @@ const Navbar = () => {
   const handleCloseLoginModal = () => setShowLoginModal(false);
 
   const { loading, isAuthorized, username, id, userAvatar } = useSelector(state => state.auth);
-  const [isLoading, setIsLoading] = useState(false);
+  const [ isLoading, setIsLoading ] = useState(false);
 
   // useEffect(()=>{
   //   setIsLoading(loading);
   //   toggleLoading(isLoading);
   // },[]);
+
+
+  useEffect(()=>{
+    if ( loading === true ){
+      setIsLoading(true);
+    }else{
+      setIsLoading(false);
+    }
+  },[loading])
 
   const logoutHandle = () => {
     dispatch(logout());
@@ -61,8 +72,13 @@ const Navbar = () => {
     if (isAuthorized === false && isProtectedRoute) {
       navigate("/"); // 跳轉到首頁
       window.scrollTo(0, 0);
-      // 可選：顯示提示信息
-      alert('請先登入以訪問此頁面');
+
+      Swal.fire({
+        title: "請先登入以訪問此頁面!",
+        icon: "warning",
+        confirmButtonColor: "#E77605",
+        confirmButtonText: "確認"
+      });
     }
   }, [isAuthorized, navigate, location]);
 
@@ -164,7 +180,12 @@ const Navbar = () => {
       e.preventDefault();
       console.log('搜尋:', searchQuery);
       if (searchQuery === "") {
-        alert("請輸入搜尋文字");
+        Swal.fire({
+          text:"請輸入搜尋文字",
+          icon: "info",
+          timer: 1500,
+          showConfirmButton: false,
+        });
         return;
       }
       navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
@@ -178,6 +199,8 @@ const Navbar = () => {
   // }
   
   return (
+    <>
+    { isLoading && <LoadingSpinner/>}
     <section className="pt-19 pt-lg-20 ">
       <div className="fixed-top bg-light shadow-sm">
         <div className="container">
@@ -382,6 +405,7 @@ const Navbar = () => {
         </div>
       </div> */}
     </section>
+    </>
   );
 };
 

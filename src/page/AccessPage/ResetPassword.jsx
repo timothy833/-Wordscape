@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import axios from 'axios';
 const { VITE_API_BASE_URL } = import.meta.env;
+import Swal from "sweetalert2";
 
 const ResetPassword = () => {
   const navigate = useNavigate();
@@ -11,11 +12,16 @@ const ResetPassword = () => {
   const [formErrors, setFormErrors] = useState({});
   const [validated, setValidated] = useState(false);
   const Resettoken = searchParams.get("token");
+  
 
   useEffect(() => {
     if (!Resettoken) {
-      alert("無效的重設密碼連結");
       // navigate("/"); // 若沒有 token，導回登入頁 
+      Swal.fire({
+        title: "無效的重設密碼連結",
+        icon: "error",
+        timer: 1500,
+      });
     }
   }, [Resettoken, navigate]);
   
@@ -71,7 +77,12 @@ const ResetPassword = () => {
             }
         );
         
-        alert("密碼重設成功！");
+        Swal.fire({
+          title: "密碼重設成功！",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
         navigate("/"); 
 
     }catch(error){
