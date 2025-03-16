@@ -6,7 +6,8 @@ import "quill/dist/quill.snow.css"; // ✅ Quill 樣式
 import axios from "axios";
 import { Modal } from "bootstrap";
 import PropTypes from "prop-types";
-
+import {alertCreatePost} from "../../utils/alertMsg"
+import Swal from "sweetalert2";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -20,7 +21,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 
   
-const NewPostModal = ({ getBlogArticle, token })=> {
+const NewPostModal = ({ getBlogArticle, token, isModalOpen, setIsModalOpen, setIsLoading })=> {
     // const [token , setToken] =useState("");
     const [title, setTitle] = useState("");
     const [imagePreview, setImagePreview] = useState(null); // ✅ 預覽圖片
@@ -33,6 +34,7 @@ const NewPostModal = ({ getBlogArticle, token })=> {
     const [categoryId, setCategoryId] = useState(""); // ✅ 當前選擇分類
     const [description, setDescription] = useState("");//設定文章簡介
     const [status, setStatus] = useState(""); //設定文章公布狀態
+    const [errors, setErrors] = useState({}); // ❗ 用來儲存錯誤訊息
     
 
     const editorRef = useRef(null);
@@ -53,18 +55,16 @@ const NewPostModal = ({ getBlogArticle, token })=> {
         if (!modalRef.current) return;
 
         const modalElement = modalRef.current; // ✅ 確保引用的是當前 `modalRef`
-        modalInstance.current = new Modal(modalElement);
+        modalInstance.current = new Modal(modalElement, {backdrop: "static"});
+        
+        if(isModalOpen) {
+            modalInstance.current.show();
+        }else if (modalInstance.current) {
+            modalInstance.current.hide();
+        }
 
-        const handleHidden = () => handleClose();
 
-        // 監聽 `modal` 開啟關閉事件
-        modalElement.addEventListener("hidden.bs.modal", handleHidden);
-    
-
-        return () => {
-          modalElement.removeEventListener("hidden.bs.modal", handleHidden);       
-        };
-    }, []); 
+    }, [isModalOpen]); 
 
 
     //初始化Quill工具內容
@@ -90,6 +90,7 @@ const NewPostModal = ({ getBlogArticle, token })=> {
         // ✅ 將 `text-change` 事件處理函數存為變數
         const handleTextChange = () => {
             setContent(quillInstance.current.root.innerHTML);
+            setErrors((prev) => ({ ...prev, content: "" })); 
 
             const editor = editorRef.current.querySelector(".ql-editor");
             if (editor) {
@@ -132,6 +133,7 @@ const NewPostModal = ({ getBlogArticle, token })=> {
     // 選擇分類
     const handleCategoryChange = (e) => {
         setCategoryId(e.target.value);
+        setErrors((prev) => ({ ...prev, category: "" })); // 🔥 清除分類錯誤
     };
 
 
@@ -153,8 +155,15 @@ const NewPostModal = ({ getBlogArticle, token })=> {
     }
 
 
-    // ✅ **手動關閉 Modal，清空所有輸入資料**
+    // ✅ **清空所有輸入資料**
     const handleClose = () => {
+        // ✅ 清空錯誤訊息，避免關閉後錯誤還留著
+        setErrors({});
+
+         // ✅ 確保 Bootstrap Modal 也被隱藏
+        if (modalInstance.current) {
+            modalInstance.current.hide();
+        }
         setTitle(""); 
         setCategoryId("");
         setImagePreview(null); 
@@ -178,22 +187,31 @@ const NewPostModal = ({ getBlogArticle, token })=> {
         document.activeElement?.blur();
         document.body.focus(); // **強制焦點回到 body**
         // ✅ **手動隱藏 `modal`**
-        modalInstance.current.hide();
+        setIsModalOpen(false);
     };
 
     // ✅ 手動輸入封面圖片 URL
-    const handleExternalImage = (e) => {
+    const handleExternalImage = async(e) => {
         const url = e.target.value.trim();
-        setImagePreview("");
-        setExternalImage(url);
+        setExternalImage(url); // ✅ 先存 URL，不影响 `imagePreview`
+        setErrors((prev) => ({ ...prev, image: "" })); // 清除錯誤
     };
 
     // ✅ 只有在輸入框失去焦點時，才設定預覽圖片
-    const handleExternalImageBlur = () => {
-        if (externalImage) {
-        setImagePreview(externalImage);
+    const handleExternalImageBlur = async() => {
+
+
+        const isValid = await validateImage(externalImage);
+        if (isValid) {
+            setImagePreview(externalImage); // ✅ URL 有效時才預覽
+        } else {
+            setErrors((prev) => ({ ...prev, image: "⚠️ 圖片 URL 無效，請輸入可預覽的圖片。" }));
+            setImagePreview(null);
         }
     };
+
+
+ 
 
     //  ✅ **上選擇本地封面圖片（但不立即上傳 R2）**
     const handleImageChange = async(e) => {
@@ -201,6 +219,7 @@ const NewPostModal = ({ getBlogArticle, token })=> {
         if (!file) return;
         setImagePreview("");
         setExternalImage("");
+        setErrors((prev) => ({ ...prev, image: "" })); // 清除錯誤
         setImagePreview(URL.createObjectURL(file)); // 顯示預覽畫面
         setSelectedFile(file); // 先存本地檔案
     };
@@ -226,6 +245,40 @@ const NewPostModal = ({ getBlogArticle, token })=> {
     };
 
   
+
+    // 🚀 **檢查圖片是否有效**
+    const validateImage = (url) => {
+        return new Promise((resolve) => {
+        const img = new Image();
+        img.src = url;
+        img.onload = () => resolve(true); // 圖片可載入，回傳 true
+        img.onerror = () => resolve(false); // 圖片載入失敗，回傳 false
+        });
+    };
+
+      // 🚀 **表單驗證**
+    const validateForm = async () => {
+        const newErrors = {};
+        if (!title.trim()) newErrors.title = "⚠️ 標題為必填項";
+        if (!description.trim()) newErrors.description = "⚠️ 文章簡介為必填項";
+        if (!categoryId) newErrors.category = "⚠️ 文章分類為必填項";
+        if (!content.trim()) newErrors.content = "⚠️ 文章內容為必填項";
+
+        if (!imagePreview) {
+        if (externalImage) {
+            const isValid = await validateImage(externalImage);
+            if (!isValid) {
+            newErrors.image = "⚠️ 請輸入有效的封面圖片 URL";
+            }
+        } else if (!selectedFile) {
+            newErrors.image = "⚠️ 必須上傳封面圖片（本地或 URL）";
+        }
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0; // ✅ 若無錯誤則返回 true
+    };
+
 
     // const checkOrCreateCategory = async (name) => {
     //     try {
@@ -262,6 +315,9 @@ const NewPostModal = ({ getBlogArticle, token })=> {
 
     // **發送文章**
     const handleSubmit = async ()=> {
+        const isValid = await validateForm();
+        if (!isValid) return;
+
         try {
             // 1️⃣ **上傳封面圖到 R2（如果有選擇本地圖片）**
             let uploadFinalImage = selectedFile ? await uploadImageToR2() : externalImage;
@@ -316,7 +372,7 @@ const NewPostModal = ({ getBlogArticle, token })=> {
                     return
                 }
             }
-
+            setIsLoading(true);
              // 5️⃣ 送出文章資料
            const  postResponse =  await axios.post(`${API_BASE_URL}/posts`, {
                 title,
@@ -331,7 +387,7 @@ const NewPostModal = ({ getBlogArticle, token })=> {
                 }
             })
 
-            console.log(postResponse);
+            
             const newPostId = postResponse.data.data.id;
 
             // 發送 API 把所有標籤加到文章**
@@ -343,26 +399,26 @@ const NewPostModal = ({ getBlogArticle, token })=> {
                 });
                 console.log(resTag);
             }
-            
-            alert("文章發布成功");
-            handleClose(); // 發布成功後，關閉 modal 並清空輸入內容
+            setIsLoading(false);
+            Swal.fire(alertCreatePost);
+            handleClose(); // 發布成功後清空輸入內容
             getBlogArticle();
             
         } catch (error) {
-            console.error("發布失敗", error);
-            handleClose(); //關閉 modal 並清空輸入內容
+            console.error("新增文章失敗", error);
+            // handleClose(); //關閉 modal 並清空輸入內容
         }
     }
 
 
 
     return (
-        <div className="modal fade" ref={modalRef} id="newPostModal" aria-labelledby="newPostModalLabel" aria-hidden="true"   tabIndex="-1">
+        <div className="modal fade" ref={modalRef}  aria-labelledby="newPostModalLabel" aria-hidden="true"   tabIndex="-1">
             <div className="modal-dialog modal-lg">
                 <div className="modal-content max-h">
                     <div className="modal-header">
                         <h5 className="modal-title">新增文章</h5>
-                        <button type="button" className="btn-close"  data-bs-dismiss="modal" aria-label="Close" onClick={ handleClose}></button>
+                        <button type="button" className="btn-close"   aria-label="Close" onClick={ handleClose}></button>
                     </div>
                     <div className="modal-body">
                          <label htmlFor="封面圖片" className="form-label fw-medium">封面圖片</label>
@@ -370,11 +426,18 @@ const NewPostModal = ({ getBlogArticle, token })=> {
                             <input ref={fileInputRef} id="封面圖片" type="file" className="form-control mb-2" accept="image/*"  onChange={handleImageChange} />
                             <input type="text" className="form-control mb-2" placeholder="輸入封面圖片 URL" value={externalImage} onBlur={handleExternalImageBlur} onChange={handleExternalImage} />
                         </div>
-                      
-                        {imagePreview && <img src={imagePreview} alt="預覽圖片" className="img-fluid mb-3" onError={(e) => (e.target.style.display = "none")}/>}
+                        {errors.image && <p className="text-danger">{errors.image}</p>}
+                        {imagePreview && <img src={imagePreview} alt="預覽圖片" className="img-fluid mb-3" style={{display: "block"}} onError={(e) => (e.target.style.display = "none")}/>}
 
-                        <input type="text" className="form-control mb-2" placeholder="文章標題" value={title} onChange={(e)=> setTitle(e.target.value)} />
-                        <input type="text" className="form-control mb-2" placeholder="文章簡介(少於100字)" value={description} onChange={(e)=> setDescription(e.target.value)} />
+                        <input type="text" className="form-control mb-2" placeholder="文章標題" value={title} onChange={(e)=>{ setTitle(e.target.value)
+                        setErrors((prev) => ({ ...prev, title: "" }));
+                        }} />
+                        {errors.title && <p className="text-danger">{errors.title}</p>}
+                        <input type="text" className="form-control mb-2" placeholder="文章簡介(少於100字)" value={description} onChange={(e)=> {
+                            setDescription(e.target.value)
+                            setErrors((prev) => ({ ...prev, description: "" }))    
+                        }} />
+                        {errors.description && <p className="text-danger">{errors.description}</p>}
 
                         <div className="d-flex gap-2">
                             <div className="mb-2">
@@ -388,7 +451,9 @@ const NewPostModal = ({ getBlogArticle, token })=> {
                                         </option>
                                     ))}
                                 </select>
+                                {errors.category && <p className="text-danger">{errors.category}</p>}
                             </div>
+                            
 
                             <div className="mb-2">
                                 <label className="form-label fw-medium">文章狀態</label>
@@ -428,10 +493,11 @@ const NewPostModal = ({ getBlogArticle, token })=> {
                                      
                         {/* ✅ 修正 Quill 工具列問題 */}
                         <div  ref={editorRef} className="mb-3 "></div>
+                        {errors.content && <p className="text-danger">{errors.content}</p>}
                     </div>
                     <div className="modal-footer">
-                        <button className="btn btn-primary btn-click" data-bs-dismiss="modal" aria-label="Close" onClick={handleSubmit}>發布文章</button>
-                        <button className="btn btn-secondary btn-click"  data-bs-dismiss="modal" aria-label="Close" onClick={ handleClose} > 關閉 </button>
+                        <button className="btn btn-primary btn-click"  aria-label="Close" onClick={handleSubmit}>發布文章</button>
+                        <button className="btn btn-secondary btn-click"   aria-label="Close" onClick={ handleClose} > 關閉 </button>
                     </div>
                 </div>
             </div>
@@ -441,7 +507,10 @@ const NewPostModal = ({ getBlogArticle, token })=> {
 
 NewPostModal.propTypes = {
     getBlogArticle: PropTypes.func,
-    token: PropTypes.string
+    token: PropTypes.string,
+    isModalOpen: PropTypes.bool,
+    setIsModalOpen: PropTypes.func,
+    setIsLoading: PropTypes.func
 }
   
 

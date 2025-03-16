@@ -67,7 +67,7 @@ const ResetPassword = () => {
         const url = `${VITE_API_BASE_URL}/users/reset-password`;
         const data = {
             "token": Resettoken,
-            "password": formData.password,  
+            "newPassword": formData.password,  
           }
 
         const resetPwRes = await axios.post(url, data, {

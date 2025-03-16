@@ -1,0 +1,11 @@
+@import "../../style/variables";  // 確保變數被載入
+
+// 在你的 SCSS 或 CSS 文件中添加
+.hover-effect {
+    cursor: pointer;
+    transition: color 0.3s ease-in-out;
+  
+    &:hover {
+      color: $primary_hover !important;; // 使用你的 SCSS 變數
+    }
+  }

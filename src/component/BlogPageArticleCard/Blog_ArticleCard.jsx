@@ -5,13 +5,35 @@ import axios from "axios";
 import { useEffect,useState} from "react";
 // import EditPostModal from "../../page/BlogPage/EditPostModal"
 import { Link } from "react-router-dom";
+import dayjs from "dayjs";
+import { alertDeletePost, alertMsgForAdminInfo, alertReply } from "../../utils/alertMsg"
+import Swal from "sweetalert2";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, token, getBlogArticle, onEdit, isAuthor}) => {
+const useMediaQuery = (query) => {
+  // window.matchMedia(query).matches 瀏覽器內建查詢CSS符不符合標準
+  const [matches, setMatches] = useState(window.matchMedia(query).matches);
+
+  useEffect(() => {
+    const mediaQueryList = window.matchMedia(query);
+    const documentChangeHandler = () => setMatches(mediaQueryList.matches);
+
+    mediaQueryList.addEventListener("change", documentChangeHandler);
+    return () => mediaQueryList.removeEventListener("change", documentChangeHandler);
+  }, [query]);
+
+  return matches;
+};
+
+
+const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, token, getBlogArticle, onEdit, isAuthor, userId, setIsLoading}) => {
   const [addcontent, setAddContent] = useState("");
   const [articleId, setArticleId] =useState("");
   const [showArticleReply, setShowArticleReply] = useState(false);
   const [showAllComments, setShowAllComments] = useState(false);
+  const [isGood, setIsGood] = useState(false);
+
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   useEffect(() => {
     if (!likePost) {
@@ -63,14 +85,16 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, to
   // 文章刪除modal功能
   const articleDelete = async(post_id)=> {
     try {
-      const res  = await axios.delete(`${API_BASE_URL}/posts/${post_id}`,{
+      setIsLoading(true);
+      await axios.delete(`${API_BASE_URL}/posts/${post_id}`,{
         headers: {
           Authorization: `Bearer ${token}`,
         }
       });
-      console.log("文章刪除成功", res);
+      setIsLoading(false);
+      Swal.fire(alertDeletePost);
       getBlogArticle();
-      alert("文章刪除成功");
+      
     } catch (error) {
       console.error("文章刪除失敗", error);
     }
@@ -79,13 +103,15 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, to
   //切換文章發布狀態
   const toggleStatus = async (article) => {
     try {
+      setIsLoading(true);
       const newStatus = article.status === "published" ? "draft" : "published";
       await axios.put(`${API_BASE_URL}/posts/${article.id}/status`, { status: newStatus },{
         headers: {
           Authorization: `Bearer ${token}`,
         }
       });
-  
+      setIsLoading(false);
+      Swal.fire(alertMsgForAdminInfo);
       // 重新獲取文章
       getBlogArticle();
     } catch (error) {
@@ -98,7 +124,8 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, to
   //發送文章留言請求
   const addArticleRep = async()=>{
     try {
-      const res = await axios.post(`${API_BASE_URL}/comments`,{
+      setIsLoading(true);
+      await axios.post(`${API_BASE_URL}/comments`,{
         post_id :articleId,
         content: addcontent
       },{
@@ -106,9 +133,11 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, to
           Authorization: `Bearer ${token}`,
         }
       })
+      setIsLoading(false);
+      Swal.fire(alertReply);
       getBlogArticle();
-      alert("發送文章留言成功");
-      console.log("發送文章留言成功", res);
+  
+    
     } catch (error) {
       console.log("發送文章留言失敗",error)
     }
@@ -119,7 +148,7 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, to
   return (
     <>
       <div className="blog_articleCard card border-gray_light px-3 pt-3 mb-5 rounded-3">
-        <div className="row flex-column-reverse flex-lg-row">
+        <div className="row flex-column flex-lg-row">
           <div className="col-lg-8">
             <div className="card-body p-0">
               <Link to={`/article/${article.id}`}>
@@ -133,11 +162,18 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, to
               <Link to={`/article/${article.id}`} className=" text-gray blog-card-link">
                 (繼續閱讀...)
               </Link>
-              <div className="blogArticleCardFooter d-flex justify-content-between justify-content-md-start align-items-center gap-3">
-                <p className="text-gray">{new Date(article.created_at).toLocaleString("zh-TW")}</p>
+              <div className={`blogArticleCardFooter d-flex justify-content-between justify-content-md-start align-items-center ${isMobile ? "gap-1": "gap-3"}`}>
+                <p className="text-gray">
+                {isMobile
+                ? dayjs(article.created_at).format("MM/DD HH:mm") // 行動版
+                : dayjs(article.created_at).format("YYYY/MM/DD HH:mm:ss")} {/* 桌機版 */}
+                </p>
                 
                 {/* 🔥 文章按讚功能 */}
-                <div className="d-flex text-gray gap-1" onClick={() => likePost(article.id)} style={{ cursor: "pointer" }}>
+                <div className={`d-flex gap-1  ${isGood ? "text-primary" : "text-gray"}`} onClick={() => {
+                  likePost(article.id)
+                  setIsGood(!isGood)
+                  }} style={{ cursor: "pointer" }}>
                   <p>{article.likes_count}</p>
                   <span className="material-symbols-outlined">
                     favorite
@@ -152,7 +188,7 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, to
                   </span>
                 </div>
 
-                <p className="text-gray" style={{ cursor: "pointer" }} onClick={() => {
+                <p className="text-gray hover-effect"  onClick={() => {
                   setShowArticleReply(!showArticleReply)
                   setArticleId(article.id)
                   }}>
@@ -160,7 +196,7 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, to
                 </p>
 
                 {/* 釘選按鈕 */}
-                {isAuthor&& (<i className={`bi bi-pin-fill fs-6 ${isPinned ? "text-primary" : "text-gray"}`}
+                {isAuthor && (<i className={`bi bi-pin-fill fs-6 ${isPinned ? "text-primary" : "text-gray"}`}
                    onClick={()=> togglePin(article.id)}
                    style={{cursor: "pointer"}}
                 ></i>)}
@@ -176,9 +212,9 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, to
                 </div>)}
               </div>
                {/* （點擊展開所有留言） */}
-              <div className="text-gray" style={{ cursor: "pointer" }} onClick={() => setShowAllComments(!showAllComments)}>
-                {showAllComments.length > 1? "隱藏留言" : `查看 ${sortedComments.length} 則留言`}
-              </div>
+              {sortedComments.length > 1 && (<div className="text-gray hover-effect" style={{ cursor: "pointer" }} onClick={() => setShowAllComments(!showAllComments)}>
+                {showAllComments? "隱藏留言" : `查看 ${sortedComments.length} 則留言`}
+              </div>)}
             </div>
           </div>
           <div className="col-lg-4">
@@ -192,7 +228,7 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, to
           {/* 回覆輸入框 */}
           {showArticleReply && (
             <div
-            className="input-group"
+            className="input-group mb-2"
             onBlur={() => {
               setShowArticleReply(false);
             }}
@@ -207,7 +243,7 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, to
               onKeyDown={(e) => e.key === "Enter" && addArticleRep()}
             />
             <span
-              className="material-symbols-outlined input-group-text border-start-0 bg-light text-primary icon-fill fs-6 rounded-1"
+              className="material-symbols-outlined input-group-text border-start-0 bg-light text-primary icon-fill fs-6 rounded-1 btn-click"
               onMouseDown={(e) => {
                 e.preventDefault();
                 addArticleRep()
@@ -229,7 +265,10 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, to
             postId= {comment.post_id}  
             getBlogArticle={getBlogArticle} 
             token={token} 
-            formatTimeAgo={formatTimeAgo} // ✅ 傳入格式化時間函式  
+            formatTimeAgo={formatTimeAgo}   // ✅ 傳入格式化時間函式  
+            isAuthor={isAuthor}
+            userId={userId}
+            setIsLoading={setIsLoading}
           />
         ))}
       </div>
@@ -266,7 +305,9 @@ Blog_ArticleCard.propTypes = {
   token: PropTypes.string,
   getBlogArticle: PropTypes.func,
   onEdit: PropTypes.func,
-  isAuthor:PropTypes.bool
+  isAuthor:PropTypes.bool,
+  userId: PropTypes.string,
+  setIsLoading: PropTypes.func
 }
 
 
