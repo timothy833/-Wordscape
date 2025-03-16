@@ -27,3 +27,37 @@ export const alertMsgForCancelFavorites = {
   showConfirmButton: false,
   timer: 1500,
 };
+
+export const alertCreatePost = {
+  title: "成功建立文章",
+  icon: "success",
+  showCloseButton: false,
+  showConfirmButton: false,
+  timer: 1500,
+};
+
+
+export const alertDeletePost = {
+  title: "成功刪除文章",
+  icon: "success",
+  showCloseButton: false,
+  showConfirmButton: false,
+  timer: 1500,
+};
+
+export const alertDelete = {
+  title: "刪除成功",
+  icon: "success",
+  showCloseButton: false,
+  showConfirmButton: false,
+  timer: 1500,
+};
+
+export const alertReply = {
+  title: "留言成功",
+  icon: "success",
+  showCloseButton: false,
+  showConfirmButton: false,
+  timer: 1500,
+};
+

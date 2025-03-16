@@ -98,3 +98,40 @@
     color: $primary_hover; // 使用 SCSS 變數
   }
 }
+
+// .accordion-button {
+//   background-color: transparent; /* 讓標題區域符合側邊欄風格 */
+//   color: #e77605; /* 讓標題顏色與主題相符 */
+//   font-weight: bold;
+
+// }
+
+.accordion-collapse {
+  transition: height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.accordion-body {
+  padding-left: 20px; /* 讓文章標題有縮排 */
+}
+
+.blog-home_header {
+  max-height: 800px; /* ✅ 確保不超過視窗高度 */
+  
+  transition: max-height 0.3s ease-in-out;
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: #fffaeb !important; /* ✅ 修改展開時的背景色 */
+  color: #e77605 !important; /* ✅ 讓文字顏色符合主題 */
+  box-shadow: none !important; /* ✅ 移除黑色陰影 */
+}
+
+// 在你的 SCSS 或 CSS 文件中添加
+.hover-effect {
+  cursor: pointer;
+  transition: color 0.3s ease-in-out;
+
+  &:hover {
+    color: $primary_hover !important;; // 使用你的 SCSS 變數
+  }
+}
