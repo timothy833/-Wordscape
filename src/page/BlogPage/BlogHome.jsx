@@ -897,15 +897,15 @@ const uploadImageToR2 = async () => {
                   </div>
                 </Swiper>):(
                   <div
-                    className="blog-home_mainBanner py-10 ps-lg-10 rounded-3 mb-5 border border-gray_light"
+                    className="d-flex flex-column align-items-center align-items-lg-start blog-home_mainBanner py-10 ps-lg-10 rounded-3 mb-5 border border-gray_light"
                     style={{
                       backgroundColor: "#f0f0f0",
                       textAlign: "center",
                       padding: "50px",
                     }}
                   >
-                    <p className="fs-5 fs-md-3 text-dark mtb-5">請新增文章</p>
-                    <p className="text-dark">目前沒有可顯示的文章，請點擊「新增文章」來開始</p>
+                    <h2 className="fs-5 fs-md-3 text-dark mb-5">請新增文章</h2>
+                    <h4 className="text-dark">目前沒有可顯示的文章，請點擊「新增文章」來開始</h4>
                   </div>
                 )}
               </section>  
