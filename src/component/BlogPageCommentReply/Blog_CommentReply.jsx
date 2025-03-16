@@ -2,7 +2,7 @@ import avatar from "../../assets/images/avatar-1.png";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import {  alertDelete, alertReply } from "../../utils/alertMsg" 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -97,7 +97,7 @@ const deleteComment = async (commentId) => {
           onClick={() => navigate(`/blog/${comment.user_id}`)} // 🚀 這裡改用 navigate
           style={{ cursor: "pointer" }}
         >
-          <img className="avatar rounded-circle border" src={comment.profile_picture ||avatar} alt="avatar" />
+          <img className="avatar rounded-circle border" src={comment.profile_picture ||"https://raw.githubusercontent.com/wfox5510/wordSapce-imgRepo/695229fa8c60c474d3d9dc0d60b25f9539ac74d9/default-avatar.svg"} alt="avatar" />
             {comment.user_name}
         </div>
       </div>
