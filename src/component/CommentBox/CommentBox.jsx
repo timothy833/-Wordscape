@@ -265,6 +265,18 @@ const CommentBox = ({
             全部留言
           </a>
         )}
+        {showAllReview && commentData.replies.length > 2 && (
+          <a
+            href="#"
+            className="text-primary"
+            onClick={(e) => {
+              e.preventDefault();
+              setShowAllReview(false);
+            }}
+          >
+            隱藏留言
+          </a>
+        )}
       </div>
     </>
   );
