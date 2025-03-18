@@ -28,7 +28,7 @@ const AdminLayout = () => {
               <div className="admin_wrap pt-10 pb-5 px-5 rounded-3 border border-gray_light">
                 <div className="admin-mobile-header d-md-none">
                   <div className="d-flex align-items-center flex-column border-bottom border-gray_light mb-5">
-                    <img className="admin-avatar mb-2" src={userAvatar || "https://raw.githubusercontent.com/wfox5510/wordSapce-imgRepo/695229fa8c60c474d3d9dc0d60b25f9539ac74d9/default-avatar.svg"} alt="avatar" />
+                    <img className="admin-avatar mb-2 rounded-circle" src={userAvatar || "https://raw.githubusercontent.com/wfox5510/wordSapce-imgRepo/695229fa8c60c474d3d9dc0d60b25f9539ac74d9/default-avatar.svg"} alt="avatar" />
                     <p className="mb-2">{username}</p>
                     <p className="text-primary mb-5">編輯個人主頁</p>
                   </div>
