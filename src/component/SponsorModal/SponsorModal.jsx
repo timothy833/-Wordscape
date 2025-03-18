@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { useState, useEffect, useRef } from "react";
 import { Modal } from "bootstrap";
 import { useParams, useLocation } from 'react-router-dom';
+import { alertMsgForVerify } from "../../utils/alertMsg";
 const { VITE_API_BASE_URL } = import.meta.env;
 import Swal from "sweetalert2";
 
@@ -36,7 +37,7 @@ const SponsorModal = () => {
       const sponsorModal = Modal.getInstance(sponsorModalRef.current);
       sponsorModal.show();
     }else{
-      Swal.fire({alertMsgForVerify});
+      Swal.fire(alertMsgForVerify);
     }
   }
   
