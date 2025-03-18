@@ -1,12 +1,12 @@
-import axios from 'axios'
-import { useState, useEffect } from 'react'
-import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
-import { login, clearError } from '../../slice/authSlice';
-import { useNavigate } from 'react-router-dom';
-import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 const { VITE_API_BASE_URL } = import.meta.env;
+import axios from 'axios'
+import PropTypes from 'prop-types';
+import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 import Swal from "sweetalert2";
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react'
+import { login, clearError } from '../../slice/authSlice';
 
 const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
     LoginPage.propTypes = {
