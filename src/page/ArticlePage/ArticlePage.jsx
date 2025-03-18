@@ -251,7 +251,7 @@ const ArticlePage = () => {
                 )}
               </div>
               <div className="d-flex align-items-center gap-4">
-                <SponsorModal />
+                {isAuthorized && <SponsorModal />}
                 <a
                   href="#"
                   className={`btn ${
