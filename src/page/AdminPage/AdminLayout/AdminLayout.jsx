@@ -30,7 +30,7 @@ const AdminLayout = () => {
                   <div className="d-flex align-items-center flex-column border-bottom border-gray_light mb-5">
                     <img className="admin-avatar mb-2 rounded-circle" src={userAvatar || "https://raw.githubusercontent.com/wfox5510/wordSapce-imgRepo/695229fa8c60c474d3d9dc0d60b25f9539ac74d9/default-avatar.svg"} alt="avatar" />
                     <p className="mb-2">{username}</p>
-                    <p className="text-primary mb-5">編輯個人主頁</p>
+                    <Link to={`/blog/${id}`} className="text-primary mb-5">編輯個人主頁</Link>
                   </div>
                   <nav className="list-unstyled d-flex justify-content-between admin-layout_nav mb-6">
                     <NavLink to="info" className={({ isActive }) => `pb-1 link-gray ${isActive ? "adminLinkActive" : ""}`}>會員資訊</NavLink>
