@@ -19,7 +19,9 @@ const AdminInfo = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const fileInputRef = useRef(null);
 
-  const { register, handleSubmit, setValue, watch } = useForm();
+  const { register, handleSubmit, setValue, watch,formState:{errors} } = useForm({
+    mode:'onChange'
+  });
   useEffect(() => {
     (async () => {
       if (!token) {
@@ -130,11 +132,26 @@ const AdminInfo = () => {
             </div>
             <div className="mb-5 admin-form_group">
               <label htmlFor="email" className="form-label mb-2">電子郵件</label>
-              <input type="email" className="form-control py-3" id="email" placeholder="email" {...register("email")} />
+              <div><input type="email" className="form-control py-3" id="email" placeholder="email" {...register("email",{
+                pattern: {
+                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                  message: "Email格式不符"
+                }
+              })} />
+            <div className="text-danger mt-1">{errors.email ? errors.email.message : ""}</div>
+              </div>
             </div>
             <div className="mb-5 admin-form_group">
               <label htmlFor="phone" className="form-label mb-2">手機號碼</label>
-              <input type="number" className="form-control py-3" id="phone" placeholder="電話" {...register("phone")} />
+              <div>
+              <input type="text" className="form-control py-3" id="phone" placeholder="電話" {...register("phone",{
+                pattern: {
+                  value: /^\d+$/,
+                  message: "請輸入正確號碼"
+                }
+              })} />
+              <div className="text-danger mt-1">{errors.phone ? errors.phone.message : ""}</div>
+              </div>
             </div>
             <div className="admin-form_group py-md-3 mb-5">
               <p className="mb-md-0 mb-2">性別</p>
@@ -184,8 +201,8 @@ const AdminInfo = () => {
           <p className="mb-md-0 mb-2">生日</p>
           <div className="admin-form_birthday d-flex gap-3 w-md-100">
             <select className="form-select py-3" {...register("year")}>
-              {[...Array(46)].map((_, i) => {
-                const year = 1980 + i;
+              {[...Array(100)].map((_, i) => {
+                const year = 1926 + i;
                 return <option key={year} value={year}>{year}</option>;
               })}
             </select>
