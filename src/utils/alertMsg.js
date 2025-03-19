@@ -20,6 +20,15 @@ export const alertMsgForAdminError = {
   showConfirmButton: false,
   timer: 1500,
 };
+
+export const alertMsgForAddFavorites = {
+  title: "已成功加入收藏",
+  icon: "success",
+  showCloseButton: false,
+  showConfirmButton: false,
+  timer: 1500,
+};
+
 export const alertMsgForCancelFavorites = {
   title: "已成功取消收藏",
   icon: "success",
@@ -61,3 +70,9 @@ export const alertReply = {
   timer: 1500,
 };
 
+export const alertMsgForSuccess = {
+  icon: "success",
+  showCloseButton: false,
+  showConfirmButton: false,
+  timer: 1500,
+};
