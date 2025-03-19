@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import { alertMsgForVerify } from "../../utils/alertMsg";
+import PropTypes from "prop-types";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -50,7 +51,7 @@ const CommentReply = ({
   };
   const postCommentLike = async () => {
     try {
-      const res = await axios.post(
+      await axios.post(
         `${API_BASE_URL}/comments/comment_likes/${commentData.id}`
       );
       getComment();
@@ -89,7 +90,9 @@ const CommentReply = ({
           {isAuther && <span className="text-gray">作者</span>}
         </Link>
         <div className="d-flex gap-5 align-items-center">
-          <span className="text-gray">{formatTimeAgo(commentData.created_at)}</span>
+          <span className="text-gray">
+            {formatTimeAgo(commentData.created_at)}
+          </span>
           <a
             href="#"
             className={`d-flex align-items-center user-select-none pe-open ${
@@ -180,6 +183,24 @@ const CommentReply = ({
       )}
     </div>
   );
+};
+
+CommentReply.propTypes = {
+  commentData: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    user_id: PropTypes.string,
+    content: PropTypes.string.isRequired,
+    user_name: PropTypes.string.isRequired,
+    profile_picture: PropTypes.string,
+    likes_count: PropTypes.number,
+    created_at: PropTypes.string.isRequired,
+  }).isRequired,
+  isAuther: PropTypes.bool.isRequired,
+  isCurrentUser: PropTypes.bool.isRequired,
+  getComment: PropTypes.func.isRequired,
+  loginUserId: PropTypes.string.isRequired,
+  isAuthorized: PropTypes.bool.isRequired,
+  formatTimeAgo: PropTypes.func.isRequired,
 };
 
 export default CommentReply;

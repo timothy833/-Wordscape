@@ -62,7 +62,7 @@ const ArticlePage = () => {
   };
   const postComment = async () => {
     try {
-      const res = await axios.post(`${API_BASE_URL}/comments`, {
+      await axios.post(`${API_BASE_URL}/comments`, {
         post_id: articleId,
         content: commentInput,
       });
@@ -112,7 +112,7 @@ const ArticlePage = () => {
   const postArticleLike = async () => {
     try {
       //可以加入動畫增加使用體驗，次要
-      const res = await axios.post(
+      await axios.post(
         `${API_BASE_URL}/posts/post_likes/${articleId}`
       );
       getArticle(); //為了取得讚數在進行一次get文章資料，是否可以進行優化

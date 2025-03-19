@@ -4,6 +4,7 @@ import "../../../node_modules/bootstrap/js/src/dropdown.js";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import { alertMsgForVerify } from "../../utils/alertMsg";
+import PropTypes from "prop-types";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -17,7 +18,7 @@ const CommentBox = ({
   hasReplie,
   isCurrentUser,
   isAuthorized,
-  formatTimeAgo
+  formatTimeAgo,
 }) => {
   const [commentLikeData, setCommentLikeData] = useState(null);
   const [isReviewOpen, setIsReviewOpen] = useState(false);
@@ -73,7 +74,7 @@ const CommentBox = ({
   };
   const postCommentLike = async () => {
     try {
-      const res = await axios.post(
+      await axios.post(
         `${API_BASE_URL}/comments/comment_likes/${commentData.id}`
       );
       getComment();
@@ -144,7 +145,9 @@ const CommentBox = ({
           <p>{commentData.content}</p>
         )}
         <div className="d-flex gap-5">
-          <span className="text-gray">{formatTimeAgo(commentData.created_at)}</span>
+          <span className="text-gray">
+            {formatTimeAgo(commentData.created_at)}
+          </span>
           <a
             href="#"
             className={`d-flex align-items-center user-select-none pe-open ${
@@ -156,7 +159,7 @@ const CommentBox = ({
             } gap-1`}
             onClick={(e) => {
               e.preventDefault();
-              isAuthorized ? postCommentLike() : Swal.fire(alertMsgForVerify);;
+              isAuthorized ? postCommentLike() : Swal.fire(alertMsgForVerify);
             }}
           >
             <span className="material-symbols-outlined icon-fill fs-6">
@@ -171,7 +174,9 @@ const CommentBox = ({
             } gap-1`}
             onClick={(e) => {
               e.preventDefault();
-              isAuthorized ? setIsReviewOpen(!isReviewOpen) : Swal.fire(alertMsgForVerify);;
+              isAuthorized
+                ? setIsReviewOpen(!isReviewOpen)
+                : Swal.fire(alertMsgForVerify);
             }}
           >
             <span className="material-symbols-outlined icon-fill fs-6">
@@ -222,7 +227,9 @@ const CommentBox = ({
             className="text-gray"
             onClick={(e) => {
               e.preventDefault();
-              isAuthorized ? setIsReviewOpen(!isReviewOpen) : Swal.fire(alertMsgForVerify);;
+              isAuthorized
+                ? setIsReviewOpen(!isReviewOpen)
+                : Swal.fire(alertMsgForVerify);
             }}
           >
             回覆
@@ -283,5 +290,27 @@ const CommentBox = ({
     </>
   );
 };
+CommentBox.propTypes = {
+  children: PropTypes.node.isRequired,
+  commentData: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    user_id: PropTypes.string,
+    content: PropTypes.string.isRequired,
+    user_name: PropTypes.string.isRequired,
+    profile_picture: PropTypes.string,
+    likes_count: PropTypes.string,
+    replies: PropTypes.arrayOf(PropTypes.object),
+    created_at: PropTypes.string,
+  }).isRequired,
+  loginUserId: PropTypes.string.isRequired,
+  articleId: PropTypes.string.isRequired,
+  getComment: PropTypes.func.isRequired,
+  isAuther: PropTypes.bool.isRequired,
+  hasReplie: PropTypes.bool.isRequired,
+  isCurrentUser: PropTypes.bool.isRequired,
+  isAuthorized: PropTypes.bool.isRequired,
+  formatTimeAgo: PropTypes.func.isRequired,
+};
+
 
 export default CommentBox;
