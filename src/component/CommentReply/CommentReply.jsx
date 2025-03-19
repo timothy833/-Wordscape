@@ -13,6 +13,7 @@ const CommentReply = ({
   getComment,
   loginUserId,
   isAuthorized,
+  formatTimeAgo,
 }) => {
   const [commentLikeData, setCommentLikeData] = useState(null);
   const [currentComment, setCurrentComment] = useState(commentData.content);
@@ -88,6 +89,7 @@ const CommentReply = ({
           {isAuther && <span className="text-gray">作者</span>}
         </Link>
         <div className="d-flex gap-5 align-items-center">
+          <span className="text-gray">{formatTimeAgo(commentData.created_at)}</span>
           <a
             href="#"
             className={`d-flex align-items-center user-select-none pe-open ${
@@ -99,7 +101,7 @@ const CommentReply = ({
             } gap-1`}
             onClick={(e) => {
               e.preventDefault();
-              isAuthorized ? postCommentLike() : Swal.fire(alertMsgForVerify);;
+              isAuthorized ? postCommentLike() : Swal.fire(alertMsgForVerify);
             }}
           >
             <span className="material-symbols-outlined icon-fill fs-6">

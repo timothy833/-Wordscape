@@ -160,7 +160,15 @@ const ArticlePage = () => {
       console.log(error);
     }
   };
-
+  // ✅ 顯示距離現在多久
+  const formatTimeAgo = (timestamp) => {
+    const now = new Date();
+    const createdAt = new Date(timestamp);
+    const diffMs = now - createdAt;
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffHours / 24);
+    return diffDays > 0 ? `${diffDays} 天前` : diffHours > 0 ? `${diffHours} 小時前` : "剛剛";
+  };
   useEffect(() => {
     window.scrollTo(0, 0);
     getArticle();
@@ -323,6 +331,7 @@ const ArticlePage = () => {
                 commentData={commentItem}
                 articleId={articleId}
                 getComment={getComment}
+                formatTimeAgo={formatTimeAgo}
                 isAuthorized={isAuthorized}
                 isAuther={commentItem.user_id === articleData?.user_id}
                 isCurrentUser={commentItem.user_id === userId}
@@ -338,6 +347,7 @@ const ArticlePage = () => {
                       commentData={replieItem}
                       isAuthorized={isAuthorized}
                       getComment={getComment}
+                      formatTimeAgo={formatTimeAgo}
                       isAuther={replieItem.user_id === articleData?.user_id}
                       isCurrentUser={replieItem.user_id === userId}
                     />

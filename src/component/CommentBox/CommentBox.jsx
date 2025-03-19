@@ -17,6 +17,7 @@ const CommentBox = ({
   hasReplie,
   isCurrentUser,
   isAuthorized,
+  formatTimeAgo
 }) => {
   const [commentLikeData, setCommentLikeData] = useState(null);
   const [isReviewOpen, setIsReviewOpen] = useState(false);
@@ -143,6 +144,7 @@ const CommentBox = ({
           <p>{commentData.content}</p>
         )}
         <div className="d-flex gap-5">
+          <span className="text-gray">{formatTimeAgo(commentData.created_at)}</span>
           <a
             href="#"
             className={`d-flex align-items-center user-select-none pe-open ${
