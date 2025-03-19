@@ -46,13 +46,12 @@ const SignupPage = ({ show, handleClose, handleShowLoginModal }) => {
                 "password": formData.password,  
             }
             
-            const signUpRes = await axios.post(url, data, {
+            await axios.post(url, data, {
                 headers: {
                     "Content-Type": "application/json"
                 }
             }
         );
-        // console.log('signupRes',signUpRes);
         
         Swal.fire({
             title: "註冊成功!",
@@ -73,7 +72,7 @@ const SignupPage = ({ show, handleClose, handleShowLoginModal }) => {
                 confirmButtonColor: "#E77605",
                 confirmButtonText: "確認"
               });
-            // console.log('error in sign up', error.response?.data || error.message);
+            
         }finally{
             setIsLoading(false);
         }

@@ -1,8 +1,6 @@
-import { Dropdown, Collapse } from "bootstrap";
+import { Collapse } from "bootstrap";
 import logo from "../../assets/images/logo.svg";
 import logo_sm from "../../assets/images/logo-sm.svg";
-import axios from 'axios'
-const { VITE_API_BASE_URL } = import.meta.env;
 
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';

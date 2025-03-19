@@ -9,7 +9,7 @@ const { VITE_API_BASE_URL } = import.meta.env;
 import Swal from "sweetalert2";
 
 const SponsorModal = () => {
-  const { isAuthorized, username, token } = useSelector(state => state.auth);
+  const { isAuthorized, token } = useSelector(state => state.auth);
   const sponsorModalRef = useRef(null);
   const [ isNextStep, setIsNextStep] = useState(false);
   const [paymentData, setPaymentData] = useState({
@@ -22,38 +22,60 @@ const SponsorModal = () => {
   const { user_id, id } = useParams(); // 從 URL 取得對應的參數
   const location = useLocation(); // 取得當前的路徑
   const [sponsorId, setSponsorId] = useState(null);
-  const [sponsorName, setSponsorName ] = useState('');
+  const [sponsorName, setSponsorName] = useState('');
 
   // Modal Create & Functions
   useEffect(() => {
     new Modal(sponsorModalRef.current, {backdrop: false}); 
   },[]);
 
-  // 預設放置在blog和artical頁面
+  // 獲取贊助對象的ID
+  const getSponsorId = async () => {
+    let idToSponsor = null;
+    
+    if (location.pathname.startsWith("/blog/")) {
+      idToSponsor = user_id; // `/blog/:user_id`
+    } else if (location.pathname.startsWith("/article/")) {
+      const postId = id; // `/article/:id`
+      try {
+        const postData = await axios.get(`${VITE_API_BASE_URL}/posts/${postId}`);
+        idToSponsor = postData.data.data.user_id;
+      } catch (error) {
+        console.log('Error getting user id from post:', error);
+      }
+    }
+    
+    return idToSponsor;
+  };
+
+  // 獲取作者數據
+  const getAuthorData = async (idToSponsor) => {
+    try {
+      const res = await axios.get(
+        `${VITE_API_BASE_URL}/users/${idToSponsor}`
+      );
+      return res.data.username;
+    } catch (error) {
+      console.log('Error getting author data:', error);
+      return '';
+    }
+  };
+
+  // 預設放置在blog和article頁面
   const openSponsorModal = async() => {
     if(isAuthorized){
-      const receiverName = await getAutherData();
-      setSponsorName(receiverName);
+      const idToSponsor = await getSponsorId();
+      setSponsorId(idToSponsor);
+      
+      const authorName = await getAuthorData(idToSponsor);
+      setSponsorName(authorName);
+      
       const sponsorModal = Modal.getInstance(sponsorModalRef.current);
       sponsorModal.show();
-    }else{
+    } else {
       Swal.fire(alertMsgForVerify);
     }
   }
-  
-  const getAutherData = async () => {
-    const recieverId = await getUserIdForSponsor();
-    try {
-      const res = await axios.get(
-        `${VITE_API_BASE_URL}/users/${recieverId}`
-      );
-      const authName = res.data.username;
-      console.log(authName);
-      return authName;
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const closeSponsorModal = () => {
     const sponsorModal = Modal.getInstance(sponsorModalRef.current);
@@ -166,7 +188,7 @@ const SponsorModal = () => {
   }
 
   // 自訂卡號輸入
-  const handleCardNumberChange = (e, index) => {
+  const handleCardNumberChange = (e) => {
     const cardParts = [
       document.getElementById('card-part-1').value,
       document.getElementById('card-part-2').value,
@@ -193,27 +215,6 @@ const SponsorModal = () => {
     return paymentData.payment;
   }
 
-  //判斷目前位置並取得作者ID
-  const getUserIdForSponsor = async() => {
-    let sponsorId = null;
-    let postId = null;
-    if (location.pathname.startsWith("/blog/")) {
-      sponsorId = user_id; // `/blog/:user_id`
-
-    } else if (location.pathname.startsWith("/article/")) {
-      postId = id; // `/article/:id`
-        try {
-          const postData = await axios.get(`${VITE_API_BASE_URL}/posts/${postId}`);
-          sponsorId = postData.data.data.user_id;
-          console.log(postData);
-        } catch (error) {
-          console.log('error in get userId',error);
-        }
-    }
-    setSponsorId(sponsorId)
-    return sponsorId;
-  };
-
   //確定付款
   const sponsorHandle = async() => {
     try{
@@ -221,11 +222,11 @@ const SponsorModal = () => {
       const actualAmount = paymentData.amount === "custom" ? 
         parseInt(paymentData.customAmount) : 
         parseInt(paymentData.amount);
-      const recieverId = await getUserIdForSponsor();
+        
       const url = `${VITE_API_BASE_URL}/payments`;
       const data = {
         "amount": actualAmount,
-        "receiver_id": recieverId
+        "receiver_id": sponsorId  // 使用狀態中儲存的sponsorId
       }
       console.log(data);
       
@@ -233,7 +234,7 @@ const SponsorModal = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
       
-      console.log('sponsorRes',sponsorRes);
+      console.log('sponsorRes', sponsorRes);
       if(sponsorRes.data.status === 'success'){
         Swal.fire({
           title: "贊助成功!",
@@ -252,29 +253,25 @@ const SponsorModal = () => {
         confirmButtonColor: "#E77605",
         confirmButtonText: "確認"
       });
-    }finally{
+    } finally {
       closeSponsorModal(); // 成功後關閉對話框
     }
   }
 
   return (
     <>
-   {/*Button trigger modal*/}
+    {/*Button trigger modal*/}
     <button 
       type="button" 
       className="btn btn-outline-primary sponsor-btn border border-primary-hover btn-click"
-      onClick={async()=>{
-        openSponsorModal();
-        const userId = await getUserIdForSponsor(); // 確保等到結果
-        console.log("Final Sponsor ID:", userId);
-      }}
+      onClick={openSponsorModal}
     >
       <i className="bi bi-gift sponsor-icon fs-8 px-2"></i>
       <span className="sponsor-text fs-8">贊助</span>
     </button>
 
     {/* Modal*/}
-    <div ref={ sponsorModalRef }
+    <div ref={sponsorModalRef}
       className="modal fade modal-fullscreen-md-down sponsor-modal" 
       style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
       id="sponsorModal" 
@@ -405,7 +402,7 @@ const SponsorModal = () => {
                       type="text" 
                       maxLength="4"
                       aria-label=".form-control-sm"
-                      onChange={(e) => handleCardNumberChange(e, 0)}
+                      onChange={handleCardNumberChange}
                       disabled={paymentData.cardType !== "custom"}
                     />-
                     <input 
@@ -414,7 +411,7 @@ const SponsorModal = () => {
                       type="text" 
                       maxLength="4"
                       aria-label=".form-control-sm"
-                      onChange={(e) => handleCardNumberChange(e, 1)}
+                      onChange={handleCardNumberChange}
                       disabled={paymentData.cardType !== "custom"}
                     />-
                     <input 
@@ -423,7 +420,7 @@ const SponsorModal = () => {
                       type="text" 
                       maxLength="4"
                       aria-label=".form-control-sm"
-                      onChange={(e) => handleCardNumberChange(e, 2)}
+                      onChange={handleCardNumberChange}
                       disabled={paymentData.cardType !== "custom"}
                     />-
                     <input 
@@ -432,7 +429,7 @@ const SponsorModal = () => {
                       type="text" 
                       maxLength="4"
                       aria-label=".form-control-sm"
-                      onChange={(e) => handleCardNumberChange(e, 3)}
+                      onChange={handleCardNumberChange}
                       disabled={paymentData.cardType !== "custom"}
                     />
                     </div>

@@ -16,7 +16,7 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
     };
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { loading, error, isAuthorized } = useSelector(state => state.auth);
+    const { error, isAuthorized } = useSelector(state => state.auth);
     const [isForgot, setIsForgot] = useState(false);
     const [resetEmail, setResetEmail] = useState({ email: "" });
     const [formData, setFormData] = useState({ email: "", password: "" });
@@ -118,7 +118,7 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
             
             console.log("forgot password",forgotPwRes);
             setResetEmail({ email: "" });
-            // alert(forgotPwRes.data.message); 
+           
             handleClose();
             Swal.fire({
                 title: "請檢查Email 以重設密碼",
