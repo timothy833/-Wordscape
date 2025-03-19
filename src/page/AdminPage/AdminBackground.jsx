@@ -6,6 +6,7 @@ const { VITE_API_BASE_URL } = import.meta.env;
 import dayjs from "dayjs";
 import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 import AdminRevenueChart from "../../component/AdminRevenueChart/AdminRevenueChart";
+import AdminViewCount from "../../component/AdminViewCount/AdminViewCount";
 
 const AdminBackground = () => {
   const [isLoading,setIsLoading] = useState(false);
@@ -349,14 +350,16 @@ const AdminBackground = () => {
         <ul className="clickCount_body list-unstyled">
           {currentArticles.length > 0 ? (
             currentArticles.map((article) => (
-              <li key={article.id} className="d-md-grid d-flex justify-content-between mb-5">
-                <div>
-                  <p className="clickCount_body-title mb-2">{article.title}</p>
-                  <p className="text-gray d-md-none">{dayjs(article.created_at).format("YYYY-MM-DD")}</p>
-                </div>
-                <p className="text-gray d-none d-md-block">{dayjs(article.created_at).format("YYYY-MM-DD")}</p>
-                <p>{article.views_count.toLocaleString()}</p>
-              </li>
+              // <li key={article.id} className="d-md-grid d-flex justify-content-between mb-5">
+              //   <div>
+              //     <p className="clickCount_body-title mb-2">{article.title}</p>
+              //     <p className="text-gray d-md-none">{dayjs(article.created_at).format("YYYY-MM-DD")}</p>
+              //   </div>
+              //   <p className="text-gray d-none d-md-block">{dayjs(article.created_at).format("YYYY-MM-DD")}</p>
+              //   <p>{article.views_count.toLocaleString()}</p>
+              // </li>
+
+              <AdminViewCount key={article.id} article={article} />
             ))
           ) : (
             <p className="text-gray">目前沒有文章</p>
@@ -366,7 +369,7 @@ const AdminBackground = () => {
         {totalPages > 1 && (
           <ul className="admin-background_pagination list-unstyled d-flex justify-content-center gap-5">
             {Array.from({ length: totalPages }).map((_, i) => (
-              <li key={i} className={i + 1 === currentPage ? "text-primary" : ""} onClick={() => setCurrentPage(i + 1)}>
+              <li style={{ cursor: "pointer" }} key={i} className={i + 1 === currentPage ? "text-primary" : ""} onClick={() => setCurrentPage(i + 1)}>
                 {i + 1}
               </li>
             ))}
