@@ -31,7 +31,9 @@ const ArticleListPage = () => {
   const getAllArticleData = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/full`);
-      const filterArticleData = res.data.data.filter((item)=>item.status=="published");
+      const filterArticleData = res.data.data.filter(
+        (item) => item.status == "published"
+      );
       setAllArticleData(filterArticleData);
     } catch (error) {
       console.log(error);
@@ -84,7 +86,7 @@ const ArticleListPage = () => {
   //取得所有文章資料後根據選擇分類篩選資料，用於渲染文章列表
   const [articleListData, setArticleListData] = useState(null);
   const [listSelector, setListSelector] = useState("allArticle");
-  const [articleListDisplayCount, SetArticleListDisplayCount] = useState(10);
+  const [articleListPageCount, setArticleListPageCount] = useState(1);
 
   const getArticleListData = async () => {
     try {
@@ -93,7 +95,8 @@ const ArticleListPage = () => {
         res.data.data.filter(
           (articleDataItem) =>
             (articleDataItem.category_id === listSelector ||
-            listSelector === "allArticle") && articleDataItem.status == "published"
+              listSelector === "allArticle") &&
+            articleDataItem.status == "published"
         )
       );
     } catch (error) {
@@ -122,19 +125,19 @@ const ArticleListPage = () => {
     }
   };
   //文章列表沒有paganation，用滾動至底部作為新增資料的判斷
-  useEffect(() => {
-    const handleScroll = () => {
-      //當滑動到底部，且顯示文章數量少於文章列表資料數量
-      window.innerHeight + window.scrollY >=
-        document.documentElement.scrollHeight &&
-        articleListData?.length > articleListDisplayCount &&
-        SetArticleListDisplayCount((prev) => {
-          return prev + 10;
-        });
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [articleListData]);
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     //當滑動到底部，且顯示文章數量少於文章列表資料數量
+  //     window.innerHeight + window.scrollY >=
+  //       document.documentElement.scrollHeight &&
+  //       articleListData?.length > articleListPageCount &&
+  //       setArticleListPageCount((prev) => {
+  //         return prev + 10;
+  //       });
+  //   };
+  //   window.addEventListener("scroll", handleScroll);
+  //   return () => window.removeEventListener("scroll", handleScroll);
+  // }, [articleListData]);
 
   useEffect(() => {
     getCategories();
@@ -404,7 +407,7 @@ const ArticleListPage = () => {
                         </li>
                       );
                     })}
-                    {recommendArticleData
+                  {recommendArticleData
                     .slice(3, 5)
                     .map((recommendArticleDataItem) => {
                       return (
@@ -481,7 +484,10 @@ const ArticleListPage = () => {
           </div>
           <ul className="list-unstyled d-flex flex-column gap-5 px-4 px-lg-0">
             {articleListData
-              ?.slice(0, articleListDisplayCount)
+              ?.slice(
+                (articleListPageCount - 1) * 10,
+                articleListPageCount * 10
+              )
               .map((articleListDataItem) => {
                 return (
                   <li key={articleListDataItem.id} className="rounded-2 border">
@@ -550,6 +556,126 @@ const ArticleListPage = () => {
                 );
               })}
           </ul>
+          {articleListData && (
+            <ul className="hot-article-pagination pagination justify-content-center gap-2 mb-0">
+              <li className="page-item">
+                <a
+                  className={`page-link material-symbols-outlined p-0 ps-1 pt-1 rounded-1 ${
+                    currentPage === 1 && "disabled"
+                  }`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setArticleListPageCount(articleListPageCount - 1);
+                  }}
+                >
+                  arrow_back_ios
+                </a>
+              </li>
+              {Array.from({
+                length: Math.ceil(articleListData.length / 10),
+              }).map((item, index) => {
+                const totalPage = Math.ceil(articleListData.length / 10);
+                if (
+                  articleListPageCount - index - 1 <= 2 &&
+                  articleListPageCount - index - 1 >= -2
+                )
+                  return (
+                    <li className="page-item" key={index}>
+                      <a
+                        className={`page-link rounded-1 p-0 ${
+                          articleListPageCount === index + 1 && "active"
+                        }`}
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setArticleListPageCount(index + 1);
+                        }}
+                      >
+                        {index + 1}
+                      </a>
+                    </li>
+                  );
+                else if (
+                  articleListPageCount < totalPage - 2 &&
+                  index + 1 === totalPage
+                )
+                  return (
+                    <Fragment key={index}>
+                      <li className="page-item">
+                        <a
+                          className={`page-link rounded-1 p-0`}
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                          }}
+                        >
+                          ...
+                        </a>
+                      </li>
+                      <li className="page-item">
+                        <a
+                          className={`page-link rounded-1 p-0 ${
+                            articleListPageCount === index + 1 && "active"
+                          }`}
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setArticleListPageCount(index + 1);
+                          }}
+                        >
+                          {index + 1}
+                        </a>
+                      </li>
+                    </Fragment>
+                  );
+                else if (articleListPageCount > 3 && index === 0)
+                  return (
+                    <Fragment key={index}>
+                      <li className="page-item">
+                        <a
+                          className={`page-link rounded-1 p-0 ${
+                            articleListPageCount === index + 1 && "active"
+                          }`}
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setArticleListPageCount(index + 1);
+                          }}
+                        >
+                          {index + 1}
+                        </a>
+                      </li>
+                      <li className="page-item">
+                        <a
+                          className={`page-link rounded-1 p-0`}
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                          }}
+                        >
+                          ...
+                        </a>
+                      </li>
+                    </Fragment>
+                  );
+              })}
+              <li className="page-item">
+                <a
+                  className={`page-link material-symbols-outlined rounded-1 p-0 ${
+                    articleListPageCount ===
+                      Math.ceil(articleListData.length / 10) && "disabled"
+                  }`}
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setArticleListPageCount(articleListPageCount + 1);
+                  }}
+                >
+                  arrow_forward_ios
+                </a>
+              </li>
+            </ul>
+          )}
         </div>
       </section>
     </>
