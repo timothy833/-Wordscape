@@ -59,7 +59,7 @@ const AdminSubscription = () => {
       </div>
       <nav className="d-none d-lg-block" aria-label="Page navigation">
         <ul className="hot-article-pagination pagination justify-content-center gap-2 mb-0">
-          <li className="page-item" disable="true">
+          <li className="page-item">
             <a
               className={`page-link material-symbols-outlined p-0 ps-1 pt-1 rounded-1 ${
                 currentPage === 1 && "disabled"
