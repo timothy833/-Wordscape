@@ -14,9 +14,9 @@ const ErrorPage = () => {
       style={{ paddingTop: "200px", paddingBottom: "300px" }}
     >
       <h2 className="text-dark d-flex flex-row align-items-center mb-5">
-        <span class="material-symbols-outlined fs-2 me-2">menu_book</span>
+        <span className="material-symbols-outlined fs-2 me-2">menu_book</span>
         您所查看的頁面已經不存在
-        <span class="material-symbols-outlined fs-2 ms-2">menu_book</span>
+        <span className="material-symbols-outlined fs-2 ms-2">menu_book</span>
       </h2>
       <h3 className="text-gray mb-5">可能的原因</h3>
       <ul className="text-gray">
