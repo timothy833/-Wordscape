@@ -4,6 +4,12 @@ import { setFavoriteArticle } from "../../slice/favoriteSlice";
 import { Link } from "react-router-dom";
 
 import axios from "axios";
+import Swal from "sweetalert2";
+
+import {
+  alertMsgForAddFavorites,
+  alertMsgForCancelFavorites,
+} from "../../utils/alertMsg";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -117,7 +123,10 @@ const ArticleListPage = () => {
 
   const postFavorites = async (id) => {
     try {
-      await axios.post(`${API_BASE_URL}/posts/favorites/${id}`);
+      const res = await axios.post(`${API_BASE_URL}/posts/favorites/${id}`);
+      res.data.favorited
+        ? Swal.fire(alertMsgForAddFavorites)
+        : Swal.fire(alertMsgForCancelFavorites);
       getFavoriteArticle();
       getArticleListData();
     } catch (error) {
