@@ -1,9 +1,10 @@
-import { useState } from 'react';
-import PropTypes from 'prop-types';
-import axios from 'axios';
 const { VITE_API_BASE_URL } = import.meta.env;
+import axios from 'axios';
+import PropTypes from 'prop-types';
 import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 import Swal from "sweetalert2";
+import { useState, useEffect, useRef } from 'react';
+import { Popover } from "bootstrap";
 
 const SignupPage = ({ show, handleClose, handleShowLoginModal }) => {
     SignupPage.propTypes = {
@@ -45,13 +46,12 @@ const SignupPage = ({ show, handleClose, handleShowLoginModal }) => {
                 "password": formData.password,  
             }
             
-            const signUpRes = await axios.post(url, data, {
+            await axios.post(url, data, {
                 headers: {
                     "Content-Type": "application/json"
                 }
             }
         );
-        console.log('signupRes',signUpRes);
         
         Swal.fire({
             title: "註冊成功!",
@@ -63,9 +63,16 @@ const SignupPage = ({ show, handleClose, handleShowLoginModal }) => {
         setFormData({ username: "", email: "", password: "", confirmPassword: "" });
         setValidated(false);
         setFormErrors({});
-        handleClose(); //成功時再關閉視窗 如果輸入錯誤需要提示
+        guideToLoginHandle(); //成功跳轉登入頁
         }catch(error){
-            console.log('error in sign up', error.response?.data || error.message);
+            Swal.fire({
+                title: "註冊失敗!",
+                text: error.message,
+                icon: "error",
+                confirmButtonColor: "#E77605",
+                confirmButtonText: "確認"
+              });
+            
         }finally{
             setIsLoading(false);
         }
@@ -73,9 +80,34 @@ const SignupPage = ({ show, handleClose, handleShowLoginModal }) => {
 
     const guideToLoginHandle = () =>{
         setFormData({ username: "", email: "", password: "", confirmPassword: "" });
-        handleShowLoginModal();
         handleClose();
+        handleShowLoginModal();
     };
+
+    const passwordRef = useRef(null);
+    const popoverRef = useRef(null);
+
+    useEffect(() => {
+        // 初始化 popover
+        if (passwordRef.current && !popoverRef.current) {
+        popoverRef.current = new Popover(passwordRef.current, {
+            container: 'body',
+            placement: 'right',
+            trigger: 'focus', // 當輸入框獲得焦點時顯示
+            html: true,
+            content: `
+            <p>密碼需至少 8 個字元<br>並包含字母與數字</p>
+            `
+        });
+        }
+
+        // 組件卸載時銷毀 popover
+        return () => {
+        if (popoverRef.current) {
+            popoverRef.current.dispose();
+        }
+        };
+    }, []);
     
     // if (!show) return null; // 不顯示時直接返回null
     
@@ -188,6 +220,9 @@ const SignupPage = ({ show, handleClose, handleShowLoginModal }) => {
                                                     value={formData.password}
                                                     onChange={formInputChange}
                                                     required
+                                                    ref={passwordRef}
+                                                    data-bs-toggle="popover"
+                                                   
                                                 />
                                                 <label htmlFor="signPassword">Password</label>
                                                 <div className="invalid-feedback">{formErrors.password}</div>

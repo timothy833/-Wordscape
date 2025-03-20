@@ -70,7 +70,7 @@ const ResetPassword = () => {
             "newPassword": formData.password,  
           }
 
-        const resetPwRes = await axios.post(url, data, {
+        await axios.post(url, data, {
                 headers: {
                 "Content-Type": "application/json"
                 }

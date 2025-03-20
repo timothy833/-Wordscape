@@ -1,12 +1,12 @@
-import axios from 'axios'
-import { useState, useEffect } from 'react'
-import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
-import { login, clearError } from '../../slice/authSlice';
-import { useNavigate } from 'react-router-dom';
-import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 const { VITE_API_BASE_URL } = import.meta.env;
+import axios from 'axios'
+import PropTypes from 'prop-types';
+import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 import Swal from "sweetalert2";
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react'
+import { login, clearError } from '../../slice/authSlice';
 
 const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
     LoginPage.propTypes = {
@@ -16,7 +16,7 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
     };
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { loading, error, isAuthorized } = useSelector(state => state.auth);
+    const { error, isAuthorized } = useSelector(state => state.auth);
     const [isForgot, setIsForgot] = useState(false);
     const [resetEmail, setResetEmail] = useState({ email: "" });
     const [formData, setFormData] = useState({ email: "", password: "" });
@@ -118,7 +118,7 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
             
             console.log("forgot password",forgotPwRes);
             setResetEmail({ email: "" });
-            // alert(forgotPwRes.data.message); 
+           
             handleClose();
             Swal.fire({
                 title: "請檢查Email 以重設密碼",
