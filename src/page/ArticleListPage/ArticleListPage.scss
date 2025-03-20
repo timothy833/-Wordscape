@@ -152,6 +152,10 @@
   }
 }
 .article-list-card {
+  &:hover{
+    transition: 0.2s;
+    background-color: $secondary;
+  }
   .card-img {
     aspect-ratio: 2 / 1;
     @include media-breakpoint-up(md) {

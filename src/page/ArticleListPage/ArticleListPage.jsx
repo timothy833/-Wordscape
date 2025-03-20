@@ -499,10 +499,10 @@ const ArticleListPage = () => {
               )
               .map((articleListDataItem) => {
                 return (
-                  <li key={articleListDataItem.id} className="rounded-2 border">
+                  <li key={articleListDataItem.id}>
                     <Link
                       to={`/article/${articleListDataItem.id}`}
-                      className="article-list-card d-flex flex-column-reverse flex-md-row justify-content-between p-5"
+                      className="article-list-card d-flex rounded-2 border flex-column-reverse flex-md-row justify-content-between p-5"
                     >
                       <div className="d-flex flex-column gap-5 me-md-6">
                         <h3 className="text-primary fs-7 fw-bold text-truncate-2lines lh-sm">
@@ -553,7 +553,7 @@ const ArticleListPage = () => {
                         </div>
                       </div>
                       <img
-                        className="card-img object-fit-cover mb-5 mb-md-0"
+                        className="card-img object-fit-cover mb-5 mb-md-0 rounded"
                         src={
                           articleListDataItem.image_url ||
                           "https://github.com/wfox5510/wordSapce-imgRepo/blob/main/banner-1.png?raw=true"
