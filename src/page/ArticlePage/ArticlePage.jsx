@@ -9,11 +9,15 @@ import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import DOMParserReact from "dom-parser-react";
 import Swal from "sweetalert2";
-import { alertMsgForVerify } from "../../utils/alertMsg";
+import {
+  alertMsgForVerify,
+  alertMsgForAddFavorites,
+  alertMsgForCancelFavorites,
+  alertMsgForSuccess,
+} from "../../utils/alertMsg";
 import { Link } from "react-router-dom";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 import SponsorModal from "../../component/SponsorModal/SponsorModal";
-
 
 const ArticlePage = () => {
   const { id: articleId } = useParams();
@@ -27,6 +31,7 @@ const ArticlePage = () => {
   const [isLike, setIsLike] = useState(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(null);
+
 
   const getArticle = async () => {
     try {
@@ -46,8 +51,6 @@ const ArticlePage = () => {
       console.log(error);
     }
   };
-  //使用功能確認是否登入
-  const checkIsLogin = () => {};
   //留言相關功能(需登入)
   const getComment = async () => {
     try {
@@ -59,7 +62,7 @@ const ArticlePage = () => {
   };
   const postComment = async () => {
     try {
-      const res = await axios.post(`${API_BASE_URL}/comments`, {
+      await axios.post(`${API_BASE_URL}/comments`, {
         post_id: articleId,
         content: commentInput,
       });
@@ -84,7 +87,12 @@ const ArticlePage = () => {
   };
   const postSubscribed = async () => {
     try {
-      await axios.post(`${API_BASE_URL}/subscriptions/${articleData.user_id}`);
+      const res = await axios.post(
+        `${API_BASE_URL}/subscriptions/${articleData.user_id}`
+      );
+      res.data.subscribed
+        ? Swal.fire({...alertMsgForSuccess,title:"已成功追蹤"})
+        : Swal.fire({...alertMsgForSuccess,title:"已取消追蹤"});
       checkIsSubscribed();
     } catch (error) {
       console.log(error);
@@ -104,7 +112,7 @@ const ArticlePage = () => {
   const postArticleLike = async () => {
     try {
       //可以加入動畫增加使用體驗，次要
-      const res = await axios.post(
+      await axios.post(
         `${API_BASE_URL}/posts/post_likes/${articleId}`
       );
       getArticle(); //為了取得讚數在進行一次get文章資料，是否可以進行優化
@@ -128,7 +136,12 @@ const ArticlePage = () => {
   };
   const postFavorites = async () => {
     try {
-      await axios.post(`${API_BASE_URL}/posts/favorites/${articleId}`);
+      const res = await axios.post(
+        `${API_BASE_URL}/posts/favorites/${articleId}`
+      );
+      res.data.favorited
+        ? Swal.fire(alertMsgForAddFavorites)
+        : Swal.fire(alertMsgForCancelFavorites);
       checkIsFavorites();
     } catch (error) {
       console.log(error);
@@ -139,13 +152,23 @@ const ArticlePage = () => {
   const getAllArticleData = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/full`);
-      const filterArticleData = res.data.data.filter((item)=>item.status=="published");
+      const filterArticleData = res.data.data.filter(
+        (item) => item.status == "published"
+      );
       setAllArticleData(filterArticleData);
     } catch (error) {
       console.log(error);
     }
   };
-
+  // ✅ 顯示距離現在多久
+  const formatTimeAgo = (timestamp) => {
+    const now = new Date();
+    const createdAt = new Date(timestamp);
+    const diffMs = now - createdAt;
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffHours / 24);
+    return diffDays > 0 ? `${diffDays} 天前` : diffHours > 0 ? `${diffHours} 小時前` : "剛剛";
+  };
   useEffect(() => {
     window.scrollTo(0, 0);
     getArticle();
@@ -156,7 +179,7 @@ const ArticlePage = () => {
   useEffect(() => {
     if (articleData) {
       getAutherData();
-      checkIsSubscribed();
+      isAuthorized && checkIsSubscribed();
     }
   }, [articleData]);
   useEffect(() => {
@@ -169,7 +192,7 @@ const ArticlePage = () => {
       setIsFavorite(false);
       setIsSubscribed(null);
     }
-  }, [isAuthorized]);
+  }, [isAuthorized, articleId]);
 
   return (
     <>
@@ -181,7 +204,7 @@ const ArticlePage = () => {
                 return (
                   <a
                     className="badge rounded-pill bg-primary-hover lh-base"
-                    style={{cursor: 'pointer', fontSize : '.9rem'}}
+                    style={{ cursor: "pointer", fontSize: ".9rem" }}
                     key={tagItem.id}
                   >
                     #{tagItem.name}
@@ -194,7 +217,10 @@ const ArticlePage = () => {
             </div>
             <div className="d-flex gap-3 flex-column flex-lg-row">
               <div className="d-flex align-items-center gap-4">
-                <Link to={`/blog/${autherData?.id}`} className="d-flex align-items-center">
+                <Link
+                  to={`/blog/${autherData?.id}`}
+                  className="d-flex align-items-center"
+                >
                   <img
                     className="avatar object-fit-cover rounded-pill me-2"
                     src={
@@ -233,7 +259,7 @@ const ArticlePage = () => {
                 )}
               </div>
               <div className="d-flex align-items-center gap-4">
-              <SponsorModal />
+                {isAuthorized && <SponsorModal />}
                 <a
                   href="#"
                   className={`btn ${
@@ -305,6 +331,7 @@ const ArticlePage = () => {
                 commentData={commentItem}
                 articleId={articleId}
                 getComment={getComment}
+                formatTimeAgo={formatTimeAgo}
                 isAuthorized={isAuthorized}
                 isAuther={commentItem.user_id === articleData?.user_id}
                 isCurrentUser={commentItem.user_id === userId}
@@ -320,6 +347,7 @@ const ArticlePage = () => {
                       commentData={replieItem}
                       isAuthorized={isAuthorized}
                       getComment={getComment}
+                      formatTimeAgo={formatTimeAgo}
                       isAuther={replieItem.user_id === articleData?.user_id}
                       isCurrentUser={replieItem.user_id === userId}
                     />

@@ -4,11 +4,17 @@ import { setFavoriteArticle } from "../../slice/favoriteSlice";
 import { Link } from "react-router-dom";
 
 import axios from "axios";
+import Swal from "sweetalert2";
+
+import {
+  alertMsgForAddFavorites,
+  alertMsgForCancelFavorites,
+} from "../../utils/alertMsg";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ArticleListPage = () => {
-  const { isAuthorized, id: userId } = useSelector((state) => state.auth);
+  const { isAuthorized } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -31,7 +37,9 @@ const ArticleListPage = () => {
   const getAllArticleData = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/full`);
-      const filterArticleData = res.data.data.filter((item)=>item.status=="published");
+      const filterArticleData = res.data.data.filter(
+        (item) => item.status == "published"
+      );
       setAllArticleData(filterArticleData);
     } catch (error) {
       console.log(error);
@@ -84,7 +92,7 @@ const ArticleListPage = () => {
   //取得所有文章資料後根據選擇分類篩選資料，用於渲染文章列表
   const [articleListData, setArticleListData] = useState(null);
   const [listSelector, setListSelector] = useState("allArticle");
-  const [articleListDisplayCount, SetArticleListDisplayCount] = useState(10);
+  const [articleListPageCount, setArticleListPageCount] = useState(1);
 
   const getArticleListData = async () => {
     try {
@@ -93,7 +101,8 @@ const ArticleListPage = () => {
         res.data.data.filter(
           (articleDataItem) =>
             (articleDataItem.category_id === listSelector ||
-            listSelector === "allArticle") && articleDataItem.status == "published"
+              listSelector === "allArticle") &&
+            articleDataItem.status == "published"
         )
       );
     } catch (error) {
@@ -114,7 +123,10 @@ const ArticleListPage = () => {
 
   const postFavorites = async (id) => {
     try {
-      await axios.post(`${API_BASE_URL}/posts/favorites/${id}`);
+      const res = await axios.post(`${API_BASE_URL}/posts/favorites/${id}`);
+      res.data.favorited
+        ? Swal.fire(alertMsgForAddFavorites)
+        : Swal.fire(alertMsgForCancelFavorites);
       getFavoriteArticle();
       getArticleListData();
     } catch (error) {
@@ -122,19 +134,19 @@ const ArticleListPage = () => {
     }
   };
   //文章列表沒有paganation，用滾動至底部作為新增資料的判斷
-  useEffect(() => {
-    const handleScroll = () => {
-      //當滑動到底部，且顯示文章數量少於文章列表資料數量
-      window.innerHeight + window.scrollY >=
-        document.documentElement.scrollHeight &&
-        articleListData?.length > articleListDisplayCount &&
-        SetArticleListDisplayCount((prev) => {
-          return prev + 10;
-        });
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [articleListData]);
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     //當滑動到底部，且顯示文章數量少於文章列表資料數量
+  //     window.innerHeight + window.scrollY >=
+  //       document.documentElement.scrollHeight &&
+  //       articleListData?.length > articleListPageCount &&
+  //       setArticleListPageCount((prev) => {
+  //         return prev + 10;
+  //       });
+  //   };
+  //   window.addEventListener("scroll", handleScroll);
+  //   return () => window.removeEventListener("scroll", handleScroll);
+  // }, [articleListData]);
 
   useEffect(() => {
     getCategories();
@@ -218,7 +230,7 @@ const ArticleListPage = () => {
                                   {hotArticleDataItem.description}
                                 </p>
                               </div>
-                              <div className="card-footer border-0 p-0 bg-light">
+                              <div className="card-footer border-0 p-0">
                                 <span className="me-2">
                                   {hotArticleDataItem.author_name} |
                                 </span>
@@ -234,7 +246,7 @@ const ArticleListPage = () => {
                     aria-label="Page navigation"
                   >
                     <ul className="hot-article-pagination pagination justify-content-center gap-2 mb-0">
-                      <li className="page-item" disable="true">
+                      <li className="page-item">
                         <a
                           className={`page-link material-symbols-outlined p-0 ps-1 pt-1 rounded-1 ${
                             currentPage === 1 && "disabled"
@@ -371,7 +383,7 @@ const ArticleListPage = () => {
                       return (
                         <li
                           key={recommendArticleDataItem.id}
-                          className="recommend-article-card bg-light rounded-2 border-bottom border-2 border-lg-4 border-primary"
+                          className="recommend-article-card rounded-2 border-bottom border-2 border-lg-4 border-primary"
                         >
                           <Link
                             to={`/article/${recommendArticleDataItem.id}`}
@@ -404,13 +416,13 @@ const ArticleListPage = () => {
                         </li>
                       );
                     })}
-                    {recommendArticleData
+                  {recommendArticleData
                     .slice(3, 5)
                     .map((recommendArticleDataItem) => {
                       return (
                         <li
                           key={recommendArticleDataItem.id}
-                          className="d-none d-lg-block recommend-article-card bg-light rounded-2 border-bottom border-2 border-lg-4 border-primary"
+                          className="d-none d-lg-block recommend-article-card rounded-2 border-bottom border-2 border-lg-4 border-primary"
                         >
                           <Link
                             to={`/article/${recommendArticleDataItem.id}`}
@@ -481,13 +493,16 @@ const ArticleListPage = () => {
           </div>
           <ul className="list-unstyled d-flex flex-column gap-5 px-4 px-lg-0">
             {articleListData
-              ?.slice(0, articleListDisplayCount)
+              ?.slice(
+                (articleListPageCount - 1) * 10,
+                articleListPageCount * 10
+              )
               .map((articleListDataItem) => {
                 return (
-                  <li key={articleListDataItem.id} className="rounded-2 border">
+                  <li key={articleListDataItem.id}>
                     <Link
                       to={`/article/${articleListDataItem.id}`}
-                      className="article-list-card d-flex flex-column-reverse flex-md-row justify-content-between p-5"
+                      className="article-list-card d-flex rounded-2 border flex-column-reverse flex-md-row justify-content-between p-5"
                     >
                       <div className="d-flex flex-column gap-5 me-md-6">
                         <h3 className="text-primary fs-7 fw-bold text-truncate-2lines lh-sm">
@@ -538,7 +553,7 @@ const ArticleListPage = () => {
                         </div>
                       </div>
                       <img
-                        className="card-img object-fit-cover mb-5 mb-md-0"
+                        className="card-img object-fit-cover mb-5 mb-md-0 rounded"
                         src={
                           articleListDataItem.image_url ||
                           "https://github.com/wfox5510/wordSapce-imgRepo/blob/main/banner-1.png?raw=true"
@@ -550,6 +565,126 @@ const ArticleListPage = () => {
                 );
               })}
           </ul>
+          {articleListData && (
+            <ul className="hot-article-pagination pagination justify-content-center gap-2 mb-0">
+              <li className="page-item">
+                <a
+                  className={`page-link material-symbols-outlined p-0 ps-1 pt-1 rounded-1 ${
+                    currentPage === 1 && "disabled"
+                  }`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setArticleListPageCount(articleListPageCount - 1);
+                  }}
+                >
+                  arrow_back_ios
+                </a>
+              </li>
+              {Array.from({
+                length: Math.ceil(articleListData.length / 10),
+              }).map((item, index) => {
+                const totalPage = Math.ceil(articleListData.length / 10);
+                if (
+                  articleListPageCount - index - 1 <= 2 &&
+                  articleListPageCount - index - 1 >= -2
+                )
+                  return (
+                    <li className="page-item" key={index}>
+                      <a
+                        className={`page-link rounded-1 p-0 ${
+                          articleListPageCount === index + 1 && "active"
+                        }`}
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setArticleListPageCount(index + 1);
+                        }}
+                      >
+                        {index + 1}
+                      </a>
+                    </li>
+                  );
+                else if (
+                  articleListPageCount < totalPage - 2 &&
+                  index + 1 === totalPage
+                )
+                  return (
+                    <Fragment key={index}>
+                      <li className="page-item">
+                        <a
+                          className={`page-link rounded-1 p-0`}
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                          }}
+                        >
+                          ...
+                        </a>
+                      </li>
+                      <li className="page-item">
+                        <a
+                          className={`page-link rounded-1 p-0 ${
+                            articleListPageCount === index + 1 && "active"
+                          }`}
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setArticleListPageCount(index + 1);
+                          }}
+                        >
+                          {index + 1}
+                        </a>
+                      </li>
+                    </Fragment>
+                  );
+                else if (articleListPageCount > 3 && index === 0)
+                  return (
+                    <Fragment key={index}>
+                      <li className="page-item">
+                        <a
+                          className={`page-link rounded-1 p-0 ${
+                            articleListPageCount === index + 1 && "active"
+                          }`}
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setArticleListPageCount(index + 1);
+                          }}
+                        >
+                          {index + 1}
+                        </a>
+                      </li>
+                      <li className="page-item">
+                        <a
+                          className={`page-link rounded-1 p-0`}
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                          }}
+                        >
+                          ...
+                        </a>
+                      </li>
+                    </Fragment>
+                  );
+              })}
+              <li className="page-item">
+                <a
+                  className={`page-link material-symbols-outlined rounded-1 p-0 ${
+                    articleListPageCount ===
+                      Math.ceil(articleListData.length / 10) && "disabled"
+                  }`}
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setArticleListPageCount(articleListPageCount + 1);
+                  }}
+                >
+                  arrow_forward_ios
+                </a>
+              </li>
+            </ul>
+          )}
         </div>
       </section>
     </>

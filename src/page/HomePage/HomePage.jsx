@@ -14,7 +14,6 @@ import banner_3 from "../../assets/images/banner/banner-3.png";
 import banner_1_sm from "../../assets/images/banner/banner-1-sm.png";
 import banner_2_sm from "../../assets/images/banner/banner-2-sm.png";
 import banner_3_sm from "../../assets/images/banner/banner-3-sm.png";
-import avatar from "../../assets/images/avatar-1.png";
 import about_us from "../../assets/images/about-us.png";
 import commentData from "./HomePageCommentData";
 import { useEffect, useState } from "react";

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import PropTypes from "prop-types";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const ArticleCard = ({ articleData }) => {
   const [autherData , setAutherData] = useState(null)
@@ -68,6 +69,19 @@ const ArticleCard = ({ articleData }) => {
       </Link>
 
   );
+};
+
+ArticleCard.propTypes = {
+  articleData: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    user_id: PropTypes.number.isRequired,
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    author_name: PropTypes.string.isRequired,
+    image_url: PropTypes.string,
+    likes_count: PropTypes.number.isRequired,
+    comments: PropTypes.array.isRequired,
+  }).isRequired,
 };
 
 export default ArticleCard;

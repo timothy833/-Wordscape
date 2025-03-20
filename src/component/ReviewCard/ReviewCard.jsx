@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import "./ReviewCard.scss";
 const ReviewCard = ({ reviewStar, avatar, width, content ,user_name }) => {
   return (
@@ -41,6 +42,14 @@ const ReviewCard = ({ reviewStar, avatar, width, content ,user_name }) => {
       </div>
     </div>
   );
+};
+
+ReviewCard.propTypes = {
+  reviewStar: PropTypes.number.isRequired,
+  avatar: PropTypes.string.isRequired,
+  width: PropTypes.string.isRequired,
+  content: PropTypes.string.isRequired,
+  user_name: PropTypes.string.isRequired,
 };
 
 export default ReviewCard;

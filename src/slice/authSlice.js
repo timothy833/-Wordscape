@@ -54,6 +54,7 @@ export const login = createAsyncThunk(
 
       return { token, username, id };
     } catch (error) {
+      console.log(error);
       if (error.response && error.response.status === 401) {
         Swal.fire({
           title: "登入失敗!",
