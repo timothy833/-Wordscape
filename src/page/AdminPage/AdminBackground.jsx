@@ -10,7 +10,7 @@ import AdminViewCount from "../../component/AdminViewCount/AdminViewCount";
 
 const AdminBackground = () => {
   const [isLoading,setIsLoading] = useState(false);
-  const { isAuthorized, id, username, token } = useSelector(state => state.auth);
+  const {id,token } = useSelector(state => state.auth);
 
   const [followers, setFollowers] = useState(0); // 訂閱人數
   const [totalViews, setTotalViews] = useState([]);  // 總點閱量
@@ -84,7 +84,7 @@ const AdminBackground = () => {
       };
     };
     fetchData();
-  }, [])
+  }, [id, token])
 
   // 下拉選單數據
   const [monthlyViews, setMonthlyViews] = useState(0); // 月總點閱量
@@ -146,8 +146,6 @@ const AdminBackground = () => {
     setTotalRevenue(total);
   }, [revenue]);
 
-  // 整理營收圖表數據
-  const [monthlyRevenueData, setMonthlyRevenueData] = useState(Array(12).fill(0));
 
   // 圖表年份選擇
   const [selectedYear, setSelectedYear] = useState(dayjs().format("YYYY")); // 預設當前年份
@@ -350,15 +348,6 @@ const AdminBackground = () => {
         <ul className="clickCount_body list-unstyled">
           {currentArticles.length > 0 ? (
             currentArticles.map((article) => (
-              // <li key={article.id} className="d-md-grid d-flex justify-content-between mb-5">
-              //   <div>
-              //     <p className="clickCount_body-title mb-2">{article.title}</p>
-              //     <p className="text-gray d-md-none">{dayjs(article.created_at).format("YYYY-MM-DD")}</p>
-              //   </div>
-              //   <p className="text-gray d-none d-md-block">{dayjs(article.created_at).format("YYYY-MM-DD")}</p>
-              //   <p>{article.views_count.toLocaleString()}</p>
-              // </li>
-
               <AdminViewCount key={article.id} article={article} />
             ))
           ) : (

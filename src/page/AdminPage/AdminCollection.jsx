@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState,Fragment} from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 const { VITE_API_BASE_URL } = import.meta.env;
@@ -9,7 +9,7 @@ import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 
 
 const AdminCollection = () => {
-  const { isAuthorized, id, username, token } = useSelector(state => state.auth);
+  const { token } = useSelector(state => state.auth);
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [collectionData, setCollectionData] = useState([]);
@@ -33,7 +33,7 @@ const AdminCollection = () => {
         setIsLoading(false);
       };
     })();
-  }, []);
+  }, [token]);
   return (
     <>
       {isLoading && <LoadingSpinner />}
@@ -49,9 +49,9 @@ const AdminCollection = () => {
                 <Admin_ArticleCard
                   key={item.id}
                   collectionData={item}
-                  setCollectionData={setCollectionData} 
-                  collectionDataList={collectionData}  
-                  setCurrentPage={setCurrentPage}     
+                  setCollectionData={setCollectionData}
+                  collectionDataList={collectionData}
+                  setCurrentPage={setCurrentPage}
                 />
               )
             })
@@ -60,7 +60,7 @@ const AdminCollection = () => {
           {/* 分頁 */}
           <nav className="d-none d-lg-block" aria-label="Page navigation">
             <ul className="hot-article-pagination pagination justify-content-center gap-2 mb-0">
-              <li className="page-item" disable="true">
+              <li className="page-item">
                 <a
                   className={`page-link material-symbols-outlined p-0 ps-1 pt-1 rounded-1 ${currentPage === 1 && "disabled"
                     }`}

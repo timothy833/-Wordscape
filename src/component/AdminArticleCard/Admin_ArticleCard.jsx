@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import PropTypes from "prop-types";
 const { VITE_API_BASE_URL } = import.meta.env;
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -8,15 +9,14 @@ import { alertMsgForVerify } from "../../utils/alertMsg";
 import { alertMsgForCancelFavorites } from "../../utils/alertMsg";
 import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 
-
 const Admin_ArticleCard = ({
   collectionData,
   setCollectionData,
   collectionDataList,
   setCurrentPage
 }) => {
-  const { isAuthorized, id, username, token } = useSelector(state => state.auth);
-  const [collection, setCollection] = useState([collectionData]);
+  const { token } = useSelector(state => state.auth);
+  const [collection] = useState([collectionData]);
   const [isLoading, setIsLoading] = useState(false);
   const cancelFavorites = async (id) => {
     if (!token) {
@@ -111,6 +111,13 @@ const Admin_ArticleCard = ({
       })}
     </>
   );
+};
+
+Admin_ArticleCard.propTypes = {
+  collectionData: PropTypes.object.isRequired,
+  setCollectionData: PropTypes.func.isRequired,
+  collectionDataList: PropTypes.array.isRequired,
+  setCurrentPage: PropTypes.func.isRequired,
 };
 
 export default Admin_ArticleCard;

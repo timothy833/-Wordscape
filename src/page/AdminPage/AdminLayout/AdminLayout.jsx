@@ -2,8 +2,7 @@ import { Outlet, NavLink,Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const AdminLayout = () => {
-  const { isAuthorized, id, username, token, userAvatar } = useSelector(state => state.auth);
-  const adminLinkActive = ({ isActive }) => (isActive ? "adminLinkActive" : "");
+  const { id, username,  userAvatar } = useSelector(state => state.auth);
   return (
     <>
       <main className="bg-secondary py-10">

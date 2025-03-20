@@ -14,13 +14,21 @@ import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 const AdminInfo = () => {
   const [isLoading,setIsLoading] = useState(false);
   const dispatch = useDispatch();
-  const { isAuthorized, id, username, token, userAvatar } = useSelector(state => state.auth);
+  const { id, token} = useSelector(state => state.auth);
   const [previewImage, setPreviewImage] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const fileInputRef = useRef(null);
 
   const { register, handleSubmit, setValue, watch,formState:{errors} } = useForm({
-    mode:'onChange'
+    mode:'onChange',
+    defaultValues: {
+      username: "",
+      email: "",
+      phone: "",
+      gender: "",
+      bio: "",
+      profile_picture: "",
+    }
   });
   useEffect(() => {
     (async () => {
@@ -54,7 +62,7 @@ const AdminInfo = () => {
         setIsLoading(false);
       }
     })();
-  }, []);
+  }, [id,setValue,token]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
