@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import  { useEffect } from "react";
 import c3 from "c3";
 import "c3/c3.css";
+import PropTypes from "prop-types";
 
 const AdminRevenueChart = ({ revenueData }) => {
   useEffect(() => {
@@ -60,6 +61,10 @@ const AdminRevenueChart = ({ revenueData }) => {
       <div id="revenue-chart"></div>
     </div>
   );
+};
+
+AdminRevenueChart.propTypes = {
+  revenueData: PropTypes.arrayOf(PropTypes.number).isRequired,
 };
 
 export default AdminRevenueChart;

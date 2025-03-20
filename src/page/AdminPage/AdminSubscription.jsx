@@ -30,14 +30,13 @@ const AdminSubscription = () => {
         <h1 className="fs-4 fs-md-1 text-primary fw-bold mb-5 mb-md-10">
           收款紀錄
         </h1>
-        <a href="#" className="link-primary-hover">
+        <a style={{cursor:"pointer"}} className="link-primary-hover">
           問題回報
         </a>
       </div>
 
       <div className="subscription-history">
         {paymentReceivedData
-          // .slice((currentPage - 1) * 10 + 1, currentPage * 10)
           .slice((currentPage - 1) * 10 , currentPage * 10)
           .map((paymentReceivedDataItem) => {
             return (
