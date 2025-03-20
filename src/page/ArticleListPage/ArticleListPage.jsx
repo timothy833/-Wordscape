@@ -230,7 +230,7 @@ const ArticleListPage = () => {
                                   {hotArticleDataItem.description}
                                 </p>
                               </div>
-                              <div className="card-footer border-0 p-0 bg-light">
+                              <div className="card-footer border-0 p-0">
                                 <span className="me-2">
                                   {hotArticleDataItem.author_name} |
                                 </span>
@@ -383,7 +383,7 @@ const ArticleListPage = () => {
                       return (
                         <li
                           key={recommendArticleDataItem.id}
-                          className="recommend-article-card bg-light rounded-2 border-bottom border-2 border-lg-4 border-primary"
+                          className="recommend-article-card rounded-2 border-bottom border-2 border-lg-4 border-primary"
                         >
                           <Link
                             to={`/article/${recommendArticleDataItem.id}`}
@@ -422,7 +422,7 @@ const ArticleListPage = () => {
                       return (
                         <li
                           key={recommendArticleDataItem.id}
-                          className="d-none d-lg-block recommend-article-card bg-light rounded-2 border-bottom border-2 border-lg-4 border-primary"
+                          className="d-none d-lg-block recommend-article-card rounded-2 border-bottom border-2 border-lg-4 border-primary"
                         >
                           <Link
                             to={`/article/${recommendArticleDataItem.id}`}
