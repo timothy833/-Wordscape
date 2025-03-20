@@ -8,7 +8,7 @@ import axios from "axios";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ArticleListPage = () => {
-  const { isAuthorized, id: userId } = useSelector((state) => state.auth);
+  const { isAuthorized } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -234,7 +234,7 @@ const ArticleListPage = () => {
                     aria-label="Page navigation"
                   >
                     <ul className="hot-article-pagination pagination justify-content-center gap-2 mb-0">
-                      <li className="page-item" disable="true">
+                      <li className="page-item">
                         <a
                           className={`page-link material-symbols-outlined p-0 ps-1 pt-1 rounded-1 ${
                             currentPage === 1 && "disabled"
