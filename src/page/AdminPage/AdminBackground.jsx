@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState,Fragment } from "react";
 import { useSelector } from "react-redux";
 
 import axios from "axios";
@@ -208,7 +208,6 @@ const AdminBackground = () => {
   });
 
   // 文章分頁
-  const totalPages = Math.ceil(sortedArticles.length / articlesPerPage);
   const currentArticles = sortedArticles.slice((currentPage - 1) * articlesPerPage, currentPage * articlesPerPage);
 
 
@@ -347,7 +346,8 @@ const AdminBackground = () => {
 
         <ul className="clickCount_body list-unstyled">
           {currentArticles.length > 0 ? (
-            currentArticles.map((article) => (
+            currentArticles
+            .map((article) => (
               <AdminViewCount key={article.id} article={article} />
             ))
           ) : (
@@ -355,15 +355,115 @@ const AdminBackground = () => {
           )}
         </ul>
         {/* 分頁按鈕 */}
-        {totalPages > 1 && (
-          <ul className="admin-background_pagination list-unstyled d-flex justify-content-center gap-5">
-            {Array.from({ length: totalPages }).map((_, i) => (
-              <li style={{ cursor: "pointer" }} key={i} className={i + 1 === currentPage ? "text-primary" : ""} onClick={() => setCurrentPage(i + 1)}>
-                {i + 1}
-              </li>
-            ))}
-          </ul>
-        )}
+         <nav aria-label="Page navigation">
+                    <ul className="hot-article-pagination pagination justify-content-center gap-2 mb-0">
+                      <li className="page-item">
+                        <a
+                          className={`page-link material-symbols-outlined p-0 ps-1 pt-1 rounded-1 ${currentPage === 1 && "disabled"
+                            }`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCurrentPage(currentPage - 1);
+                          }}
+                        >
+                          arrow_back_ios
+                        </a>
+                      </li>
+                      {Array.from({
+                        length: Math.ceil(sortedArticles.length / 10),
+                      }).map((item, index) => {
+                        const totalPage = Math.ceil(sortedArticles.length / 10);
+                        if (currentPage - index - 1 <= 2 && currentPage - index - 1 >= -2)
+                          return (
+                            <li className="page-item" key={index}>
+                              <a
+                                className={`page-link rounded-1 p-0 ${currentPage === index + 1 && "active"
+                                  }`}
+                                href="#"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setCurrentPage(index + 1);
+                                }}
+                              >
+                                {index + 1}
+                              </a>
+                            </li>
+                          );
+                        else if (currentPage < totalPage - 2 && index + 1 === totalPage)
+                          return (
+                            <Fragment key={index}>
+                              <li className="page-item">
+                                <a
+                                  className={`page-link rounded-1 p-0`}
+                                  href="#"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                  }}
+                                >
+                                  ...
+                                </a>
+                              </li>
+                              <li className="page-item">
+                                <a
+                                  className={`page-link rounded-1 p-0 ${currentPage === index + 1 && "active"
+                                    }`}
+                                  href="#"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    setCurrentPage(index + 1);
+                                  }}
+                                >
+                                  {index + 1}
+                                </a>
+                              </li>
+                            </Fragment>
+                          );
+                        else if (currentPage > 3 && index === 0)
+                          return (
+                            <Fragment key={index}>
+                              <li className="page-item">
+                                <a
+                                  className={`page-link rounded-1 p-0 ${currentPage === index + 1 && "active"
+                                    }`}
+                                  href="#"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    setCurrentPage(index + 1);
+                                  }}
+                                >
+                                  {index + 1}
+                                </a>
+                              </li>
+                              <li className="page-item">
+                                <a
+                                  className={`page-link rounded-1 p-0`}
+                                  href="#"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                  }}
+                                >
+                                  ...
+                                </a>
+                              </li>
+                            </Fragment>
+                          );
+                      })}
+                      <li className="page-item">
+                        <a
+                          className={`page-link material-symbols-outlined rounded-1 p-0 ${currentPage === Math.ceil(sortedArticles.length / 10) &&
+                            "disabled"
+                            }`}
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCurrentPage(currentPage + 1);
+                          }}
+                        >
+                          arrow_forward_ios
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
       </div>
     </>
   );
