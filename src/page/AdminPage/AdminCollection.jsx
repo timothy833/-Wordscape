@@ -58,7 +58,7 @@ const AdminCollection = () => {
           }
 
           {/* 分頁 */}
-          <nav className="d-none d-lg-block" aria-label="Page navigation">
+          <nav aria-label="Page navigation">
             <ul className="hot-article-pagination pagination justify-content-center gap-2 mb-0">
               <li className="page-item">
                 <a
