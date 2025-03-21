@@ -315,8 +315,12 @@ const NewPostModal = ({ getBlogArticle, token, isModalOpen, setIsModalOpen, setI
 
     // **發送文章**
     const handleSubmit = async ()=> {
+        setIsLoading(true);
         const isValid = await validateForm();
-        if (!isValid) return;
+        if (!isValid){
+            setIsLoading(false);
+            return;
+        } 
 
         try {
             // 1️⃣ **上傳封面圖到 R2（如果有選擇本地圖片）**
@@ -369,10 +373,10 @@ const NewPostModal = ({ getBlogArticle, token, isModalOpen, setIsModalOpen, setI
                     // quill.root.innerHTML = tempDiv.innerHTML; // ✅ 直接更新 Quill 編輯器內容
                 } catch (error) {
                     console.error("文章內圖片上傳失敗", error);
+                    setIsLoading(false);
                     return
                 }
             }
-            setIsLoading(true);
              // 5️⃣ 送出文章資料
            const  postResponse =  await axios.post(`${API_BASE_URL}/posts`, {
                 title,
@@ -399,11 +403,10 @@ const NewPostModal = ({ getBlogArticle, token, isModalOpen, setIsModalOpen, setI
                 });
                 console.log(resTag);
             }
+            getBlogArticle();
             setIsLoading(false);
             Swal.fire(alertCreatePost);
             handleClose(); // 發布成功後清空輸入內容
-            getBlogArticle();
-            
         } catch (error) {
             console.error("新增文章失敗", error);
             // handleClose(); //關閉 modal 並清空輸入內容

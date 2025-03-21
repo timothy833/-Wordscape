@@ -19,7 +19,7 @@ function getTokenFromCookie() {
 const initialToken = getTokenFromCookie();
 if (initialToken) {
   axios.defaults.headers.common.Authorization = `Bearer ${initialToken}`;
-  console.log('初始化 token 成功', initialToken);
+  // console.log('初始化 token 成功', initialToken);
 };
 
 export const login = createAsyncThunk(
@@ -33,7 +33,7 @@ export const login = createAsyncThunk(
         }
       });
       const { token, id, username } = loginRes.data;
-      console.log("login", loginRes);
+      // console.log("login", loginRes);
       localStorage.setItem('WS_id', id);
       localStorage.setItem('WS_username', username);
 
@@ -81,7 +81,7 @@ export const login = createAsyncThunk(
 export const logout = createAsyncThunk(
   'auth/logout',
   async (_, { getState, rejectWithValue }) => {
-    console.log('logout');
+    // console.log('logout');
     try {
       const token = getState().auth.token;
       if (!token) {
@@ -94,7 +94,7 @@ export const logout = createAsyncThunk(
         }
       });
 
-      console.log('logout', logoutRes);
+      // console.log('logout', logoutRes);
 
       if (logoutRes.status === 200) {
         // 成功登出，清除數據

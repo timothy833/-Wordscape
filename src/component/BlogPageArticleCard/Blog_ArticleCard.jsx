@@ -26,20 +26,54 @@ const useMediaQuery = (query) => {
 };
 
 
-const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, token, getBlogArticle, onEdit, isAuthor, userId, setIsLoading}) => {
+const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, token, getBlogArticle, onEdit, isAuthor, userId, setIsLoading, }) => {
   const [addcontent, setAddContent] = useState("");
   const [articleId, setArticleId] =useState("");
   const [showArticleReply, setShowArticleReply] = useState(false);
   const [showAllComments, setShowAllComments] = useState(false);
-  const [isGood, setIsGood] = useState(false);
 
   const isMobile = useMediaQuery("(max-width: 768px)");
 
-  useEffect(() => {
-    if (!likePost) {
-      console.warn("⚠️ likePost 函式未傳遞，請檢查 BlogHome.jsx");
+  const [isGood, setIsGood] = useState(false);
+  
+  //取得文章是否按讚狀態
+  // 🔥 檢查登入者是否已按讚
+  const checkLikeStatus = async (postId) => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/posts/post_likes/${postId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      // 從回傳資料中檢查當前使用者是否有在按讚者列表內
+      const hasLiked = res.data.data.some(user => user.id === userId);
+      setIsGood(hasLiked); // 如果有按讚則為 true，否則 false
+    } catch (error) {
+      console.error("檢查按讚狀態失敗", error);
     }
-  }, [likePost]);
+  };
+
+  // 🔥 當組件掛載時，檢查當前使用者是否已按讚
+  useEffect(() => {
+    checkLikeStatus(article.id);
+  }, [article.id]); 
+
+
+  //文章內容按讚
+  const likePost = async (postId) => {
+    const res =  await axios.post(`${API_BASE_URL}/posts/post_likes/${postId}`,{}, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            }
+          })
+    if(res.data.liked === true){
+      setIsGood(true);
+    }else{
+      setIsGood(false);
+    }
+
+    getBlogArticle(); 
+  };
 
    // ✅ 確保留言按照時間排序（最新留言在最前）
    const sortedComments = [...comments].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
@@ -66,21 +100,6 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, to
   };
 
 
-   // 🔥 留言按讚功能（只影響該文章內部）
-  const likeComment = (commentId) => {
-    axios.post(`${API_BASE_URL}/comments/comment_likes/${commentId}`,{},{
-      headers: {
-        Authorization: `Bearer ${token}`,
-      }
-    })
-      .then(( )=> {
-          console.log("留言按讚成功")
-          getBlogArticle();
-        })
-      .catch(error => console.error("留言按讚失敗", error));
-
-
-  };
 
   // 文章刪除modal功能
   const articleDelete = async(post_id)=> {
@@ -172,7 +191,6 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, to
                 {/* 🔥 文章按讚功能 */}
                 <div className={`d-flex gap-1  ${isGood ? "text-primary" : "text-gray"}`} onClick={() => {
                   likePost(article.id)
-                  setIsGood(!isGood)
                   }} style={{ cursor: "pointer" }}>
                   <p>{article.likes_count}</p>
                   <span className="material-symbols-outlined">
@@ -188,12 +206,12 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, to
                   </span>
                 </div>
 
-                <p className="text-gray hover-effect"  onClick={() => {
+                {userId &&(<p className="text-gray hover-effect"  onClick={() => {
                   setShowArticleReply(!showArticleReply)
                   setArticleId(article.id)
                   }}>
                   回覆
-                </p>
+                </p>)}
 
                 {/* 釘選按鈕 */}
                 {isAuthor && (<i className={`bi bi-pin-fill fs-6 ${isPinned ? "text-primary" : "text-gray"}`}
@@ -261,7 +279,6 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, likePost, to
           <Blog_CommentReply 
             key={comment.id} 
             comment={comment} 
-            likeComment={likeComment} 
             postId= {comment.post_id}  
             getBlogArticle={getBlogArticle} 
             token={token} 
@@ -301,13 +318,12 @@ Blog_ArticleCard.propTypes = {
   ),
   togglePin: PropTypes.func.isRequired,
   isPinned: PropTypes.bool.isRequired,
-  likePost: PropTypes.func,
   token: PropTypes.string,
   getBlogArticle: PropTypes.func,
   onEdit: PropTypes.func,
   isAuthor:PropTypes.bool,
   userId: PropTypes.string,
-  setIsLoading: PropTypes.func
+  setIsLoading: PropTypes.func,
 }
 
 

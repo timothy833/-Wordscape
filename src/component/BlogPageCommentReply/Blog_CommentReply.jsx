@@ -1,4 +1,3 @@
-import avatar from "../../assets/images/avatar-1.png";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -8,7 +7,7 @@ import {  alertDelete, alertReply } from "../../utils/alertMsg"
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 import { useNavigate } from "react-router-dom";
 
-const Blog_CommentReply = ({comment, likeComment, getBlogArticle, token, postId, formatTimeAgo, isAuthor, userId, setIsLoading}) => {
+const Blog_CommentReply = ({comment, getBlogArticle, token, postId, formatTimeAgo, isAuthor, userId, setIsLoading}) => {
 
   const [addReply, setAddReply] = useState("");
   const [commentId, setCommentId] =useState("");
@@ -18,11 +17,54 @@ const Blog_CommentReply = ({comment, likeComment, getBlogArticle, token, postId,
   const [editedReply, setEditedReply] = useState(comment.content); // 編輯中的留言內容
   const [isGood, setIsGood ] =useState(false);
 
-  useEffect(() => {
-    if (!likeComment) {
-      console.warn("⚠️ likeComment 函式未傳遞，請檢查 Blog_ArticleCard.jsx");
+
+
+   // 🔥 檢查登入者是否已按讚
+   const checkLikeStatus = async (commentId) => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/comments/comment_likes/${commentId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      // console.log(res.data);
+      // console.log(userId);
+      // 從回傳資料中檢查當前使用者是否有在按讚者列表內
+      const hasLiked = res.data.data.some(user => user.user_id === userId);
+      // console.log("按讚狀態",hasLiked )
+      setIsGood(hasLiked); // 如果有按讚則為 true，否則 false
+    } catch (error) {
+      console.error("檢查按讚狀態失敗", error);
     }
-  }, [likeComment]);
+  };
+
+    // 🔥 當組件掛載時，檢查當前使用者是否已按讚
+    useEffect(() => {
+      checkLikeStatus(comment.id);
+    }, [comment.id]); 
+  
+
+  // 🔥 文章內留言按讚功能
+  const likeComment = (commentId) => {
+  axios.post(`${API_BASE_URL}/comments/comment_likes/${commentId}`,{},{
+    headers: {
+      Authorization: `Bearer ${token}`,
+    }
+  })
+    .then(( res )=> {
+        if(res.data.liked === true){
+          setIsGood(true);
+        }else{
+          setIsGood(false);
+        }
+        // console.log("留言按讚成功")
+        // checkLikeStatus(commentId); // 按讚後立即重新檢查狀態
+        getBlogArticle();
+      })
+    .catch(error => console.error("留言按讚失敗", error));
+
+  };
+  
 
   //發送留言回覆請求
   const addCommentRep = async()=>{
@@ -143,7 +185,6 @@ const deleteComment = async (commentId) => {
         <p className="text-gray">{formatTimeAgo(comment.created_at)}</p> {/* ✅ 顯示發言時間 */}
         <div className={`d-flex gap-1 ${isGood ? "text-primary" : "text-gray"}`} onClick={() => {
           likeComment(comment.id)
-          setIsGood(!isGood)
           }} style={{ cursor: "pointer" }}>
           <span className="material-symbols-outlined">
             favorite
@@ -156,11 +197,11 @@ const deleteComment = async (commentId) => {
           </span>
           <p>{comment.replies.length}</p>
         </div>
-        <p className="text-gray hover-effect"  style={{ cursor: "pointer" }}
+        {userId && (<p className="text-gray hover-effect"  style={{ cursor: "pointer" }}
             onClick={() => {
                   setShowCommentReply(!showCommentReply)
                   setCommentId(comment.id)
-                  }}>回覆</p>
+                  }}>回覆</p>)}
 
         {/* 🔥 三點選單（Dropdown Menu）🔽 */}
         {(isAuthor || comment.user_id === userId) && (
@@ -281,8 +322,6 @@ Blog_CommentReply.propTypes = {
     replies: PropTypes.arrayOf(PropTypes.object),
     created_at: PropTypes.string
   }).isRequired,  
-  likeComment: PropTypes.func, // 按讚留言
-  commentLikes: PropTypes.object, // 留言按讚數對應物件
   getBlogArticle: PropTypes.func,
   token: PropTypes.string,
   postId: PropTypes.string,

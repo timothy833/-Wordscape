@@ -19,7 +19,7 @@ import SponsorModal from "../../component/SponsorModal/SponsorModal";
 //React方法引用
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { useEffect, useState, useRef, useMemo, useCallback,} from "react";
+import { useEffect, useState, useRef, useMemo, Fragment} from "react";
 
 //引入Modal方法
 import { Modal } from "bootstrap";
@@ -32,11 +32,11 @@ import { Link } from "react-router-dom";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 import { useSelector, useDispatch} from "react-redux";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { logout } from "../../slice/authSlice";
 import Cookies from "js-cookie";
 import Swal from "sweetalert2";
-import {  alertMsgForAdminInfo } from "../../utils/alertMsg"
+import {  alertMsgForAdminInfo,alertMsgForAdminError} from "../../utils/alertMsg"
 import LoadingSpinner from "../../component/LoadingSpinner/LoadingSpinner"
 // const getCookie = (name) => {
 //   return document.cookie
@@ -80,9 +80,6 @@ const BlogHome = () => {
   const userId = useSelector((state)=> state.auth.id);
   const token = useSelector((state)=> state.auth.token);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [isLoginner, setIsLoginner] = useState(false);
-
   const [isLoading, setIsLoading] = useState(true); // ✅ 預設 `true`，開始載入
 
 
@@ -91,6 +88,7 @@ const BlogHome = () => {
       const tokenFromCookies = Cookies.get("WS_token");
       if (!tokenFromCookies) {
         dispatch(logout());
+        // navigate("/"); // 這裡手動導回首頁
       }
     };
 
@@ -99,11 +97,11 @@ const BlogHome = () => {
   }, [dispatch]);
 
   // **監聽 Redux `token`，當變成 `null` 時自動跳轉首頁**
-  useEffect(() => {
-    if (!token) {
-      navigate("/"); // 確保同步登出
-    }
-  }, [token, navigate]);
+  // useEffect(() => {
+  //   if (!token) {
+  //     navigate("/"); // 確保同步登出
+  //   }
+  // }, [token, navigate]);
 
 
   //初始化比對userId是否是登入id
@@ -123,32 +121,6 @@ const BlogHome = () => {
 
 
 
-  // useEffect(() => {
-  //   if (!!token && !isAuthor) {
-  //     setIsLoginner(true);
-  //   } else {
-  //     setIsLoginner(false);
-  //   }
-  // }, [isAuthor, token]);
-
-
-  // useEffect(() => {
-  //   console.log("🔄 重新載入 BlogHome，當前 user_id:", user_id);
-  //   if (user_id) {
-  //     getBlogArticle();
-  //   }
-  // }, [user_id]); // 只監聽 `user_id`，避免不必要的重新加載
-  
-  // 處理文章按讚
-  const likePost = async (postId) => {
-    await axios.post(`${API_BASE_URL}/posts/post_likes/${postId}`,{}, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            }
-          })
-
-    getBlogArticle(); 
-  };
 
 
 
@@ -187,7 +159,7 @@ const BlogHome = () => {
   const getBlogArticle = async ()=>{
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/user/${user_id}`);
-      console.log(res.data);
+      // console.log(res.data);
       if( res.data && Array.isArray(res.data.data)){
         let fetchedArticles = res.data.data;
 
@@ -254,7 +226,7 @@ const swiperArticles = useMemo(() => {
   const getBlogUser = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/users/${user_id}`);
-      console.log(res.data);
+      // console.log(res.data);
       setBlogUser(res.data);
     } catch (error) {
       console.error("取得 blog 使用者失敗", error);
@@ -279,7 +251,7 @@ const swiperArticles = useMemo(() => {
   
       axios.get(`${API_BASE_URL}/banners/${user_id}`)
       .then(res => {
-        console.log(res.data);
+        // console.log(res.data);
         setBanner(res.data );
         setTitle(res.data.title  || "預設標題");
         setSubtitle(res.data.subtitle  || "預設副標題");
@@ -293,7 +265,7 @@ const swiperArticles = useMemo(() => {
 
 
   useEffect(() => {
-    console.log("🔄 重新載入 BlogHome，當前 user_id:", user_id);
+    // console.log("🔄 重新載入 BlogHome，當前 user_id:", user_id);
     getBlogArticle(); // 重新載入該 BlogHome 的內容
     getBlogUser();    // 重新載入該使用者資訊
     getBanner();
@@ -306,12 +278,12 @@ const swiperArticles = useMemo(() => {
     //當文章載入後，取得每篇文章的留言
     if(articles.length > 0){
       const newComments = {}; //建立新的物件存放每篇文章的留言
-      console.log(articles);
+      // console.log(articles);
       Promise.all(
         articles.map(article =>{
             return  axios.get(`${API_BASE_URL}/comments/${article.id}`)
                 .then(res=>{
-                  console.log(`文章 ${article.id} 的留言:`, res.data);
+                  // console.log(`文章 ${article.id} 的留言:`, res.data);
                   newComments[article.id] = res.data.data|| []; // 確保即使沒有留言，也有空陣列 // 以 article.id 為 key 儲存留言  取 `data` 屬性內的陣列
                 }) 
                 .catch(error => {
@@ -333,7 +305,7 @@ const swiperArticles = useMemo(() => {
   //處理banner資訊上傳
   const handleBannerUpdate = async ()=>{
     try {
-
+      setIsLoading(true);
       const newErrors = {};
 
       // 🚀 確保所有欄位都填寫
@@ -351,8 +323,10 @@ const swiperArticles = useMemo(() => {
 
       setErrors(newErrors);
 
-      if (Object.keys(newErrors).length > 0 || !isValidImage) return; // 🚀 若有錯誤則阻止提交
-
+      if (Object.keys(newErrors).length > 0 || !isValidImage){ 
+        setIsLoading(false);
+        return; // 🚀 若有錯誤則阻止提交
+      }
       const url = `${API_BASE_URL}/banners`;
       const method = banner ? "put" : "post"; // ✅ 判斷是更新還是建立
 
@@ -383,6 +357,7 @@ const swiperArticles = useMemo(() => {
         };
       }else {
         console.error("請提供圖片或外部圖片 URL");
+        setIsLoading(false);
         return;
       }
 
@@ -392,10 +367,11 @@ const swiperArticles = useMemo(() => {
         headers,
         data
       });
-      console.log(res.data);
+      // console.log(res.data);
       setBanner(res.data);
-      Swal.fire(alertMsgForAdminInfo);
       getBanner();
+      setIsLoading(false);
+      Swal.fire(alertMsgForAdminInfo);
       //✅關閉Modal 
       closeModal(); // ✅ 成功後關閉
 
@@ -491,7 +467,7 @@ const swiperArticles = useMemo(() => {
     if(!modalInstanceBannerRef.current) {
       modalInstanceBannerRef.current = new Modal(modalBannerRef.current, {backdrop: "true", Keyboard: true});
     }
-    // getBanner();
+    getBanner();
     modalInstanceBannerRef.current.show();
   }
   
@@ -582,12 +558,15 @@ useEffect(() => {
 //傳進去給articleCard當打開開關
 
 const openEditModal = (article) => {
-  console.log("🔍 文章選擇:", article);
+  // console.log("🔍 文章選擇:", article);
+  getBlogArticle();
   setSelectedArticle(article);
 
   if(!modalInstanceRef.current) {
     modalInstanceRef.current = new Modal(modalRef.current, {backdrop: "true", Keyboard: true});
   }
+
+
   modalInstanceRef.current.show();
 }
 
@@ -661,89 +640,121 @@ const uploadImageToR2 = async () => {
   }
 };
 
+  // 工具函式：判斷 Quill 編輯器內容是否為空（即便有 <p><br></p> 這種表面 HTML）
+const isQuillContentEmpty = (html) => {
+  const div = document.createElement("div");
+  div.innerHTML = html;
+  return div.textContent.trim() === "";  // 沒有純文字內容就視為空
+};
 
 
   // ✅ 更新文章
   const handleSubmit = async () => {
     try {
+      setIsLoading(true);
       const newErrors = {};
       let isValidImage = true;
 
-      // 🚀 只檢查圖片
-      if (!selectedFileEdit && !externalImageEdit) {
-          newErrors.imageEdit = "⚠️ 必須上傳封面圖片（本地或 URL）";
-          isValidImage = false;
-      } else if (externalImageEdit) {
-          isValidImage = await validateImage(externalImageEdit);
-          if (!isValidImage) {
-              newErrors.imageEdit = "⚠️ 請輸入有效的封面圖片 URL";
-          }
-      }
-
-      setErrors(newErrors);
-
-      if (!isValidImage) return; // 🚀 圖片無效，阻止提交
-
-
-      const finalImageUrl = selectedFileEdit? await uploadImageToR2():externalImageEdit;
-
-       // 創建一個臨時 `div` 來解析 HTML(Quill 內部 Base64 圖片)
-       const tempDiv = document.createElement("div");
-
-       // ✅ **確保 Quill 內容是最新的**
-       tempDiv.innerHTML = contentEdit;
-       // ✅ **處理 Base64 圖片並替換**
-       const imgTags = [...tempDiv.getElementsByTagName("img")];
-       
-       // 2️⃣ 找出所有 Base64 編碼的圖片
-       const base64Images = imgTags
-           .map(img => img.getAttribute("src"))
-           .filter(src => src.startsWith("data:image"));
-
-      // 3️⃣ 如果有 Base64 圖片，則批量上傳
-      if(base64Images.length > 0) {
-        try {
-            const res = await axios.post(`${API_BASE_URL}/posts/upload/content`,
-            {files: base64Images},{
-                headers:{
-                    Authorization: `Bearer ${token}`
-                },
-                maxContentLength: 100 * 1024 * 1024, // ✅ 允許最大 100MB
-                maxBodyLength: 100 * 1024 * 1024
-            })
-
-            // 4️⃣ 替換 Quill 內的 Base64 圖片 URL 為 R2 的 URL
-            base64Images.forEach((base64, index)=>{
-                const newUrl = res.data.urls[index];
-                const img = tempDiv.querySelector(`img[src="${base64}"]`);
-                if(img) img.setAttribute("src", newUrl);
-            });
-
-            // setContent(tempDiv.innerHTML); // ✅ **統一更新 `content`**
-            // quill.root.innerHTML = tempDiv.innerHTML; // ✅ 直接更新 Quill 編輯器內容
-        } catch (error) {
-            console.error("文章內圖片上傳失敗", error);
-            return
+       // ✅ 驗證圖片：如果有輸入外部圖片，檢查是否有效
+       if(externalImageEdit) {
+        isValidImage = await validateImage(externalImageEdit);
+        if(!isValidImage){
+          newErrors.imageEdit = "⚠️ 請輸入有效的封面圖片 URL";
         }
+       }
+
+       setErrors(newErrors);
+       if (!isValidImage) {
+         setIsLoading(false);
+         return; // 🚀 圖片無效，阻止提交
+       }
+
+      // ✅ 圖片處理：選本地 → 上傳，否則用外部網址
+      let finalImageUrl =  null;
+
+      if(selectedFileEdit){
+        finalImageUrl = await uploadImageToR2();
+      }else if(externalImageEdit){
+        finalImageUrl = externalImageEdit;
       }
-      setIsLoading(true);
-      await axios.patch(`${API_BASE_URL}/posts/${selectedArticle.id}`, {
-        title: titleEdit,
-        description: descriptionEdit,
-        content: tempDiv.innerHTML,
-        image_url: finalImageUrl,
-      }, {
+
+      
+      
+      // ✅ 動態組裝 payload
+      const payload = {};
+      if(titleEdit.trim() !== "") payload.title = titleEdit.trim();
+      if(descriptionEdit === "string" && descriptionEdit.trim() !== "" && descriptionEdit.trim() !== selectedArticle.description?.trim()) payload.description = descriptionEdit;
+      if(finalImageUrl && finalImageUrl !== selectedArticle.image_url) payload.image_url = finalImageUrl;
+      if(!isQuillContentEmpty(contentEdit) && contentEdit.trim() !== (selectedArticle.content || "").trim()){
+        // ✅ 處理 Quill Base64 圖片（解析 contentEdit）
+        // 創建一個臨時 `div` 來解析 HTML(Quill 內部 Base64 圖片)
+        const tempDiv = document.createElement("div");
+
+        // ✅ **確保 Quill 內容是最新的**
+        tempDiv.innerHTML = contentEdit;
+        // ✅ **處理 Base64 圖片並替換**
+        const imgTags = [...tempDiv.getElementsByTagName("img")];
+        
+        // 2️⃣ 找出所有 Base64 編碼的圖片
+        const base64Images = imgTags
+            .map(img => img.getAttribute("src"))
+            .filter(src => src.startsWith("data:image"));
+
+        // 3️⃣ 如果有 Base64 圖片，則批量上傳
+        if(base64Images.length > 0) {
+          try {
+              const res = await axios.post(`${API_BASE_URL}/posts/upload/content`,
+              {files: base64Images},{
+                  headers:{
+                      Authorization: `Bearer ${token}`
+                  },
+                  maxContentLength: 100 * 1024 * 1024, // ✅ 允許最大 100MB
+                  maxBodyLength: 100 * 1024 * 1024
+              })
+
+              // 4️⃣ 替換 Quill 內的 Base64 圖片 URL 為 R2 的 URL
+              base64Images.forEach((base64, index)=>{
+                  const newUrl = res.data.urls[index];
+                  const img = tempDiv.querySelector(`img[src="${base64}"]`);
+                  if(img) img.setAttribute("src", newUrl);
+              });
+          } catch (error) {
+              setIsLoading(false);
+              console.error("文章內圖片上傳失敗", error);
+              return
+          }
+        }
+
+        payload.content = tempDiv.innerHTML.trim();
+      };
+
+
+       if(Object.keys(payload).length === 0){
+        setIsLoading(false);
+        Swal.fire({
+          title: "文章未有變更",
+          icon: "info",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+        closeEditModal();
+        return;
+       };
+      
+      await axios.patch(`${API_BASE_URL}/posts/${selectedArticle.id}`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+      getBlogArticle(); // 重新加載文章
       setIsLoading(false);
       Swal.fire( alertMsgForAdminInfo);
-      getBlogArticle(); // 重新加載文章
       closeEditModal(); // 關閉 Modal
     } catch (error) {
       console.error("文章更新失敗", error);
-      alert("文章更新失敗");
+      setIsLoading(false);
+      Swal.fire(alertMsgForAdminError);
+     
     }
   };
 
@@ -753,6 +764,10 @@ const uploadImageToR2 = async () => {
   const [currentPage, setCurrentPage] = useState(1);//設定當前頁碼
   const articlesPerPage = 10; // 每頁顯示 10 篇文章
 
+  // 🔥 當 `filteredArticles` 變更時，重設 `currentPage`
+  useEffect(() => {
+    setCurrentPage(1); // 避免切換篩選條件後，還在超出的頁碼導致空白
+  }, [filteredArticles]);
    // 🔥 計算當前頁面的文章
    const paginatedArticles = useMemo(() => {
     const startIndex = (currentPage - 1) * articlesPerPage;
@@ -767,6 +782,7 @@ const uploadImageToR2 = async () => {
 
   const [openCategory, setOpenCategory] = useState(null);
 
+  //切換導航區展開分類開關
   const toggleCategory = (categoryId) => {
     setOpenCategory(openCategory === categoryId ? null : categoryId);
   };
@@ -790,7 +806,7 @@ const uploadImageToR2 = async () => {
                   <li><FontAwesomeIcon icon={faInstagram} size="lg" style={{ color: "#e77605", cursor: 'pointer' }} /></li>
                   <li><FontAwesomeIcon icon={faYoutube} size="lg" style={{ color: "#e77605", cursor: 'pointer' }} /></li>
                 </ul>
-                {!isAuthor && <SponsorModal />}
+                {!isAuthor && userId && <SponsorModal />}
                 <p className="text-gray mt-3 pb-5 border-bottom border-gray">{blogUser.bio}</p>
                 <h4 className="text-primary my-5">文章導航區</h4>
                 <ul className="blog-home_nav list-unstyled align-self-baseline d-flex flex-column gap-5">
@@ -933,7 +949,6 @@ const uploadImageToR2 = async () => {
                       comments={comments[article.id]||[]}  // 把留言傳給 Blog_ArticleCard
                       togglePin={togglePin} //傳遞函式開關給子組件
                       isPinned = {pinnedArticles.includes(article.id)} //傳遞是否釘選
-                      likePost={likePost} // 傳遞按讚函式
                       token={token}
                       getBlogArticle = {()=> getBlogArticle() }
                       onEdit={ openEditModal}  // 🚀 **將開啟 `Modal` 的函式傳下去**
@@ -1023,30 +1038,113 @@ const uploadImageToR2 = async () => {
       </div>
 
 
-      {/* 🔥 Bootstrap 5 分頁元件 */}
-      <nav>
-        <ul className="pagination justify-content-center mt-4">
-          <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-            <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)}>
-              上一頁
-            </button>
-          </li>
+      {/* 🔥分頁元件 */}
+     <nav className="d-lg-block mb-3" aria-label="Page navigation">
+      <ul className="hot-article-pagination pagination justify-content-center gap-2 mb-0">
+        {/* 上一頁 */}
+        <li className="page-item">
+          <button
+            className={`page-link material-symbols-outlined p-0 ps-1 pt-1 rounded-1 ${
+              currentPage === 1 ? "disabled" : ""
+            }`}
+            onClick={(e) => {
+              e.preventDefault();
+              if (currentPage > 1) setCurrentPage(currentPage - 1);
+            }}
+          >
+            arrow_back_ios
+          </button>
+        </li>
 
-          {Array.from({ length: totalPages }, (_, i) => (
-            <li key={i} className={`page-item ${currentPage === i + 1 ? "active" : ""}`}>
-              <button className="page-link" onClick={() => setCurrentPage(i + 1)}>
-                {i + 1}
-              </button>
-            </li>
-          ))}
+        {/* 頁碼區塊（顯示 currentPage 前後 2 頁 + 省略號） */}
+        {Array.from({ length: totalPages }).map((_, index) => {
+          const pageNum = index + 1;
 
-          <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-            <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>
-              下一頁
-            </button>
-          </li>
-        </ul>
-      </nav>
+          // 顯示目前頁前後 ±2 的頁碼
+          if (Math.abs(currentPage - pageNum) <= 2) {
+            return (
+              <li className="page-item" key={index}>
+                <button
+                  className={`page-link rounded-1 p-0 ${
+                    currentPage === pageNum ? "active" : ""
+                  }`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setCurrentPage(pageNum);
+                  }}
+                >
+                  {pageNum}
+                </button>
+              </li>
+            );
+          }
+
+          // 開頭的省略號（只顯示一次）
+          if (currentPage > 3 && pageNum === 1) {
+            return (
+              <Fragment key={index}>
+                <li className="page-item">
+                  <button
+                    className="page-link rounded-1 p-0"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setCurrentPage(1);
+                    }}
+                  >
+                    1
+                  </button>
+                </li>
+                <li className="page-item">
+                  <span className="page-link rounded-1 p-0">...</span>
+                </li>
+              </Fragment>
+            );
+          }
+
+          // 結尾的省略號（只顯示一次）
+          if (currentPage < totalPages - 2 && pageNum === totalPages) {
+            return (
+              <Fragment key={index}>
+                <li className="page-item">
+                  <span className="page-link rounded-1 p-0">...</span>
+                </li>
+                <li className="page-item">
+                  <button
+                    className={`page-link rounded-1 p-0 ${
+                      currentPage === pageNum ? "active" : ""
+                    }`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setCurrentPage(pageNum);
+                    }}
+                  >
+                    {pageNum}
+                  </button>
+                </li>
+              </Fragment>
+            );
+          }
+
+          // 其他頁碼不顯示
+          return null;
+        })}
+
+        {/* 下一頁 */}
+        <li className="page-item">
+          <button
+            className={`page-link material-symbols-outlined rounded-1 p-0 ${
+              currentPage === totalPages ? "disabled" : ""
+            }`}
+            onClick={(e) => {
+              e.preventDefault();
+              if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+            }}
+          >
+            arrow_forward_ios
+          </button>
+        </li>
+      </ul>
+    </nav>
       
       {isLoading  && <LoadingSpinner /> }
     </>
