@@ -9,13 +9,9 @@ import AdminBackground from "../page/AdminPage/AdminBackground";
 import AdminInfo from "../page/AdminPage/AdminInfo";
 import AdminCollection from "../page/AdminPage/AdminCollection";
 import AdminSubscription from "../page/AdminPage/AdminSubscription";
-import BlogPage from "../page/BlogPage/BlogPage";
-import TestLoginPage from "../page/BlogPage/TestLoginPage";
-import TestArticlePage from "../page/BlogPage/TestArticlePage";
 import ResetPassword from "../page/AccessPage/ResetPassword";
 import ErrorPage from "../page/ErrorPage/ErrorPage";
 import SearchPage from "../page/SearchPage/SearchPage";
-import { element } from "prop-types";
 const router = [
   {
     path: "/",
@@ -68,18 +64,6 @@ const router = [
         element: <ResetPassword />,
       },
       { path: "/articleList", element: <ArticleListPage /> },
-      {
-        path: "/blogpage",
-        element: <BlogPage />,
-      },
-      {
-        path: "/testlogin",
-        element: <TestLoginPage />,
-      },
-      {
-        path: "/testArticle/:id",
-        element: <TestArticlePage />,
-      },
       {
         path:"*",
         element: <ErrorPage />,
