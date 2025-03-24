@@ -14,7 +14,7 @@ const BlogPage = () => {
         const res = await axios.get(`${API_BASE_URL}/posts`);
         setArticles(res.data.data);
       } catch (error) {
-        console.error("❌ 文章獲取失敗:", error);
+        Sentry.captureException("❌ 文章獲取失敗:", error);
       }
     };
 

@@ -25,7 +25,7 @@ const AdminBackground = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (!token) {
-        console.log("驗證錯誤，請重新登入");
+        //console.log("驗證錯誤，請重新登入");
         return;
       }
 
@@ -77,7 +77,7 @@ const AdminBackground = () => {
         setRevenue(revenueRes.data.data || []);
 
       } catch (error) {
-        console.log(error);
+        Sentry.captureException(error);
 
       } finally {
         setIsLoading(false);

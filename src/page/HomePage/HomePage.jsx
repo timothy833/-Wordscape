@@ -29,7 +29,7 @@ const HomePage = () => {
       const filterArticleData = res.data.data.filter((item)=>item.status=="published");
       setAllArticleData(filterArticleData);
     } catch (error) {
-      console.log(error);
+      Sentry.captureException(error);
     }
   };
   const [commentCount, setCommentCount] = useState(3);

@@ -86,7 +86,7 @@ const ResetPassword = () => {
         navigate("/"); 
 
     }catch(error){
-        console.log('error in reset password', error.response?.data || error.message);
+      Sentry.captureException('error in reset password', error.response?.data || error.message);
     }
   };
 

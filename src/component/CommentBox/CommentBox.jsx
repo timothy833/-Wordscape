@@ -33,7 +33,7 @@ const CommentBox = ({
       await axios.delete(`${API_BASE_URL}/comments/${commentData.id}`);
       getComment();
     } catch (error) {
-      console.log(error);
+      Sentry.captureException(error);
     }
   };
   const putComment = async () => {
@@ -43,7 +43,7 @@ const CommentBox = ({
       });
       getComment();
     } catch (error) {
-      console.log(error);
+      Sentry.captureException(error);
     }
   };
   const postReviewComment = async () => {
@@ -59,7 +59,7 @@ const CommentBox = ({
         setReview("");
       }
     } catch (error) {
-      console.log(error);
+      Sentry.captureException(error);
     }
   };
   const getCommentLikeData = async () => {
@@ -69,7 +69,7 @@ const CommentBox = ({
       );
       setCommentLikeData(res.data.data);
     } catch (error) {
-      console.log(error);
+      Sentry.captureException(error);
     }
   };
   const postCommentLike = async () => {
@@ -80,7 +80,7 @@ const CommentBox = ({
       getComment();
       getCommentLikeData();
     } catch (error) {
-      console.log(error);
+      Sentry.captureException(error);
     }
   };
   const handleEdit = () => {

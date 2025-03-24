@@ -27,14 +27,11 @@ const Blog_CommentReply = ({comment, getBlogArticle, token, postId, formatTimeAg
           Authorization: `Bearer ${token}`,
         },
       });
-      // console.log(res.data);
-      // console.log(userId);
       // 從回傳資料中檢查當前使用者是否有在按讚者列表內
       const hasLiked = res.data.data.some(user => user.user_id === userId);
-      // console.log("按讚狀態",hasLiked )
       setIsGood(hasLiked); // 如果有按讚則為 true，否則 false
     } catch (error) {
-      console.error("檢查按讚狀態失敗", error);
+      Sentry.captureException("檢查按讚狀態失敗", error);
     }
   };
 
@@ -61,7 +58,7 @@ const Blog_CommentReply = ({comment, getBlogArticle, token, postId, formatTimeAg
         // checkLikeStatus(commentId); // 按讚後立即重新檢查狀態
         getBlogArticle();
       })
-    .catch(error => console.error("留言按讚失敗", error));
+    .catch(error => Sentry.captureException("留言按讚失敗", error));
 
   };
   
@@ -84,7 +81,7 @@ const Blog_CommentReply = ({comment, getBlogArticle, token, postId, formatTimeAg
       Swal.fire(alertReply);
 
     } catch (error) {
-      console.log("發送文章留言失敗",error)
+      Sentry.captureException("發送文章留言失敗",error)
     }
 
   }
@@ -104,7 +101,7 @@ const Blog_CommentReply = ({comment, getBlogArticle, token, postId, formatTimeAg
       getBlogArticle();
       setIsEditing(false);
     } catch (error) {
-      console.error("更新留言失敗", error);
+      Sentry.captureException("更新留言失敗", error);
     }
   };
 
@@ -125,7 +122,7 @@ const deleteComment = async (commentId) => {
     // 🔥 確保前端獲取最新留言
     await getBlogArticle();  // 👉 等待最新留言載入完成，確保畫面即時更新
   } catch (error) {
-    console.error(`❌ 刪除留言 ${commentId} 失敗`, error);
+    Sentry.captureException(`❌ 刪除留言 ${commentId} 失敗`, error);
   }
 };
 

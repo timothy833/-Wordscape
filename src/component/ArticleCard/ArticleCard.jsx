@@ -12,7 +12,7 @@ const ArticleCard = ({ articleData }) => {
       );
       setAutherData(res.data);
     } catch (error) {
-      console.log(error);
+      Sentry.captureException(error);
     }
   };
   useEffect(()=>{
@@ -73,13 +73,13 @@ const ArticleCard = ({ articleData }) => {
 
 ArticleCard.propTypes = {
   articleData: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    user_id: PropTypes.number.isRequired,
+    id: PropTypes.string.isRequired,
+    user_id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     author_name: PropTypes.string.isRequired,
     image_url: PropTypes.string,
-    likes_count: PropTypes.number.isRequired,
+    likes_count: PropTypes.string.isRequired,
     comments: PropTypes.array.isRequired,
   }).isRequired,
 };
