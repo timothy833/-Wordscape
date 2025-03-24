@@ -86,3 +86,10 @@
   transform: translateX(-50%);
   z-index: 0;
 }
+
+.nav-text-btn:hover,
+.nav-text-btn:focus,
+.nav-text-btn:active {
+  color: $primary;
+}
+

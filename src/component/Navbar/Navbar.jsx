@@ -1,6 +1,5 @@
 import { Collapse } from "bootstrap";
 import logo from "../../assets/images/logo.svg";
-import logo_sm from "../../assets/images/logo-sm.svg";
 
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -212,9 +211,9 @@ const Navbar = () => {
                   height="auto"
                 />
                 <img
-                  src={logo_sm}
+                  src={logo}
                   alt="wordspace-logo"
-                  width="60px"
+                  width="150px"
                   height="auto"
                 />
               </picture>
@@ -236,7 +235,7 @@ const Navbar = () => {
                     placeholder="搜尋..."
                   />
                 </div>
-                <Link to="/articleList" className="text-nowrap border-0 bg-light">文章列表</Link>
+                <Link to="/articleList" className="nav-text-btn text-nowrap bg-light">文章列表</Link>
 
                 {/* 根據登入狀態顯示 */}
                 {!isAuthorized ? (
@@ -296,7 +295,7 @@ const Navbar = () => {
                 aria-expanded="false"
                 aria-controls="collapseSearch"
               >
-                <span className="material-symbols-outlined text-primary fs-2">
+                <span className="material-symbols-outlined text-primary fs-4">
                   search
                 </span>
               </a>
@@ -309,7 +308,7 @@ const Navbar = () => {
                 aria-expanded="false"
                 aria-controls="collapseUserMenu"
               >
-                <span className="material-symbols-outlined text-primary fs-2">
+                <span className="material-symbols-outlined text-primary fs-3">
                   menu
                 </span>
               </a>
@@ -333,7 +332,7 @@ const Navbar = () => {
                 </span>
                 <input
                   type="text"
-                  className="search-bar form-control fs-8 ps-11 w-100"
+                  className="search-bar form-control fs-8 ps-11 w-100 rounded"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={handleKeyDown}

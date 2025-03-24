@@ -37,13 +37,13 @@
       transition: 0.2s;
       background-color: $secondary;
     }
-    padding: 10px;
+    padding: 15px;
     @include media-breakpoint-up(md) {
       padding: 20px;
     }
   }
   .card-img-top {
-    height: 86px;
+    height: 100px;
     @include media-breakpoint-up(md) {
       height: 120px;
     }
@@ -52,14 +52,14 @@
     }
   }
   .card-title {
-    font-size: 14px;
+    font-size: 20px;
     @include media-breakpoint-up(lg) {
       font-size: 22px;
     }
   }
   .card-footer {
     background-color:transparent;
-    font-size: 8px;
+    font-size: 12px;
     @include media-breakpoint-up(lg) {
       font-size: 16px;
     }
@@ -103,21 +103,21 @@
     background-color: $secondary;
   }
   .card-img {
-    height: 84px;
-    width: 84px;
+    height: 120px;
+    width: 120px;
     @include media-breakpoint-up(lg) {
       height: 131px;
       width: 131px;
     }
   }
   .card-title {
-    font-size: 12px;
+    font-size: 20px;
     @include media-breakpoint-up(lg) {
       font-size: 20px;
     }
   }
   .card-body {
-    height: 86px;
+    height: 140px;
     @include media-breakpoint-up(lg) {
       height: 140px;
     }

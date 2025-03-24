@@ -261,7 +261,7 @@ const AdminInfo = () => {
             </span>新增收款帳戶</a>
           </div>
         </div>
-        <button type="submit" className="btn btn-primary btn-lg mt-5 btn-click">儲存資料</button>
+        <button type="submit" className="btn btn-primary btn-lg mt-5 btn-click rounded-2">儲存資料</button>
       </form>
     </>
   );

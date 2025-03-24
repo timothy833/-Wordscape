@@ -66,7 +66,7 @@ const HomePage = () => {
                     alt="banner-img"
                   />
                 </picture>
-                <div className="banner-content text-light">
+                <div className="banner-content text-light px-5">
                   <h2 className="fw-bold fs-4 fs-lg-2 ls-1 mb-3">
                     簡潔且專注的閱讀體驗
                   </h2>
@@ -86,7 +86,7 @@ const HomePage = () => {
                     alt="banner-img"
                   />
                 </picture>
-                <div className="banner-content text-light">
+                <div className="banner-content text-light px-5">
                   <h2 className="fw-bold fs-4 fs-lg-2 ls-1 mb-3">
                     多元且高品質的內容
                   </h2>
@@ -106,7 +106,7 @@ const HomePage = () => {
                     alt="banner-img"
                   />
                 </picture>
-                <div className="banner-content text-light">
+                <div className="banner-content text-light px-5">
                   <h2 className="fw-bold fs-4 fs-lg-2 ls-1 mb-3">
                     創作者友善的收入模式
                   </h2>
@@ -132,7 +132,7 @@ const HomePage = () => {
         </section>
       </header>
       <section className="homepage-section bg-secondary">
-        <div className="container mb-lg-8">
+        <div className="container mb-lg-8 px-5">
           <h2 className="fw-bold fs-5 fs-lg-3 text-primary">好評推薦</h2>
           <span className="fs-7 fw-bold">快來看看大家怎麼說！</span>
           <div className="d-block d-lg-none d-flex flex-column align-items-center mt-10 gap-5">
@@ -203,7 +203,7 @@ const HomePage = () => {
         </div>
       </section>
       <section className="homepage-section">
-        <div className="container mb-lg-8 d-flex flex-column">
+        <div className="container mb-lg-8 d-flex flex-column px-5">
           <h2 className="fw-bold fs-5 fs-lg-3 text-primary">推薦好文</h2>
           <span className="d-block fs-7 fw-bold mb-10">
             精選文章，趕快來發掘！
@@ -264,7 +264,7 @@ const HomePage = () => {
         </div>
       </section>
       <section className="homepage-section bg-secondary">
-        <div className="container">
+        <div className="container px-5">
           <div className="d-flex align-items-center flex-column flex-lg-row gap-5 gap-lg-6">
             <div className="w-lg-50">
               <h2 className="text-primary fw-bold mb-5 mb-lg-10 fs-5 fs-lg-3">

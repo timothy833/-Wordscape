@@ -219,14 +219,14 @@ const ArticleListPage = () => {
                                   hotArticleDataItem.image_url ||
                                   "https://github.com/wfox5510/wordSapce-imgRepo/blob/main/banner-1.png?raw=true"
                                 }
-                                className="card-img-top object-fit-cover"
+                                className="card-img-top object-fit-cover mb-2 rounded"
                                 alt="..."
                               />
                               <div className="card-body p-0">
                                 <h3 className="card-title fw-bold text-truncate">
                                   {hotArticleDataItem.title}
                                 </h3>
-                                <p className="card-text text-truncate fs-9 fs-lg-8">
+                                <p className="card-text text-truncate fs-8 fs-lg-8">
                                   {hotArticleDataItem.description}
                                 </p>
                               </div>
@@ -376,7 +376,7 @@ const ArticleListPage = () => {
                   目前沒有相關的推薦文章
                 </span>
               ) : (
-                <ul className="list-unstyled d-flex flex-column gap-6">
+                <ul className="list-unstyled d-flex flex-column gap-3 gap-md-6">
                   {recommendArticleData
                     .slice(0, 3)
                     .map((recommendArticleDataItem) => {
@@ -387,10 +387,10 @@ const ArticleListPage = () => {
                         >
                           <Link
                             to={`/article/${recommendArticleDataItem.id}`}
-                            className="d-flex py-4 px-5 py-lg-7 px-lg-9"
+                            className="d-flex align-items-center py-4 px-5 py-lg-7 px-lg-9"
                           >
                             <img
-                              className="card-img me-3 me-lg-6 object-fit-cover"
+                              className="card-img me-3 me-lg-6 object-fit-cover rounded"
                               src={
                                 recommendArticleDataItem.image_url ||
                                 "https://github.com/wfox5510/wordSapve-imgRepo/blob/main/articleList-recommend1.png?raw=true"
@@ -405,10 +405,10 @@ const ArticleListPage = () => {
                                 </span>
                               </span>
 
-                              <h4 className="card-title text-primary fw-bold text-truncate-2lines lh-sm">
+                              <h4 className="card-title text-primary fw-bold text-truncate-2lines lh-sm text-wrap">
                                 {recommendArticleDataItem.title}
                               </h4>
-                              <p className="card-text text-truncate-2lines fs-9 fs-lg-8">
+                              <p className="card-text text-truncate-2lines fs-8 fs-lg-8">
                                 {recommendArticleDataItem.description}
                               </p>
                             </div>
@@ -429,7 +429,7 @@ const ArticleListPage = () => {
                             className="d-flex py-4 px-5 py-lg-7 px-lg-9"
                           >
                             <img
-                              className="card-img me-3 me-lg-6 object-fit-cover"
+                              className="card-img me-3 me-lg-6 object-fit-cover rounded"
                               src={
                                 recommendArticleDataItem.image_url ||
                                 "https://github.com/wfox5510/wordSapve-imgRepo/blob/main/articleList-recommend1.png?raw=true"
