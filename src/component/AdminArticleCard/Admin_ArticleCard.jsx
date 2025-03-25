@@ -38,7 +38,7 @@ const Admin_ArticleCard = ({
       }
       Swal.fire(alertMsgForCancelFavorites);
     } catch (error) {
-      console.log(error);
+      Sentry.captureException(error);
     } finally {
       setIsLoading(false);
     }

@@ -38,7 +38,7 @@ const ArticlePage = () => {
       const res = await axios.get(`${API_BASE_URL}/posts/${articleId}`);
       setArticleData(res.data.data);
     } catch (error) {
-      console.log(error);
+      Sentry.captureException(error);
     }
   };
   const getAutherData = async () => {
@@ -48,7 +48,7 @@ const ArticlePage = () => {
       );
       setAutherData(res.data);
     } catch (error) {
-      console.log(error);
+      Sentry.captureException(error);
     }
   };
   //留言相關功能(需登入)
@@ -57,7 +57,7 @@ const ArticlePage = () => {
       const res = await axios.get(`${API_BASE_URL}/comments/${articleId}`);
       setCommentData(res.data.data);
     } catch (error) {
-      console.log(error);
+      Sentry.captureException(error);
     }
   };
   const postComment = async () => {
@@ -69,7 +69,7 @@ const ArticlePage = () => {
       setCommentInput("");
       getComment();
     } catch (error) {
-      console.log(error);
+      Sentry.captureException(error);
     }
   };
   //訂閱相關功能(需登入)
@@ -82,7 +82,7 @@ const ArticlePage = () => {
         )
       );
     } catch (error) {
-      console.log(error);
+      Sentry.captureException(error);
     }
   };
   const postSubscribed = async () => {
@@ -95,7 +95,7 @@ const ArticlePage = () => {
         : Swal.fire({...alertMsgForSuccess,title:"已取消追蹤"});
       checkIsSubscribed();
     } catch (error) {
-      console.log(error);
+      Sentry.captureException(error);
     }
   };
   //點讚相關功能(需登入)
@@ -106,7 +106,7 @@ const ArticlePage = () => {
       );
       setIsLike(res.data.data.some((likeData) => likeData.id === userId));
     } catch (error) {
-      console.log(error);
+      Sentry.captureException(error);
     }
   };
   const postArticleLike = async () => {
@@ -118,7 +118,7 @@ const ArticlePage = () => {
       getArticle(); //為了取得讚數在進行一次get文章資料，是否可以進行優化
       checkIsLikeArticle();
     } catch (error) {
-      console.log(error);
+      Sentry.captureException(error);
     }
   };
   //收藏相關功能(需登入)
@@ -131,7 +131,7 @@ const ArticlePage = () => {
         )
       );
     } catch (error) {
-      console.log(error);
+      Sentry.captureException(error);
     }
   };
   const postFavorites = async () => {
@@ -144,7 +144,7 @@ const ArticlePage = () => {
         : Swal.fire(alertMsgForCancelFavorites);
       checkIsFavorites();
     } catch (error) {
-      console.log(error);
+      Sentry.captureException(error);
     }
   };
   //用於處理推薦文章
@@ -157,7 +157,7 @@ const ArticlePage = () => {
       );
       setAllArticleData(filterArticleData);
     } catch (error) {
-      console.log(error);
+      Sentry.captureException(error);
     }
   };
   // ✅ 顯示距離現在多久

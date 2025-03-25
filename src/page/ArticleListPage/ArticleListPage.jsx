@@ -30,7 +30,7 @@ const ArticleListPage = () => {
       const res = await axios.get(`${API_BASE_URL}/categories`);
       setCategoriesData(res.data.data);
     } catch (error) {
-      console.log(error);
+      Sentry.captureException(error);
     }
   };
 
@@ -42,7 +42,7 @@ const ArticleListPage = () => {
       );
       setAllArticleData(filterArticleData);
     } catch (error) {
-      console.log(error);
+      Sentry.captureException(error);
     }
   };
 
@@ -106,7 +106,7 @@ const ArticleListPage = () => {
         )
       );
     } catch (error) {
-      console.log(error);
+      Sentry.captureException(error);
     }
   };
   //取得我的收藏文章，在文章列表提示是否收藏，且可直接點選icon取消
@@ -117,7 +117,7 @@ const ArticleListPage = () => {
       const res = await axios.get(`${API_BASE_URL}/posts/favorites`);
       dispatch(setFavoriteArticle(res.data.data));
     } catch (error) {
-      console.log(error);
+      Sentry.captureException(error);
     }
   };
 
@@ -130,7 +130,7 @@ const ArticleListPage = () => {
       getFavoriteArticle();
       getArticleListData();
     } catch (error) {
-      console.log(error);
+      Sentry.captureException(error);
     }
   };
   //文章列表沒有paganation，用滾動至底部作為新增資料的判斷

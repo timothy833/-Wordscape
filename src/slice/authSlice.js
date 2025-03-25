@@ -54,7 +54,7 @@ export const login = createAsyncThunk(
 
       return { token, username, id };
     } catch (error) {
-      console.log(error);
+      Sentry.captureException(error);
       if (error.response && error.response.status === 401) {
         Swal.fire({
           title: "登入失敗!",
@@ -125,7 +125,7 @@ export const logout = createAsyncThunk(
       }
 
     } catch (error) {
-      console.log('error in logout', error.response?.data || error.message);
+      Sentry.captureException('error in logout', error.response?.data || error.message);
 
       if (error.code === 'ECONNABORTED') {
         Swal.fire({
@@ -179,7 +179,7 @@ export const fetchUserAvatar = createAsyncThunk(
 
       return { avatarUrl, updateUsername };
     } catch (error) {
-      console.log('獲取頭像失敗', error.response?.data || error.message);
+      Sentry.captureException('獲取頭像失敗', error.response?.data || error.message);
       return rejectWithValue(error.response?.data || '獲取頭像失敗');
     }
   }

@@ -41,7 +41,7 @@ const SponsorModal = () => {
         const postData = await axios.get(`${VITE_API_BASE_URL}/posts/${postId}`);
         idToSponsor = postData.data.data.user_id;
       } catch (error) {
-        console.log('Error getting user id from post:', error);
+        Sentry.captureException('Error getting user id from post:', error);
       }
     }
     
@@ -56,7 +56,7 @@ const SponsorModal = () => {
       );
       return res.data.username;
     } catch (error) {
-      console.log('Error getting author data:', error);
+      Sentry.captureException('Error getting author data:', error);
       return '';
     }
   };
@@ -228,13 +228,13 @@ const SponsorModal = () => {
         "amount": actualAmount,
         "receiver_id": sponsorId  // 使用狀態中儲存的sponsorId
       }
-      console.log(data);
+      //console.log(data);
       
       const sponsorRes = await axios.post(url, data, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
-      console.log('sponsorRes', sponsorRes);
+      //console.log('sponsorRes', sponsorRes);
       if(sponsorRes.data.status === 'success'){
         Swal.fire({
           title: "贊助成功!",
@@ -244,7 +244,7 @@ const SponsorModal = () => {
         });
       }
     } catch(error) {
-      console.log('error in sponsor', error.response?.data || error.message);
+      Sentry.captureException('error in sponsor', error.response?.data || error.message);
       
       Swal.fire({
         title: "贊助失敗!",

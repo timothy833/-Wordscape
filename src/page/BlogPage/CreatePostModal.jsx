@@ -123,7 +123,7 @@ const NewPostModal = ({ getBlogArticle, token, isModalOpen, setIsModalOpen, setI
                 const res = await axios.get(`${API_BASE_URL}/categories`);
                 setCategories(res.data.data || []); //設定分類資料
             } catch (error) {
-                console.log("載入分類失敗", error);
+                Sentry.captureException("載入分類失敗", error);
             }
         }
 
@@ -240,7 +240,7 @@ const NewPostModal = ({ getBlogArticle, token, isModalOpen, setIsModalOpen, setI
         });
         return res.data.url; // 存 R2 URL
         } catch (error) {
-        console.error("圖片上傳失敗", error);
+        Sentry.captureException("圖片上傳失敗", error);
         }
     };
 
@@ -296,7 +296,7 @@ const NewPostModal = ({ getBlogArticle, token, isModalOpen, setIsModalOpen, setI
     //         });
     //         return createRes.data.data.id;
     //     } catch (error) {
-    //         console.error("分類查詢或建立失敗", error);
+    //         Sentry.captureException("分類查詢或建立失敗", error);
     //         return null;
     //     }
     // };
@@ -372,7 +372,7 @@ const NewPostModal = ({ getBlogArticle, token, isModalOpen, setIsModalOpen, setI
                     // setContent(tempDiv.innerHTML); // ✅ **統一更新 `content`**
                     // quill.root.innerHTML = tempDiv.innerHTML; // ✅ 直接更新 Quill 編輯器內容
                 } catch (error) {
-                    console.error("文章內圖片上傳失敗", error);
+                    Sentry.captureException("文章內圖片上傳失敗", error);
                     setIsLoading(false);
                     return
                 }
@@ -401,14 +401,14 @@ const NewPostModal = ({ getBlogArticle, token, isModalOpen, setIsModalOpen, setI
                         Authorization: `Bearer ${token}`,
                     }
                 });
-                console.log(resTag);
+                //console.log(resTag);
             }
             getBlogArticle();
             setIsLoading(false);
             Swal.fire(alertCreatePost);
             handleClose(); // 發布成功後清空輸入內容
         } catch (error) {
-            console.error("新增文章失敗", error);
+            Sentry.captureException("新增文章失敗", error);
             // handleClose(); //關閉 modal 並清空輸入內容
         }
     }
@@ -425,9 +425,10 @@ const NewPostModal = ({ getBlogArticle, token, isModalOpen, setIsModalOpen, setI
                     </div>
                     <div className="modal-body">
                          <label htmlFor="封面圖片" className="form-label fw-medium">封面圖片</label>
-                        <div className="d-flex gap-2">
-                            <input ref={fileInputRef} id="封面圖片" type="file" className="form-control mb-2" accept="image/*"  onChange={handleImageChange} />
-                            <input type="text" className="form-control mb-2" placeholder="輸入封面圖片 URL" value={externalImage} onBlur={handleExternalImageBlur} onChange={handleExternalImage} />
+                        <div className="d-flex gap-2 justify-content-center align-items-center mb-2">
+                            <input ref={fileInputRef} id="封面圖片" type="file" className="form-control" accept="image/*"  onChange={handleImageChange} />
+                            <span>或</span>
+                            <input type="text" className="form-control" placeholder="輸入封面圖片 URL" value={externalImage} onBlur={handleExternalImageBlur} onChange={handleExternalImage} />
                         </div>
                         {errors.image && <p className="text-danger">{errors.image}</p>}
                         {imagePreview && <img src={imagePreview} alt="預覽圖片" className="img-fluid mb-3" style={{display: "block"}} onError={(e) => (e.target.style.display = "none")}/>}
@@ -442,7 +443,8 @@ const NewPostModal = ({ getBlogArticle, token, isModalOpen, setIsModalOpen, setI
                         }} />
                         {errors.description && <p className="text-danger">{errors.description}</p>}
 
-                        <div className="d-flex gap-2">
+                        <div className="d-flex gap-2 flex-column flex-md-row">
+                            
                             <div className="mb-2">
                                 <label className="form-label fw-medium">文章分類</label>
                                 {/* 下拉選單 */}
@@ -456,7 +458,6 @@ const NewPostModal = ({ getBlogArticle, token, isModalOpen, setIsModalOpen, setI
                                 </select>
                                 {errors.category && <p className="text-danger">{errors.category}</p>}
                             </div>
-                            
 
                             <div className="mb-2">
                                 <label className="form-label fw-medium">文章狀態</label>
@@ -468,11 +469,10 @@ const NewPostModal = ({ getBlogArticle, token, isModalOpen, setIsModalOpen, setI
 
                             <div className="mb-2">
                                 <label htmlFor="文章tag標籤"  className="form-label fw-medium">文章標籤</label>
-
                                 <div className="d-flex gap-2">
                                     <input id="文章tag標籤" type="text" className="form-control mb-2"  placeholder="文章tag標籤" value={tag} onChange={handleTagChange} style={{width: "160px",}}/>
                                     <button className="btn btn-primary mb-2 btn-click" onClick={handleAddTag}>
-                                        新增標籤
+                                        新增
                                     </button>
                                 </div>
 
@@ -488,14 +488,12 @@ const NewPostModal = ({ getBlogArticle, token, isModalOpen, setIsModalOpen, setI
                                     ))}
                                 </div>
                                
-
                             </div>
 
-                        
                         </div>
                                      
                         {/* ✅ 修正 Quill 工具列問題 */}
-                        <div  ref={editorRef} className="mb-3 "></div>
+                        <div  ref={editorRef} className="mb-3"></div>
                         {errors.content && <p className="text-danger">{errors.content}</p>}
                     </div>
                     <div className="modal-footer">

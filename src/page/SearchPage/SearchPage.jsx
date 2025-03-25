@@ -27,7 +27,7 @@ const SearchPage = () => {
       );
       setSearchResults(filteredPosts);
     } catch (error) {
-      console.error("搜尋失敗", error);
+      Sentry.captureException("搜尋失敗", error);
     }finally{
       setIsLoading(false);
     }
@@ -57,7 +57,7 @@ const SearchPage = () => {
         return updatedFavorites;
       });
     } catch (error) {
-      console.log("取得收藏文章失敗", error);
+      Sentry.captureException("取得收藏文章失敗", error);
     }
   };
 
@@ -70,7 +70,7 @@ const SearchPage = () => {
       Swal.fire(alertMsgForAdminInfo);
     } catch (error) {
       Swal.fire(alertMsgForAdminError);
-      console.log("收藏操作失敗", error);
+      Sentry.captureException("收藏操作失敗", error);
     }finally{
       setIsLoading(false);
     }

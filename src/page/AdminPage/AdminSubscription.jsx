@@ -15,7 +15,7 @@ const AdminSubscription = () => {
       const res = await axios.get(`${API_BASE_URL}/payments/received`);
       setPaymentReceivedData(res.data.data);
     } catch (error) {
-      console.log(error);
+      Sentry.captureException(error);
     }finally{
       setIsLoading(false);
     }

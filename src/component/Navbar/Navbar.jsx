@@ -45,7 +45,7 @@ const Navbar = () => {
 
   const logoutHandle = () => {
     dispatch(logout());
-    console.log("logout", isAuthorized);
+    //console.log("logout", isAuthorized);
   };
 
   // 監聽登入狀態變化
@@ -82,29 +82,6 @@ const Navbar = () => {
   // Collapse
   const searchCollapseRef = useRef(null);
   const userCollapseRef = useRef(null);
-
-  // useEffect(() => {
-  //   const handleDocumentClick = (e) => {
-  //     if (
-  //       searchCollapseRef.current?.classList.contains('show') &&
-  //       !e.target.closest('#collapseSearch') &&
-  //       !e.target.closest('[data-bs-target="#collapseSearch"]')
-  //     ) {
-  //       bootstrap.Collapse.getOrCreateInstance(searchCollapseRef.current).hide();
-  //     }
-
-  //     if (
-  //       userCollapseRef.current?.classList.contains('show') &&
-  //       !e.target.closest('#collapseUserMenu') &&
-  //       !e.target.closest('[data-bs-target="#collapseUserMenu"]')
-  //     ) {
-  //       bootstrap.Collapse.getOrCreateInstance(userCollapseRef.current).hide();
-  //     }
-  //   };
-
-  //   document.addEventListener('click', handleDocumentClick);
-  //   return () => document.removeEventListener('click', handleDocumentClick);
-  // }, []);
 
   useEffect(() => {
     const handleDocumentClick = (e) => {
@@ -175,7 +152,7 @@ const Navbar = () => {
   const handleKeyDown = async(e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      console.log('搜尋:', searchQuery);
+      //console.log('搜尋:', searchQuery);
       if (searchQuery === "") {
         Swal.fire({
           text:"請輸入搜尋文字",

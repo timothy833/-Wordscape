@@ -28,7 +28,7 @@ const AdminCollection = () => {
         });
         setCollectionData(res.data.data);
       } catch (error) {
-        console.log(error);
+        Sentry.captureException(error);
       } finally {
         setIsLoading(false);
       };

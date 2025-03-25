@@ -116,7 +116,7 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
                 }
             });
             
-            console.log("forgot password",forgotPwRes);
+            //console.log("forgot password",forgotPwRes);
             setResetEmail({ email: "" });
            
             handleClose();
@@ -134,7 +134,7 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
                 confirmButtonColor: "#E77605",
                 confirmButtonText: "確認"
               });
-            console.log('error in login', error.response?.data || error.message);
+              Sentry.captureException('error in login', error.response?.data || error.message);
         }finally{
             setIsLoading(false);
         }
