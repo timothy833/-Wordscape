@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import axios from 'axios';
 import { useEffect, useState,useCallback } from 'react';
 import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
@@ -8,6 +8,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 import Swal from 'sweetalert2';
 import { alertMsgForAdminInfo } from "../../utils/alertMsg";
 import { alertMsgForAdminError } from "../../utils/alertMsg";
+import { logError } from '../../utils/sentryHelper';
 
 const SearchPage = () => {
   const [isLoading,setIsLoading] = useState(false);
@@ -27,7 +28,7 @@ const SearchPage = () => {
       );
       setSearchResults(filteredPosts);
     } catch (error) {
-      Sentry.captureException("搜尋失敗", error);
+      logError("搜尋失敗", error);
     }finally{
       setIsLoading(false);
     }
@@ -41,7 +42,6 @@ const SearchPage = () => {
 
 
   // 收藏
-  const dispatch = useDispatch();
   const [isFavorite, setIsFavorite] = useState({});
 
   const checkIsFavorites = async () => {
@@ -49,7 +49,7 @@ const SearchPage = () => {
       const res = await axios.get(`${API_BASE_URL}/posts/favorites`);
       const favoriteArticles = res.data.data.map((item) => item.id);
 
-      setIsFavorite((prevFavorites) => {
+      setIsFavorite(() => {
         const updatedFavorites = {};
         searchResults.forEach((post) => {
           updatedFavorites[post.id] = favoriteArticles.includes(post.id);
@@ -57,7 +57,7 @@ const SearchPage = () => {
         return updatedFavorites;
       });
     } catch (error) {
-      Sentry.captureException("取得收藏文章失敗", error);
+      logError("取得收藏文章失敗", error);
     }
   };
 
@@ -70,7 +70,7 @@ const SearchPage = () => {
       Swal.fire(alertMsgForAdminInfo);
     } catch (error) {
       Swal.fire(alertMsgForAdminError);
-      Sentry.captureException("收藏操作失敗", error);
+      logError("收藏操作失敗", error);
     }finally{
       setIsLoading(false);
     }

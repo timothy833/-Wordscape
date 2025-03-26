@@ -6,6 +6,7 @@ import Admin_ArticleCard from "../../component/AdminArticleCard/Admin_ArticleCar
 import Swal from "sweetalert2";
 import { alertMsgForVerify } from "../../utils/alertMsg";
 import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
+import { logError } from "../../utils/sentryHelper";
 
 
 const AdminCollection = () => {
@@ -28,7 +29,7 @@ const AdminCollection = () => {
         });
         setCollectionData(res.data.data);
       } catch (error) {
-        Sentry.captureException(error);
+        logError(error);
       } finally {
         setIsLoading(false);
       };

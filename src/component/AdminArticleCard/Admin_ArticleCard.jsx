@@ -8,6 +8,7 @@ import Swal from "sweetalert2";
 import { alertMsgForVerify } from "../../utils/alertMsg";
 import { alertMsgForCancelFavorites } from "../../utils/alertMsg";
 import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
+import { logError } from "../../utils/sentryHelper";
 
 const Admin_ArticleCard = ({
   collectionData,
@@ -38,7 +39,7 @@ const Admin_ArticleCard = ({
       }
       Swal.fire(alertMsgForCancelFavorites);
     } catch (error) {
-      Sentry.captureException(error);
+      logError(error);
     } finally {
       setIsLoading(false);
     }

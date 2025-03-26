@@ -2,6 +2,7 @@ import NewPostModal from "../BlogPage/CreatePostModal";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { logError } from "../../utils/sentryHelper";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -14,7 +15,7 @@ const BlogPage = () => {
         const res = await axios.get(`${API_BASE_URL}/posts`);
         setArticles(res.data.data);
       } catch (error) {
-        Sentry.captureException("❌ 文章獲取失敗:", error);
+        logError("❌ 文章獲取失敗:", error);
       }
     };
 

@@ -18,6 +18,7 @@ import about_us from "../../assets/images/about-us.png";
 import commentData from "./HomePageCommentData";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { logError } from "../../utils/sentryHelper";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -29,7 +30,7 @@ const HomePage = () => {
       const filterArticleData = res.data.data.filter((item)=>item.status=="published");
       setAllArticleData(filterArticleData);
     } catch (error) {
-      Sentry.captureException(error);
+      logError(error);
     }
   };
   const [commentCount, setCommentCount] = useState(3);

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import PropTypes from "prop-types";
+import { logError } from "../../utils/sentryHelper";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const ArticleCard = ({ articleData }) => {
   const [autherData , setAutherData] = useState(null)
@@ -12,7 +13,7 @@ const ArticleCard = ({ articleData }) => {
       );
       setAutherData(res.data);
     } catch (error) {
-      Sentry.captureException(error);
+      logError(error);
     }
   };
   useEffect(()=>{

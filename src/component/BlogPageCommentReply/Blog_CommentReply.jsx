@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import {  alertDelete, alertReply } from "../../utils/alertMsg" 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 import { useNavigate } from "react-router-dom";
+import { logError } from "../../utils/sentryHelper";
 
 const Blog_CommentReply = ({comment, getBlogArticle, token, postId, formatTimeAgo, isAuthor, userId, setIsLoading}) => {
 
@@ -31,7 +32,7 @@ const Blog_CommentReply = ({comment, getBlogArticle, token, postId, formatTimeAg
       const hasLiked = res.data.data.some(user => user.user_id === userId);
       setIsGood(hasLiked); // 如果有按讚則為 true，否則 false
     } catch (error) {
-      Sentry.captureException("檢查按讚狀態失敗", error);
+      logError("檢查按讚狀態失敗", error);
     }
   };
 
@@ -58,7 +59,7 @@ const Blog_CommentReply = ({comment, getBlogArticle, token, postId, formatTimeAg
         // checkLikeStatus(commentId); // 按讚後立即重新檢查狀態
         getBlogArticle();
       })
-    .catch(error => Sentry.captureException("留言按讚失敗", error));
+    .catch(error => logError("留言按讚失敗", error));
 
   };
   
@@ -81,7 +82,7 @@ const Blog_CommentReply = ({comment, getBlogArticle, token, postId, formatTimeAg
       Swal.fire(alertReply);
 
     } catch (error) {
-      Sentry.captureException("發送文章留言失敗",error)
+      logError("發送文章留言失敗",error)
     }
 
   }
@@ -101,7 +102,7 @@ const Blog_CommentReply = ({comment, getBlogArticle, token, postId, formatTimeAg
       getBlogArticle();
       setIsEditing(false);
     } catch (error) {
-      Sentry.captureException("更新留言失敗", error);
+      logError("更新留言失敗", error);
     }
   };
 
@@ -122,7 +123,7 @@ const deleteComment = async (commentId) => {
     // 🔥 確保前端獲取最新留言
     await getBlogArticle();  // 👉 等待最新留言載入完成，確保畫面即時更新
   } catch (error) {
-    Sentry.captureException(`❌ 刪除留言 ${commentId} 失敗`, error);
+    logError(`❌ 刪除留言 ${commentId} 失敗`, error);
   }
 };
 

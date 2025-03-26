@@ -2,6 +2,7 @@ import SubscriptionHistoryCard from "../../component/SubscriptionCard/Subscripti
 import axios from "axios";
 import { useEffect, useState, Fragment } from "react";
 import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
+import { logError } from "../../utils/sentryHelper";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -15,7 +16,7 @@ const AdminSubscription = () => {
       const res = await axios.get(`${API_BASE_URL}/payments/received`);
       setPaymentReceivedData(res.data.data);
     } catch (error) {
-      Sentry.captureException(error);
+      logError(error);
     }finally{
       setIsLoading(false);
     }

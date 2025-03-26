@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import { alertMsgForVerify } from "../../utils/alertMsg";
 import PropTypes from "prop-types";
+import { logError } from "../../utils/sentryHelper";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -26,7 +27,7 @@ const CommentReply = ({
       await axios.delete(`${API_BASE_URL}/comments/${commentData.id}`);
       getComment();
     } catch (error) {
-      Sentry.captureException(error);
+      logError(error);
     }
   };
   const putComment = async () => {
@@ -36,7 +37,7 @@ const CommentReply = ({
       });
       getComment();
     } catch (error) {
-      Sentry.captureException(error);
+      logError(error);
     }
   };
   const getCommentLikeData = async () => {
@@ -46,7 +47,7 @@ const CommentReply = ({
       );
       setCommentLikeData(res.data.data);
     } catch (error) {
-      Sentry.captureException(error);
+      logError(error);
     }
   };
   const postCommentLike = async () => {
@@ -57,7 +58,7 @@ const CommentReply = ({
       getComment();
       getCommentLikeData();
     } catch (error) {
-      Sentry.captureException(error);
+      logError(error);
     }
   };
   const handleEdit = () => {
