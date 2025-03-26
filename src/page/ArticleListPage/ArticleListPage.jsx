@@ -10,6 +10,7 @@ import {
   alertMsgForAddFavorites,
   alertMsgForCancelFavorites,
 } from "../../utils/alertMsg";
+import { logError } from "../../utils/sentryHelper";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -30,7 +31,7 @@ const ArticleListPage = () => {
       const res = await axios.get(`${API_BASE_URL}/categories`);
       setCategoriesData(res.data.data);
     } catch (error) {
-      Sentry.captureException(error);
+      logError(error);
     }
   };
 
@@ -42,7 +43,7 @@ const ArticleListPage = () => {
       );
       setAllArticleData(filterArticleData);
     } catch (error) {
-      Sentry.captureException(error);
+      logError(error);
     }
   };
 
@@ -106,7 +107,7 @@ const ArticleListPage = () => {
         )
       );
     } catch (error) {
-      Sentry.captureException(error);
+      logError(error);
     }
   };
   //取得我的收藏文章，在文章列表提示是否收藏，且可直接點選icon取消
@@ -117,7 +118,7 @@ const ArticleListPage = () => {
       const res = await axios.get(`${API_BASE_URL}/posts/favorites`);
       dispatch(setFavoriteArticle(res.data.data));
     } catch (error) {
-      Sentry.captureException(error);
+      logError(error);
     }
   };
 
@@ -130,7 +131,7 @@ const ArticleListPage = () => {
       getFavoriteArticle();
       getArticleListData();
     } catch (error) {
-      Sentry.captureException(error);
+      logError(error);
     }
   };
   //文章列表沒有paganation，用滾動至底部作為新增資料的判斷

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import avatar from "../../assets/images/avatar-1.png";
+import PropTypes from "prop-types";
 import axios from "axios";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -36,6 +36,12 @@ const SubscriptionHistoryCard = ({ payerId, paymentDate, amount }) => {
       </div>
     </>
   );
+};
+
+SubscriptionHistoryCard.propTypes = {
+  payerId: PropTypes.string.isRequired,
+  paymentDate: PropTypes.string.isRequired,
+  amount: PropTypes.number.isRequired,
 };
 
 export default SubscriptionHistoryCard;

@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import axios from 'axios';
 const { VITE_API_BASE_URL } = import.meta.env;
 import Swal from "sweetalert2";
+import { logError } from "../../utils/sentryHelper";
 
 const ResetPassword = () => {
   const navigate = useNavigate();
@@ -86,7 +87,7 @@ const ResetPassword = () => {
         navigate("/"); 
 
     }catch(error){
-      Sentry.captureException('error in reset password', error.response?.data || error.message);
+      logError('error in reset password', error.response?.data || error.message);
     }
   };
 

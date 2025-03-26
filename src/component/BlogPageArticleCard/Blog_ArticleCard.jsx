@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 import { alertDeletePost, alertMsgForAdminInfo, alertReply } from "../../utils/alertMsg"
 import Swal from "sweetalert2";
+import { logError } from "../../utils/sentryHelper";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const useMediaQuery = (query) => {
@@ -49,7 +50,7 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, token, getBl
       const hasLiked = res.data.data.some(user => user.id === userId);
       setIsGood(hasLiked); // 如果有按讚則為 true，否則 false
     } catch (error) {
-      Sentry.captureException("檢查按讚狀態失敗", error);
+      logError("檢查按讚狀態失敗", error);
     }
   };
 
@@ -115,7 +116,7 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, token, getBl
       getBlogArticle();
       
     } catch (error) {
-      Sentry.captureException("文章刪除失敗", error);
+      logError("文章刪除失敗", error);
     }
   }
 
@@ -134,7 +135,7 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, token, getBl
       // 重新獲取文章
       getBlogArticle();
     } catch (error) {
-      Sentry.captureException("狀態切換失敗:", error);
+      logError("狀態切換失敗:", error);
     }
   };
 
@@ -158,7 +159,7 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, token, getBl
   
     
     } catch (error) {
-      Sentry.captureException("發送文章留言失敗",error)
+      logError("發送文章留言失敗",error)
     }
 
   }

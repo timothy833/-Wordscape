@@ -7,6 +7,7 @@ import { useParams, useLocation } from 'react-router-dom';
 import { alertMsgForVerify } from "../../utils/alertMsg";
 const { VITE_API_BASE_URL } = import.meta.env;
 import Swal from "sweetalert2";
+import { logError } from "../../utils/sentryHelper";
 
 const SponsorModal = () => {
   const { isAuthorized, token } = useSelector(state => state.auth);
@@ -41,7 +42,7 @@ const SponsorModal = () => {
         const postData = await axios.get(`${VITE_API_BASE_URL}/posts/${postId}`);
         idToSponsor = postData.data.data.user_id;
       } catch (error) {
-        Sentry.captureException('Error getting user id from post:', error);
+        logError('Error getting user id from post:', error);
       }
     }
     
@@ -56,7 +57,7 @@ const SponsorModal = () => {
       );
       return res.data.username;
     } catch (error) {
-      Sentry.captureException('Error getting author data:', error);
+      logError('Error getting author data:', error);
       return '';
     }
   };
@@ -188,7 +189,7 @@ const SponsorModal = () => {
   }
 
   // 自訂卡號輸入
-  const handleCardNumberChange = (e) => {
+  const handleCardNumberChange = () => {
     const cardParts = [
       document.getElementById('card-part-1').value,
       document.getElementById('card-part-2').value,
@@ -244,7 +245,7 @@ const SponsorModal = () => {
         });
       }
     } catch(error) {
-      Sentry.captureException('error in sponsor', error.response?.data || error.message);
+      logError('error in sponsor', error.response?.data || error.message);
       
       Swal.fire({
         title: "贊助失敗!",

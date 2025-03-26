@@ -18,6 +18,7 @@ import {
 import { Link } from "react-router-dom";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 import SponsorModal from "../../component/SponsorModal/SponsorModal";
+import { logError } from "../../utils/sentryHelper";
 
 const ArticlePage = () => {
   const { id: articleId } = useParams();
@@ -38,7 +39,7 @@ const ArticlePage = () => {
       const res = await axios.get(`${API_BASE_URL}/posts/${articleId}`);
       setArticleData(res.data.data);
     } catch (error) {
-      Sentry.captureException(error);
+      logError(error);
     }
   };
   const getAutherData = async () => {
@@ -48,7 +49,7 @@ const ArticlePage = () => {
       );
       setAutherData(res.data);
     } catch (error) {
-      Sentry.captureException(error);
+      logError(error);
     }
   };
   //留言相關功能(需登入)
@@ -57,7 +58,7 @@ const ArticlePage = () => {
       const res = await axios.get(`${API_BASE_URL}/comments/${articleId}`);
       setCommentData(res.data.data);
     } catch (error) {
-      Sentry.captureException(error);
+      logError(error);
     }
   };
   const postComment = async () => {
@@ -69,7 +70,7 @@ const ArticlePage = () => {
       setCommentInput("");
       getComment();
     } catch (error) {
-      Sentry.captureException(error);
+      logError(error);
     }
   };
   //訂閱相關功能(需登入)
@@ -82,7 +83,7 @@ const ArticlePage = () => {
         )
       );
     } catch (error) {
-      Sentry.captureException(error);
+      logError(error);
     }
   };
   const postSubscribed = async () => {
@@ -95,7 +96,7 @@ const ArticlePage = () => {
         : Swal.fire({...alertMsgForSuccess,title:"已取消追蹤"});
       checkIsSubscribed();
     } catch (error) {
-      Sentry.captureException(error);
+      logError(error);
     }
   };
   //點讚相關功能(需登入)
@@ -106,7 +107,7 @@ const ArticlePage = () => {
       );
       setIsLike(res.data.data.some((likeData) => likeData.id === userId));
     } catch (error) {
-      Sentry.captureException(error);
+      logError(error);
     }
   };
   const postArticleLike = async () => {
@@ -118,7 +119,7 @@ const ArticlePage = () => {
       getArticle(); //為了取得讚數在進行一次get文章資料，是否可以進行優化
       checkIsLikeArticle();
     } catch (error) {
-      Sentry.captureException(error);
+      logError(error);
     }
   };
   //收藏相關功能(需登入)
@@ -131,7 +132,7 @@ const ArticlePage = () => {
         )
       );
     } catch (error) {
-      Sentry.captureException(error);
+      logError(error);
     }
   };
   const postFavorites = async () => {
@@ -144,7 +145,7 @@ const ArticlePage = () => {
         : Swal.fire(alertMsgForCancelFavorites);
       checkIsFavorites();
     } catch (error) {
-      Sentry.captureException(error);
+      logError(error);
     }
   };
   //用於處理推薦文章
@@ -157,7 +158,7 @@ const ArticlePage = () => {
       );
       setAllArticleData(filterArticleData);
     } catch (error) {
-      Sentry.captureException(error);
+      logError(error);
     }
   };
   // ✅ 顯示距離現在多久

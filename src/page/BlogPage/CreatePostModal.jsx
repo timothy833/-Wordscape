@@ -8,6 +8,7 @@ import { Modal } from "bootstrap";
 import PropTypes from "prop-types";
 import {alertCreatePost} from "../../utils/alertMsg"
 import Swal from "sweetalert2";
+import { logError } from "../../utils/sentryHelper";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -123,7 +124,7 @@ const NewPostModal = ({ getBlogArticle, token, isModalOpen, setIsModalOpen, setI
                 const res = await axios.get(`${API_BASE_URL}/categories`);
                 setCategories(res.data.data || []); //設定分類資料
             } catch (error) {
-                Sentry.captureException("載入分類失敗", error);
+                logError("載入分類失敗", error);
             }
         }
 
@@ -240,7 +241,7 @@ const NewPostModal = ({ getBlogArticle, token, isModalOpen, setIsModalOpen, setI
         });
         return res.data.url; // 存 R2 URL
         } catch (error) {
-        Sentry.captureException("圖片上傳失敗", error);
+        logError("圖片上傳失敗", error);
         }
     };
 
@@ -296,7 +297,7 @@ const NewPostModal = ({ getBlogArticle, token, isModalOpen, setIsModalOpen, setI
     //         });
     //         return createRes.data.data.id;
     //     } catch (error) {
-    //         Sentry.captureException("分類查詢或建立失敗", error);
+    //         logError("分類查詢或建立失敗", error);
     //         return null;
     //     }
     // };
@@ -372,7 +373,7 @@ const NewPostModal = ({ getBlogArticle, token, isModalOpen, setIsModalOpen, setI
                     // setContent(tempDiv.innerHTML); // ✅ **統一更新 `content`**
                     // quill.root.innerHTML = tempDiv.innerHTML; // ✅ 直接更新 Quill 編輯器內容
                 } catch (error) {
-                    Sentry.captureException("文章內圖片上傳失敗", error);
+                    logError("文章內圖片上傳失敗", error);
                     setIsLoading(false);
                     return
                 }
@@ -396,7 +397,7 @@ const NewPostModal = ({ getBlogArticle, token, isModalOpen, setIsModalOpen, setI
 
             // 發送 API 把所有標籤加到文章**
             if(tags.length > 0) {
-               const resTag =  await axios.post(`${API_BASE_URL}/posts/${newPostId}/tags`, { tags }, {
+               await axios.post(`${API_BASE_URL}/posts/${newPostId}/tags`, { tags }, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     }
@@ -408,7 +409,7 @@ const NewPostModal = ({ getBlogArticle, token, isModalOpen, setIsModalOpen, setI
             Swal.fire(alertCreatePost);
             handleClose(); // 發布成功後清空輸入內容
         } catch (error) {
-            Sentry.captureException("新增文章失敗", error);
+            logError("新增文章失敗", error);
             // handleClose(); //關閉 modal 並清空輸入內容
         }
     }

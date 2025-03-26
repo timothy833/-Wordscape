@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react'
 import { login, clearError } from '../../slice/authSlice';
+import { logError } from '../../utils/sentryHelper';
 
 const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
     LoginPage.propTypes = {
@@ -100,7 +101,7 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
             newFormErrors.email = '請輸入有效的 Email 格式';
             formIsValid = false;
             setFormErrors(newFormErrors);
-            return;
+            return formIsValid;
         }
 
         try{
@@ -110,7 +111,7 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
                 "email": resetEmail.email,
                 "password": "securepassword",
               }
-            const forgotPwRes = await axios.post(url, data, {
+            await axios.post(url, data, {
                 headers: {
                 "Content-Type": "application/json"
                 }
@@ -134,7 +135,7 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
                 confirmButtonColor: "#E77605",
                 confirmButtonText: "確認"
               });
-              Sentry.captureException('error in login', error.response?.data || error.message);
+              logError('error in login', error.response?.data || error.message);
         }finally{
             setIsLoading(false);
         }

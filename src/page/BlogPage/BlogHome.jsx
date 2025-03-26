@@ -38,6 +38,7 @@ import Cookies from "js-cookie";
 import Swal from "sweetalert2";
 import {  alertMsgForAdminInfo,alertMsgForAdminError} from "../../utils/alertMsg"
 import LoadingSpinner from "../../component/LoadingSpinner/LoadingSpinner"
+import { logError } from "../../utils/sentryHelper";
 // const getCookie = (name) => {
 //   return document.cookie
 //       .split("; ")
@@ -180,7 +181,7 @@ const BlogHome = () => {
       
       setIsLoading(false);
     } catch (error) {
-      Sentry.captureException("取得blog文章列表失敗", error);
+      logError("取得blog文章列表失敗", error);
       setArticles([]); // 遇到錯誤時，也設置空陣列，避免 undefined 錯誤
     }
   }
@@ -229,7 +230,7 @@ const swiperArticles = useMemo(() => {
       // console.log(res.data);
       setBlogUser(res.data);
     } catch (error) {
-      Sentry.captureException("取得 blog 使用者失敗", error);
+      logError("取得 blog 使用者失敗", error);
     }
   };
 
@@ -258,7 +259,7 @@ const swiperArticles = useMemo(() => {
         setImagePreview(res.data.image_url  || "")
   
       })
-      .catch(error => Sentry.captureException("沒有 Banner", error));
+      .catch(error => logError("沒有 Banner", error));
     }
   
 
@@ -287,14 +288,14 @@ const swiperArticles = useMemo(() => {
                   newComments[article.id] = res.data.data|| []; // 確保即使沒有留言，也有空陣列 // 以 article.id 為 key 儲存留言  取 `data` 屬性內的陣列
                 }) 
                 .catch(error => {
-                  Sentry.captureException(`文章 ${article.id} 的留言載入失敗`, error);
+                  logError(`文章 ${article.id} 的留言載入失敗`, error);
                   newComments[article.id] = []; // 確保錯誤時也有預設值
                 })
           }
         )
       ).then(()=>{
         setComments(newComments); //只更新一次state，避免多次 re-render
-      }).catch(error => Sentry.captureException("載入留言失敗", error));
+      }).catch(error => logError("載入留言失敗", error));
     }
   }, [articles]);  // 依賴 `articles` 變化後執行
 
@@ -356,7 +357,7 @@ const swiperArticles = useMemo(() => {
           "Content-Type": "application/json",
         };
       }else {
-        Sentry.captureException("請提供圖片或外部圖片 URL");
+        logError("請提供圖片或外部圖片 URL");
         setIsLoading(false);
         return;
       }
@@ -376,7 +377,7 @@ const swiperArticles = useMemo(() => {
       closeModal(); // ✅ 成功後關閉
 
     } catch (error) {
-      Sentry.captureException("創建或更新banner失敗", error);
+      logError("創建或更新banner失敗", error);
       closeModal();
     }
   }
@@ -635,7 +636,7 @@ const uploadImageToR2 = async () => {
     });
     return res.data.url;
   } catch (error) {
-    Sentry.captureException("封面圖片上傳失敗", error);
+    logError("封面圖片上傳失敗", error);
     return 
   }
 };
@@ -720,7 +721,7 @@ const isQuillContentEmpty = (html) => {
               });
           } catch (error) {
               setIsLoading(false);
-              Sentry.captureException("文章內圖片上傳失敗", error);
+              logError("文章內圖片上傳失敗", error);
               return
           }
         }
@@ -751,7 +752,7 @@ const isQuillContentEmpty = (html) => {
       Swal.fire( alertMsgForAdminInfo);
       closeEditModal(); // 關閉 Modal
     } catch (error) {
-      Sentry.captureException("文章更新失敗", error);
+      logError("文章更新失敗", error);
       setIsLoading(false);
       Swal.fire(alertMsgForAdminError);
      

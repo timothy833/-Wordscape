@@ -9,6 +9,7 @@ import { alertMsgForAdminInfo } from "../../utils/alertMsg";
 import { alertMsgForAdminError } from "../../utils/alertMsg";
 import { alertMsgForVerify } from "../../utils/alertMsg";
 import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
+import { logError } from "../../utils/sentryHelper";
 
 
 const AdminInfo = () => {
@@ -57,7 +58,7 @@ const AdminInfo = () => {
 
         setPreviewImage(res.data.profile_picture || "https://raw.githubusercontent.com/wfox5510/wordSapce-imgRepo/695229fa8c60c474d3d9dc0d60b25f9539ac74d9/default-avatar.svg");
       } catch (error) {
-        Sentry.captureException(error);
+        logError(error);
       } finally {
         setIsLoading(false);
       }
@@ -122,7 +123,7 @@ const AdminInfo = () => {
       dispatch(updateUserInfo({ username: data.username, userAvatar: profileImageUrl }));
     } catch (error) {
       Swal.fire(alertMsgForAdminError);
-      Sentry.captureException(error);
+      logError(error);
     }finally{
       setIsLoading(false);
     }

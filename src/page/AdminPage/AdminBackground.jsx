@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 import AdminRevenueChart from "../../component/AdminRevenueChart/AdminRevenueChart";
 import AdminViewCount from "../../component/AdminViewCount/AdminViewCount";
+import { logError } from "../../utils/sentryHelper";
 
 const AdminBackground = () => {
   const [isLoading,setIsLoading] = useState(false);
@@ -77,7 +78,7 @@ const AdminBackground = () => {
         setRevenue(revenueRes.data.data || []);
 
       } catch (error) {
-        Sentry.captureException(error);
+        logError(error);
 
       } finally {
         setIsLoading(false);
