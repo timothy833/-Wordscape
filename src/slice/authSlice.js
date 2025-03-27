@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios';
 const { VITE_API_BASE_URL } = import.meta.env;
 import Swal from "sweetalert2";
+import { logError } from '../../utils/sentryHelper';
 
 // 從 cookie 中獲取 token
 function getTokenFromCookie() {
@@ -54,7 +55,7 @@ export const login = createAsyncThunk(
 
       return { token, username, id };
     } catch (error) {
-      Sentry.captureException(error);
+      logError(error);
       if (error.response && error.response.status === 401) {
         Swal.fire({
           title: "登入失敗!",
@@ -125,7 +126,7 @@ export const logout = createAsyncThunk(
       }
 
     } catch (error) {
-      Sentry.captureException('error in logout', error.response?.data || error.message);
+      logError('error in logout', error.response?.data || error.message);
 
       if (error.code === 'ECONNABORTED') {
         Swal.fire({
@@ -179,7 +180,7 @@ export const fetchUserAvatar = createAsyncThunk(
 
       return { avatarUrl, updateUsername };
     } catch (error) {
-      Sentry.captureException('獲取頭像失敗', error.response?.data || error.message);
+      logError('獲取頭像失敗', error.response?.data || error.message);
       return rejectWithValue(error.response?.data || '獲取頭像失敗');
     }
   }
