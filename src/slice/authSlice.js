@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios';
 const { VITE_API_BASE_URL } = import.meta.env;
 import Swal from "sweetalert2";
-import { logError } from '../../utils/sentryHelper';
+import { logError } from '../utils/sentryHelper';
 
 // 從 cookie 中獲取 token
 function getTokenFromCookie() {
