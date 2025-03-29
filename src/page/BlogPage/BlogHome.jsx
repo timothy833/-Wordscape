@@ -70,9 +70,7 @@ const BlogHome = () => {
 
 
   // ✅ 釘選狀態（從 localStorage 讀取）
-  const [pinnedArticles, setPinnedArticles] = useState(() => {
-    return JSON.parse(localStorage.getItem("pinnedArticles")) || [];
-  });
+  const [pinnedArticles, setPinnedArticles] = useState([]);
 
   //狀態管理userId & token
   // const dispatch = useDispatch();
@@ -97,13 +95,6 @@ const BlogHome = () => {
     return () => clearInterval(interval);
   }, [dispatch]);
 
-  // **監聽 Redux `token`，當變成 `null` 時自動跳轉首頁**
-  // useEffect(() => {
-  //   if (!token) {
-  //     navigate("/"); // 確保同步登出
-  //   }
-  // }, [token, navigate]);
-
 
   //初始化比對userId是否是登入id
   useEffect(()=>{   
@@ -121,26 +112,50 @@ const BlogHome = () => {
   }, [user_id, userId]);
 
 
+  //取得釘選文章api資料
+  useEffect(() => {
+    if (user_id) {
+      fetchPinnedArticles();
+    }
+  }, [user_id]);
+
+  const fetchPinnedArticles = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/posts/pinned/${user_id}`);
+      setPinnedArticles(res.data.data); // 取得文章 ID 陣列
+    } catch (error) {
+      logError("取得釘選文章失敗", error);
+      setPinnedArticles([]);
+    }
+  };
 
 
 
 
 
   // 切換釘選狀態
-  const togglePin = (articleId) => {
-    setPinnedArticles((prevPinned)=>{
-      let updatedPins;
-      if (prevPinned.includes(articleId)) {
-        updatedPins = prevPinned.filter((id) => id !== articleId); // 取消釘選
-      } else {
-        updatedPins = [...prevPinned, articleId]; // 釘選
-      }
+  const togglePin = async (articleId) => {
+    if (!isAuthor) return; // 只有作者能操作
 
-      // ✅ 存入 localStorage，確保重整後不會消失
-      localStorage.setItem("pinnedArticles", JSON.stringify(updatedPins));
-      return updatedPins;
+    try {
+      await axios.post(`${API_BASE_URL}/posts/${articleId}/pinned`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
 
-    });
+      // 更新狀態
+      setPinnedArticles((prevPinned) => {
+        if (prevPinned.includes(articleId)) {
+          return prevPinned.filter((id) => id !== articleId);
+        } else {
+          return [...prevPinned, articleId];
+        }
+      });
+
+    } catch (error) {
+      logError("切換釘選失敗", error);
+    }
+    
   };
 
    // ✅ 計算篩選 & 排序後的文章列表（使用 `useMemo` 優化）
