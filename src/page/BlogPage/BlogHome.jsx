@@ -229,12 +229,12 @@ const swiperArticles = useMemo(() => {
       return b.view_count - a.view_count; // 瀏覽數高的排前
     })
     .slice(0, 5); // 🔥 固定顯示最多 5 篇 // 確保少於 5 篇時顯示全部
-}, [ filteredArticles, pinnedArticles]);
+}, [articles, pinnedArticles]);
 
   // ✅ 監聽篩選狀態變更，重新載入文章
-  useEffect(() => {
-    getBlogArticle();
-  }, [filterStatus]);
+  // useEffect(() => {
+  //   getBlogArticle();
+  // }, [filterStatus]);
 
 
 
