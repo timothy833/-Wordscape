@@ -161,11 +161,11 @@ const BlogHome = () => {
    // ✅ 計算篩選 & 排序後的文章列表（使用 `useMemo` 優化）
    const filteredArticles = useMemo(() => {
     return articles
-    .filter((article) => filterStatus === "" || article.status === filterStatus) // 只顯示已發布的文章
+    .filter((article) => filterStatus === "" || article.status === filterStatus) // 只顯示已發布的文章   // 1️⃣ 篩選狀態 (全部 / 已發佈 / 草稿)
     .sort((a, b) => {
-      const isPinnedA = pinnedArticles.includes(a.id); // 按瀏覽數排序
+      const isPinnedA = pinnedArticles.includes(a.id); 
       const isPinnedB = pinnedArticles.includes(b.id);
-      return isPinnedB - isPinnedA; // 釘選的文章排在最前面
+      return isPinnedB - isPinnedA; // 釘選的文章排在最前面  // 2️⃣ 排序 → 釘選文章優先  // 如果釘選狀態相同 → 保留原本順序 (時間順)
     });
   }, [articles, filterStatus, pinnedArticles])
 
