@@ -193,18 +193,18 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, token, getBl
                 <div className={`d-flex gap-1  ${isGood ? "text-primary" : "text-gray"}`} onClick={() => {
                   likePost(article.id)
                   }} style={{ cursor: "pointer" }}>
-                  <p>{article.likes_count}</p>
                   <span className="material-symbols-outlined">
                     favorite
                   </span>
+                  <p>{article.likes_count}</p>
                 </div>
 
                  {/* 🔥 顯示該文章的留言總數 */}
                 <div className="d-flex text-gray gap-1" >
-                  <p>{countTotalComments(comments)}</p>
                   <span className="material-symbols-outlined">
                     chat_bubble
                   </span>
+                  <p>{countTotalComments(comments)}</p>
                 </div>
 
                 {userId &&(<p className="text-gray hover-effect"  onClick={() => {

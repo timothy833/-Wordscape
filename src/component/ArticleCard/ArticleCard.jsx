@@ -57,12 +57,12 @@ const ArticleCard = ({ articleData }) => {
             </div>
             <div className="d-flex gap-2">
               <span className="text-gray d-flex align-items-center gap-1">
-                {articleData?.likes_count}
                 <span className="material-icons-outlined">favorite</span>
+                {articleData?.likes_count}
               </span>
               <span className=" text-gray d-flex align-items-center gap-1">
-                {articleData?.comments.length}
                 <span className="material-icons-outlined">chat_bubble</span>
+                {articleData?.comments.length}
               </span>
             </div>
           </div>
