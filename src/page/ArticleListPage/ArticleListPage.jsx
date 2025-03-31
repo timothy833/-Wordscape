@@ -519,16 +519,16 @@ const ArticleListPage = () => {
                             ).toLocaleDateString()}
                           </span>
                           <span className="text-gray d-flex align-items-center gap-1">
-                            {articleListDataItem.likes_count}
                             <span className="material-icons-outlined">
                               favorite
                             </span>
+                            {articleListDataItem.likes_count}
                           </span>
                           <span className=" text-gray d-flex align-items-center gap-1">
-                            {articleListDataItem.comments.length}
                             <span className="material-icons-outlined">
                               chat_bubble
                             </span>
+                            {articleListDataItem.comments.length}
                           </span>
                           {isAuthorized && (
                             <span
@@ -545,10 +545,10 @@ const ArticleListPage = () => {
                                 postFavorites(articleListDataItem.id);
                               }}
                             >
-                              {articleListDataItem.favorites_count}
                               <span className="material-symbols-outlined icon-fill">
                                 bookmark
                               </span>
+                              {articleListDataItem.favorites_count}
                             </span>
                           )}
                         </div>
