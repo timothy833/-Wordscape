@@ -698,9 +698,9 @@ const isQuillContentEmpty = (html) => {
       
       // ✅ 動態組裝 payload
       const payload = {};
-      if(titleEdit.trim() !== "") payload.title = titleEdit.trim();
-      if(descriptionEdit === "string" && descriptionEdit.trim() !== "" && descriptionEdit.trim() !== selectedArticle.description?.trim()) payload.description = descriptionEdit;
-      if(finalImageUrl && finalImageUrl !== selectedArticle.image_url) payload.image_url = finalImageUrl;
+      if(titleEdit.trim() !== "" && titleEdit.trim() !== (selectedArticle.title || "").trim()) {payload.title = titleEdit.trim(); }
+      if(descriptionEdit.trim() !== "" && descriptionEdit.trim() !== (selectedArticle.description || "").trim()) {payload.description = descriptionEdit; }
+      if(finalImageUrl && finalImageUrl !== selectedArticle.image_url) {payload.image_url = finalImageUrl;}
       if(!isQuillContentEmpty(contentEdit) && contentEdit.trim() !== (selectedArticle.content || "").trim()){
         // ✅ 處理 Quill Base64 圖片（解析 contentEdit）
         // 創建一個臨時 `div` 來解析 HTML(Quill 內部 Base64 圖片)
