@@ -17,7 +17,6 @@ const ResetPassword = () => {
 
   useEffect(() => {
     if (!Resettoken) {
-      // navigate("/"); // 若沒有 token，導回登入頁 
       Swal.fire({
         title: "無效的重設密碼連結",
         icon: "error",

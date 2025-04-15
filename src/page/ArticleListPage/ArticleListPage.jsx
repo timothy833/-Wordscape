@@ -134,20 +134,6 @@ const ArticleListPage = () => {
       logError(error);
     }
   };
-  //文章列表沒有paganation，用滾動至底部作為新增資料的判斷
-  // useEffect(() => {
-  //   const handleScroll = () => {
-  //     //當滑動到底部，且顯示文章數量少於文章列表資料數量
-  //     window.innerHeight + window.scrollY >=
-  //       document.documentElement.scrollHeight &&
-  //       articleListData?.length > articleListPageCount &&
-  //       setArticleListPageCount((prev) => {
-  //         return prev + 10;
-  //       });
-  //   };
-  //   window.addEventListener("scroll", handleScroll);
-  //   return () => window.removeEventListener("scroll", handleScroll);
-  // }, [articleListData]);
 
   useEffect(() => {
     getCategories();

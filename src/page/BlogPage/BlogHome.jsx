@@ -32,19 +32,13 @@ import { Link } from "react-router-dom";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 import { useSelector, useDispatch} from "react-redux";
-// import { useNavigate } from "react-router-dom";
 import { logout } from "../../slice/authSlice";
 import Cookies from "js-cookie";
 import Swal from "sweetalert2";
 import {  alertMsgForAdminInfo,alertMsgForAdminError} from "../../utils/alertMsg"
 import LoadingSpinner from "../../component/LoadingSpinner/LoadingSpinner"
 import { logError } from "../../utils/sentryHelper";
-// const getCookie = (name) => {
-//   return document.cookie
-//       .split("; ")
-//       .find(row => row.startsWith(name + "="))
-//       ?.split("=")[1] || "";
-// };
+
 
 const BlogHome = () => {
   const { user_id } = useParams(); // URL 參數中的 Blog 擁有者 ID
@@ -72,8 +66,7 @@ const BlogHome = () => {
   // ✅ 釘選狀態（從 localStorage 讀取）
   const [pinnedArticles, setPinnedArticles] = useState([]);
 
-  //狀態管理userId & token
-  // const dispatch = useDispatch();
+
 
   // ✅ 從 Redux 取得登入的 user_id 和 token
   const userId = useSelector((state)=> state.auth.id);
@@ -87,7 +80,6 @@ const BlogHome = () => {
       const tokenFromCookies = Cookies.get("WS_token");
       if (!tokenFromCookies) {
         dispatch(logout());
-        // navigate("/"); // 這裡手動導回首頁
       }
     };
 
@@ -107,7 +99,6 @@ const BlogHome = () => {
       setTitle("");
       setSubtitle("");
       setImagePreview("")
-      // getBanner();
     }
   }, [user_id, userId]);
 
@@ -231,10 +222,6 @@ const swiperArticles = useMemo(() => {
     .slice(0, 5); // 🔥 固定顯示最多 5 篇 // 確保少於 5 篇時顯示全部
 }, [articles, pinnedArticles]);
 
-  // ✅ 監聽篩選狀態變更，重新載入文章
-  // useEffect(() => {
-  //   getBlogArticle();
-  // }, [filterStatus]);
 
 
 
@@ -250,18 +237,6 @@ const swiperArticles = useMemo(() => {
   };
 
 
-  //加載blog擁有者基本信息 渲染文章列表資料
-  // useEffect(()=>{
-  //   // const storedToken = getCookie("WS_token");
-  //   // setToken(storedToken);
-  //   // setUerId("dc576098-dc26-46a4-aede-6bc5c8f300ea");
-
-  
-  //   getBlogArticle();
-  //   getBlogUser();
-  //   // getBanner();
-  // }, [isAuthor, token]);
-    //抓資料庫回傳banner資料渲染
     const getBanner = ()=>{
       if (!user_id) return; // 🔹 確保 `user_id` 存在才執行
   
@@ -281,7 +256,6 @@ const swiperArticles = useMemo(() => {
 
 
   useEffect(() => {
-    // console.log("🔄 重新載入 BlogHome，當前 user_id:", user_id);
     getBlogArticle(); // 重新載入該 BlogHome 的內容
     getBlogUser();    // 重新載入該使用者資訊
     getBanner();
@@ -574,7 +548,6 @@ useEffect(() => {
 //傳進去給articleCard當打開開關
 
 const openEditModal = (article) => {
-  // console.log("🔍 文章選擇:", article);
   getBlogArticle();
   setSelectedArticle(article);
 

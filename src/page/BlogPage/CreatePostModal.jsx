@@ -1,8 +1,6 @@
 import { useEffect, useState, useRef} from "react";
 import Quill from "quill";
 import "quill/dist/quill.snow.css"; // ✅ Quill 樣式
-// import "quill/dist/quill.bubble.css"; // ✅ 確保 Quill 內建樣式加載
-// import "highlight.js/styles/github.css"; // ✅ 確保 Syntax 高亮樣式可用
 import axios from "axios";
 import { Modal } from "bootstrap";
 import PropTypes from "prop-types";
@@ -12,13 +10,6 @@ import { logError } from "../../utils/sentryHelper";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-
-// const getCookie = (name) => {
-//     return document.cookie
-//         .split("; ")
-//         .find(row => row.startsWith(name + "="))
-//         ?.split("=")[1] || "";
-// };
 
 
   
@@ -44,12 +35,6 @@ const NewPostModal = ({ getBlogArticle, token, isModalOpen, setIsModalOpen, setI
     const modalInstance = useRef(null);
     const quillInstance = useRef(null);
 
-
-    //在元件載入時讀取token
-    // useEffect(()=>{
-    //     const storedToken = getCookie("WS_token");
-    //     setToken(storedToken);
-    // }, []);
 
     // ✅ 監聽 Modal 開關，確保關閉時清除內容
     useEffect(() => {
@@ -281,39 +266,6 @@ const NewPostModal = ({ getBlogArticle, token, isModalOpen, setIsModalOpen, setI
     };
 
 
-    // const checkOrCreateCategory = async (name) => {
-    //     try {
-    //         if (!name.trim()) return null; // ✅ 無輸入則直接回傳 null
-
-    //         // 1️⃣ **先查詢分類是否存在**
-    //         const res = await axios.get(`${API_BASE_URL}/categories/get-category/`,  {
-    //             params: { name }
-    //           });
-    //         if (res.data.data) return res.data.data.id; // ✅ 若已存在，回傳分類 UUID
-
-    //         // 2️⃣ **若不存在，則建立分類**
-    //         const createRes = await axios.post(`${API_BASE_URL}/categories`, { name }, { 
-    //             headers: { Authorization: `Bearer ${token}` }
-    //         });
-    //         return createRes.data.data.id;
-    //     } catch (error) {
-    //         logError("分類查詢或建立失敗", error);
-    //         return null;
-    //     }
-    // };
- 
-    //監聽quill輸入內容變化
-    // useEffect(() => {
-    //     if (quill) {
-    //         quill.on("text-change", () => {
-    //             setContent(quill.root.innerHTML);
-    //         });
-    //     }
-    // }, [quill]);
-    
-
-
-
     // **發送文章**
     const handleSubmit = async ()=> {
         setIsLoading(true);
@@ -327,9 +279,6 @@ const NewPostModal = ({ getBlogArticle, token, isModalOpen, setIsModalOpen, setI
             // 1️⃣ **上傳封面圖到 R2（如果有選擇本地圖片）**
             let uploadFinalImage = selectedFile ? await uploadImageToR2() : externalImage;
 
-            // const finalCategoryId = await checkOrCreateCategory(categoryId); // ✅ 確保分類存在，否則傳 `null`
-
-            // 創建一個臨時 `div` 來解析 HTML(Quill 內部 Base64 圖片)
             const tempDiv = document.createElement("div");
 
             // ✅ **確保 Quill 內容是最新的**
@@ -342,13 +291,6 @@ const NewPostModal = ({ getBlogArticle, token, isModalOpen, setIsModalOpen, setI
                 .map(img => img.getAttribute("src"))
                 .filter(src => src.startsWith("data:image"));
 
-            // const base64Images = [];
-            // for(let img of imgTags){
-            //     const imgSrc = img.getAttribute("src");
-            //     if(imgSrc.startsWith("data:image")) {
-            //         base64Images.push(imgSrc);
-            //     }
-            // }
     
 
             // 3️⃣ 如果有 Base64 圖片，則批量上傳
@@ -370,8 +312,6 @@ const NewPostModal = ({ getBlogArticle, token, isModalOpen, setIsModalOpen, setI
                         if(img) img.setAttribute("src", newUrl);
                     });
 
-                    // setContent(tempDiv.innerHTML); // ✅ **統一更新 `content`**
-                    // quill.root.innerHTML = tempDiv.innerHTML; // ✅ 直接更新 Quill 編輯器內容
                 } catch (error) {
                     logError("文章內圖片上傳失敗", error);
                     setIsLoading(false);
@@ -410,7 +350,6 @@ const NewPostModal = ({ getBlogArticle, token, isModalOpen, setIsModalOpen, setI
             handleClose(); // 發布成功後清空輸入內容
         } catch (error) {
             logError("新增文章失敗", error);
-            // handleClose(); //關閉 modal 並清空輸入內容
         }
     }
 
