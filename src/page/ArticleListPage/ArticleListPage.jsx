@@ -192,7 +192,7 @@ const ArticleListPage = () => {
       <section className="recommend-article-section">
         <div className="container">
           <div className="row">
-            <div className="col-12 col-lg-7">
+            <div className="col-lg-7">
               <h2 className="text-primary fs-6 fs-lg-3 fw-bold mb-3 mb-lg-7 p-0 p-lg-2">
                 熱門文章
               </h2>
@@ -368,7 +368,7 @@ const ArticleListPage = () => {
                 </>
               )}
             </div>
-            <div className="col-12 col-lg-5">
+            <div className="col-lg-5">
               <h2 className="text-primary fs-6 fs-lg-3 fw-bold mb-3 mb-lg-7 p-0 p-lg-2">
                 推薦專欄
               </h2>
