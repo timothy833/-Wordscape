@@ -26,7 +26,6 @@ const AdminBackground = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (!token) {
-        //console.log("驗證錯誤，請重新登入");
         return;
       }
 

@@ -117,7 +117,6 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
                 }
             });
             
-            //console.log("forgot password",forgotPwRes);
             setResetEmail({ email: "" });
            
             handleClose();

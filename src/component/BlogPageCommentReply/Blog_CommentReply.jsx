@@ -1,7 +1,6 @@
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import axios from "axios";
-// import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import {  alertDelete, alertReply } from "../../utils/alertMsg" 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -270,20 +269,6 @@ const deleteComment = async (commentId) => {
           </span>
       </div>
       )}
-
-
-      {/* 編輯 & 刪除按鈕 */}
-      {/* <div className="d-flex gap-1">
-        {comment.user_id === userId && (
-          <p className="text-gray btn border  btn-click" style={{ cursor: "pointer" }} onClick={() => setIsEditing(!isEditing)}>
-            編輯
-          </p>
-        )}
-        {isAuthor && <p className="text-danger btn border  btn-click" style={{ cursor: "pointer" }} onClick={deleteComment}>刪除</p>}
-      </div> */}
-     
- 
-
    
       {/* 遞迴渲染子留言 */}
       {showReplies && comment.replies.length >0 && (
