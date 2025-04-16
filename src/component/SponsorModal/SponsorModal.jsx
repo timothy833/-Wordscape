@@ -229,13 +229,11 @@ const SponsorModal = () => {
         "amount": actualAmount,
         "receiver_id": sponsorId  // 使用狀態中儲存的sponsorId
       }
-      //console.log(data);
       
       const sponsorRes = await axios.post(url, data, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
-      //console.log('sponsorRes', sponsorRes);
       if(sponsorRes.data.status === 'success'){
         Swal.fire({
           title: "贊助成功!",
@@ -288,7 +286,7 @@ const SponsorModal = () => {
               <i className="bi bi-gift-fill"></i>
                <span className="ms-2">支持 {sponsorName}</span>
             </div>
-            {/* <button onClick={closeSponsorModal} type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> */}
+
           </div>
           {!isNextStep ? (
             <div className="modal-body">

@@ -10,10 +10,6 @@ import LoginPage from "../../page/AccessPage/LoginPage";
 import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 import Swal from "sweetalert2";
 
-// import { debounce } from 'lodash'; // lodash 提供 debounce 方便控制延遲
-
-//手機版collapse需點擊按鈕和列表以外的地方關閉
-
 const Navbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -29,11 +25,6 @@ const Navbar = () => {
   const { loading, isAuthorized, username, id, userAvatar } = useSelector(state => state.auth);
   const [ isLoading, setIsLoading ] = useState(false);
 
-  // useEffect(()=>{
-  //   setIsLoading(loading);
-  //   toggleLoading(isLoading);
-  // },[]);
-
 
   useEffect(()=>{
     if ( loading === true ){
@@ -45,7 +36,6 @@ const Navbar = () => {
 
   const logoutHandle = () => {
     dispatch(logout());
-    //console.log("logout", isAuthorized);
   };
 
   // 監聽登入狀態變化
@@ -135,20 +125,6 @@ const Navbar = () => {
   // Search
   const [searchQuery, setSearchQuery] = useState('');
   
-  // >>>主要按送出後才會搜尋因此先關閉
-  // 使用 debounce 限制請求頻率，提升效能
-  // useEffect(() => {
-  // const delayedSearch = debounce((searchQuery) => {
-  //     if (searchQuery.trim()) {
-  //         navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
-  //     }
-  // }, 300); 
-
-  // delayedSearch();
-
-  // return delayedSearch.cancel;
-  // }, [searchQuery]);
-
   const handleKeyDown = async(e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -167,10 +143,7 @@ const Navbar = () => {
     }
   };
 
-  
-  // function toggleLoading(isLoading) {     
-  //   document.getElementById("loadingScreen").style.display = isLoading ? "flex" : "none";
-  // }
+
   
   return (
     <>
@@ -363,21 +336,6 @@ const Navbar = () => {
       <LoginPage show={showLoginModal} handleClose={handleCloseLoginModal} handleShowSignupModal={handleShowSignupModal} />
       <SignupPage show={showSignupModal} handleClose={handleCloseSignupModal} handleShowLoginModal={handleShowLoginModal} />
 
-      {/* <div id="loadingScreen">
-        <div
-          className="d-flex justify-content-center align-items-center"
-          style={{
-            position: "fixed",
-            inset: 0,
-            backgroundColor: "rgba(255,255,255,0.5)",
-            zIndex: 999
-          }}
-        >
-          <div className="spinner-border text-secondary" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-        </div>
-      </div> */}
     </section>
     </>
   );

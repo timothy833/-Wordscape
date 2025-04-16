@@ -4,6 +4,8 @@ const { VITE_API_BASE_URL } = import.meta.env;
 import Swal from "sweetalert2";
 import { logError } from '../utils/sentryHelper';
 
+
+// ✅ 1. 取得初始 token（從 cookie）
 // 從 cookie 中獲取 token
 function getTokenFromCookie() {
   const cookies = document.cookie.split(';');
@@ -20,9 +22,10 @@ function getTokenFromCookie() {
 const initialToken = getTokenFromCookie();
 if (initialToken) {
   axios.defaults.headers.common.Authorization = `Bearer ${initialToken}`;
-  // console.log('初始化 token 成功', initialToken);
 };
 
+
+// ✅ 2. 建立非同步登入 login
 export const login = createAsyncThunk(
   'auth/login',
   async (data, { rejectWithValue }) => {
@@ -34,7 +37,6 @@ export const login = createAsyncThunk(
         }
       });
       const { token, id, username } = loginRes.data;
-      // console.log("login", loginRes);
       localStorage.setItem('WS_id', id);
       localStorage.setItem('WS_username', username);
 
@@ -79,10 +81,11 @@ export const login = createAsyncThunk(
   }
 );
 
+
+// ✅ 3. 登出
 export const logout = createAsyncThunk(
   'auth/logout',
   async (_, { getState, rejectWithValue }) => {
-    // console.log('logout');
     try {
       const token = getState().auth.token;
       if (!token) {
@@ -94,8 +97,6 @@ export const logout = createAsyncThunk(
           'Authorization': `Bearer ${token}`
         }
       });
-
-      // console.log('logout', logoutRes);
 
       if (logoutRes.status === 200) {
         // 成功登出，清除數據
@@ -152,6 +153,8 @@ export const logout = createAsyncThunk(
   }
 );
 
+
+// ✅ 4. fetch 使用者頭像
 // 獲取用戶頭像
 export const fetchUserAvatar = createAsyncThunk(
   'auth/fetchUserAvatar',
@@ -186,6 +189,7 @@ export const fetchUserAvatar = createAsyncThunk(
   }
 );
 
+// ✅ 5. 同步初始化登入資訊（for App 啟動）
 // 初始 id username
 export const initializeAuth = () => (dispatch) => {
 
@@ -207,6 +211,8 @@ export const updateToken = (token) => (dispatch) => {
   });
 };
 
+
+// ✅ 6. 建立 slice
 export const authSlice = createSlice({
   name: "auth",
   initialState: {

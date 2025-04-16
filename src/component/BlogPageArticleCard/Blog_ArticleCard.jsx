@@ -1,9 +1,7 @@
-// import articleImg from "../../assets/images/article/article-thumbnail-1.jpeg";
 import PropTypes from "prop-types";
 import Blog_CommentReply from "../BlogPageCommentReply/Blog_CommentReply";
 import axios from "axios";
 import { useEffect,useState} from "react";
-// import EditPostModal from "../../page/BlogPage/EditPostModal"
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 import { alertDeletePost, alertMsgForAdminInfo, alertReply } from "../../utils/alertMsg"
