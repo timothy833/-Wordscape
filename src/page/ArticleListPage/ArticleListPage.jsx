@@ -1,8 +1,8 @@
-import { useEffect, useState, Fragment } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setFavoriteArticle } from "../../slice/favoriteSlice";
 import { Link } from "react-router-dom";
-
+import Pagination from "../../component/Pagination/Pagination";
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -17,6 +17,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const ArticleListPage = () => {
   const { isAuthorized } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+  const articleListRef = useRef(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [allArticleData, setAllArticleData] = useState([]);
@@ -134,6 +135,20 @@ const ArticleListPage = () => {
       logError(error);
     }
   };
+  //文章列表沒有paganation，用滾動至底部作為新增資料的判斷
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     //當滑動到底部，且顯示文章數量少於文章列表資料數量
+  //     window.innerHeight + window.scrollY >=
+  //       document.documentElement.scrollHeight &&
+  //       articleListData?.length > articleListPageCount &&
+  //       setArticleListPageCount((prev) => {
+  //         return prev + 10;
+  //       });
+  //   };
+  //   window.addEventListener("scroll", handleScroll);
+  //   return () => window.removeEventListener("scroll", handleScroll);
+  // }, [articleListData]);
 
   useEffect(() => {
     getCategories();
@@ -147,6 +162,12 @@ const ArticleListPage = () => {
   useEffect(() => {
     getArticleListData();
   }, [listSelector]);
+
+  useEffect(() => {
+    if (articleListRef.current) {
+      articleListRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [articleListPageCount]);
 
   return (
     <>
@@ -232,124 +253,13 @@ const ArticleListPage = () => {
                     className="d-none d-lg-block"
                     aria-label="Page navigation"
                   >
-                    <ul className="hot-article-pagination pagination justify-content-center gap-2 mb-0">
-                      <li className="page-item">
-                        <a
-                          className={`page-link material-symbols-outlined p-0 ps-1 pt-1 rounded-1 ${
-                            currentPage === 1 && "disabled"
-                          }`}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setCurrentPage(currentPage - 1);
-                          }}
-                        >
-                          arrow_back_ios
-                        </a>
-                      </li>
-                      {Array.from({
-                        length: Math.ceil(hotArticleData.length / 3),
-                      }).map((item, index) => {
-                        const totalPage = Math.ceil(hotArticleData.length / 3);
-                        if (
-                          currentPage - index - 1 <= 2 &&
-                          currentPage - index - 1 >= -2
-                        )
-                          return (
-                            <li className="page-item" key={index}>
-                              <a
-                                className={`page-link rounded-1 p-0 ${
-                                  currentPage === index + 1 && "active"
-                                }`}
-                                href="#"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  setCurrentPage(index + 1);
-                                }}
-                              >
-                                {index + 1}
-                              </a>
-                            </li>
-                          );
-                        else if (
-                          currentPage < totalPage - 2 &&
-                          index + 1 === totalPage
-                        )
-                          return (
-                            <Fragment key={index}>
-                              <li className="page-item">
-                                <a
-                                  className={`page-link rounded-1 p-0`}
-                                  href="#"
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                  }}
-                                >
-                                  ...
-                                </a>
-                              </li>
-                              <li className="page-item">
-                                <a
-                                  className={`page-link rounded-1 p-0 ${
-                                    currentPage === index + 1 && "active"
-                                  }`}
-                                  href="#"
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    setCurrentPage(index + 1);
-                                  }}
-                                >
-                                  {index + 1}
-                                </a>
-                              </li>
-                            </Fragment>
-                          );
-                        else if (currentPage > 3 && index === 0)
-                          return (
-                            <Fragment key={index}>
-                              <li className="page-item">
-                                <a
-                                  className={`page-link rounded-1 p-0 ${
-                                    currentPage === index + 1 && "active"
-                                  }`}
-                                  href="#"
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    setCurrentPage(index + 1);
-                                  }}
-                                >
-                                  {index + 1}
-                                </a>
-                              </li>
-                              <li className="page-item">
-                                <a
-                                  className={`page-link rounded-1 p-0`}
-                                  href="#"
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                  }}
-                                >
-                                  ...
-                                </a>
-                              </li>
-                            </Fragment>
-                          );
-                      })}
-                      <li className="page-item">
-                        <a
-                          className={`page-link material-symbols-outlined rounded-1 p-0 ${
-                            currentPage ===
-                              Math.ceil(hotArticleData.length / 3) && "disabled"
-                          }`}
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setCurrentPage(currentPage + 1);
-                          }}
-                        >
-                          arrow_forward_ios
-                        </a>
-                      </li>
-                    </ul>
+                    <Pagination
+                      totalItems={hotArticleData.length}
+                      itemsPerPage={10}
+                      currentPage={currentPage}
+                      onPageChange={(page) => setCurrentPage(page)}
+                      className="hot-article-pagination"
+                    />
                   </nav>
                 </>
               )}
@@ -448,7 +358,7 @@ const ArticleListPage = () => {
           </div>
         </div>
       </section>
-      <section className="article-list-section">
+      <section className="article-list-section" ref={articleListRef}>
         <div
           className="article-list-wrap container py-8 py-lg-10 px-lg-5 rounded-2"
           style={{ backgroundColor: "#FFFDFB" }}
@@ -553,124 +463,13 @@ const ArticleListPage = () => {
               })}
           </ul>
           {articleListData && (
-            <ul className="hot-article-pagination pagination justify-content-center gap-2 mb-0">
-              <li className="page-item">
-                <a
-                  className={`page-link material-symbols-outlined p-0 ps-1 pt-1 rounded-1 ${
-                    currentPage === 1 && "disabled"
-                  }`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setArticleListPageCount(articleListPageCount - 1);
-                  }}
-                >
-                  arrow_back_ios
-                </a>
-              </li>
-              {Array.from({
-                length: Math.ceil(articleListData.length / 10),
-              }).map((item, index) => {
-                const totalPage = Math.ceil(articleListData.length / 10);
-                if (
-                  articleListPageCount - index - 1 <= 2 &&
-                  articleListPageCount - index - 1 >= -2
-                )
-                  return (
-                    <li className="page-item" key={index}>
-                      <a
-                        className={`page-link rounded-1 p-0 ${
-                          articleListPageCount === index + 1 && "active"
-                        }`}
-                        href="#"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setArticleListPageCount(index + 1);
-                        }}
-                      >
-                        {index + 1}
-                      </a>
-                    </li>
-                  );
-                else if (
-                  articleListPageCount < totalPage - 2 &&
-                  index + 1 === totalPage
-                )
-                  return (
-                    <Fragment key={index}>
-                      <li className="page-item">
-                        <a
-                          className={`page-link rounded-1 p-0`}
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault();
-                          }}
-                        >
-                          ...
-                        </a>
-                      </li>
-                      <li className="page-item">
-                        <a
-                          className={`page-link rounded-1 p-0 ${
-                            articleListPageCount === index + 1 && "active"
-                          }`}
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setArticleListPageCount(index + 1);
-                          }}
-                        >
-                          {index + 1}
-                        </a>
-                      </li>
-                    </Fragment>
-                  );
-                else if (articleListPageCount > 3 && index === 0)
-                  return (
-                    <Fragment key={index}>
-                      <li className="page-item">
-                        <a
-                          className={`page-link rounded-1 p-0 ${
-                            articleListPageCount === index + 1 && "active"
-                          }`}
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setArticleListPageCount(index + 1);
-                          }}
-                        >
-                          {index + 1}
-                        </a>
-                      </li>
-                      <li className="page-item">
-                        <a
-                          className={`page-link rounded-1 p-0`}
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault();
-                          }}
-                        >
-                          ...
-                        </a>
-                      </li>
-                    </Fragment>
-                  );
-              })}
-              <li className="page-item">
-                <a
-                  className={`page-link material-symbols-outlined rounded-1 p-0 ${
-                    articleListPageCount ===
-                      Math.ceil(articleListData.length / 10) && "disabled"
-                  }`}
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setArticleListPageCount(articleListPageCount + 1);
-                  }}
-                >
-                  arrow_forward_ios
-                </a>
-              </li>
-            </ul>
+            <Pagination
+              totalItems={articleListData.length}
+              itemsPerPage={10}
+              currentPage={articleListPageCount}
+              onPageChange={(page) => setArticleListPageCount(page)}
+              className="hot-article-pagination"
+            />
           )}
         </div>
       </section>
