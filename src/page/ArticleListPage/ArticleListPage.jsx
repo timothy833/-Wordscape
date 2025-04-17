@@ -228,7 +228,7 @@ const ArticleListPage = () => {
                                 alt="..."
                               />
                               <div className="card-body p-0">
-                                <h3 className="card-title fw-bold text-truncate">
+                                <h3 className="card-title text-primary fw-bold text-truncate">
                                   {hotArticleDataItem.title}
                                 </h3>
                                 <p className="card-text text-truncate fs-8 fs-lg-8">
@@ -295,7 +295,7 @@ const ArticleListPage = () => {
                                 </span>
                               </span>
 
-                              <h4 className="card-title text-primary fw-bold text-truncate-2lines lh-sm text-wrap">
+                              <h4 className="card-title fw-bold text-truncate-2lines lh-sm text-wrap">
                                 {recommendArticleDataItem.title}
                               </h4>
                               <p className="card-text text-truncate-2lines fs-8 fs-lg-8">
