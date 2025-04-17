@@ -1,5 +1,4 @@
 import { Fragment } from "react";
-import "./ArticlePagination.scss";
 import PropTypes from "prop-types";
 
 const ArticlePagination = ({
