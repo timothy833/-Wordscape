@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setFavoriteArticle } from "../../slice/favoriteSlice";
 import { Link } from "react-router-dom";
-import Pagination from "../../component/Pagination/Pagination";
+import ArticlePagination from "../../component/ArticlePagination/ArticlePagination";
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -249,18 +249,14 @@ const ArticleListPage = () => {
                         );
                       })}
                   </ul>
-                  <nav
-                    className="d-none d-lg-block"
-                    aria-label="Page navigation"
-                  >
-                    <Pagination
-                      totalItems={hotArticleData.length}
-                      itemsPerPage={10}
-                      currentPage={currentPage}
-                      onPageChange={(page) => setCurrentPage(page)}
-                      className="hot-article-pagination"
-                    />
-                  </nav>
+
+                  <ArticlePagination
+                    totalItems={hotArticleData.length}
+                    itemsPerPage={3}
+                    currentPage={currentPage}
+                    onPageChange={(page) => setCurrentPage(page)}
+                    className="hot-article-pagination d-none d-lg-flex"
+                  />
                 </>
               )}
             </div>
@@ -463,7 +459,7 @@ const ArticleListPage = () => {
               })}
           </ul>
           {articleListData && (
-            <Pagination
+            <ArticlePagination
               totalItems={articleListData.length}
               itemsPerPage={10}
               currentPage={articleListPageCount}
