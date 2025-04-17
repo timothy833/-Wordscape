@@ -24,7 +24,7 @@
     background-position: right 1.1rem center;
     background-size: 20px;
   }
-  @media (min-width: 768px) {
+  @include media-breakpoint-up(md){
     display: flex;
     align-items: center;
     gap: 24px;
@@ -34,8 +34,8 @@
       flex-shrink: 0;
     }
   }
-  @media (min-width: 1000px) {
-    .form-label,
+  @include media-breakpoint-up(lg){
+        .form-label,
     p {
       width: 176px;
     }
