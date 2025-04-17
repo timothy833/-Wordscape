@@ -388,7 +388,7 @@ const ArticleListPage = () => {
                                 recommendArticleDataItem.image_url ||
                                 "https://github.com/wfox5510/wordSapve-imgRepo/blob/main/articleList-recommend1.png?raw=true"
                               }
-                              alt=""
+                              alt="recommend-article-img"
                             />
                             <div className="card-body d-flex flex-column gap-2 gap-lg-3">
                               <span className="fw-bold">
@@ -427,7 +427,7 @@ const ArticleListPage = () => {
                                 recommendArticleDataItem.image_url ||
                                 "https://github.com/wfox5510/wordSapve-imgRepo/blob/main/articleList-recommend1.png?raw=true"
                               }
-                              alt=""
+                              alt="recommend-article-img"
                             />
                             <div className="card-body d-flex flex-column gap-2 gap-lg-3">
                               <span className="fw-bold">

@@ -11,7 +11,7 @@ const Footer = () => {
               srcSet={logo_light}
               width="128px"
             />
-            <img src={logo_light} alt="" />
+            <img src={logo_light} alt="logo-white" />
           </picture>
           <ul className="list-unstyled list-inline footer-linklist">
             <li className="list-inline-item list-item me-0"><Link to="/" style={{cursor: 'pointer'}}>關於我們</Link></li>
