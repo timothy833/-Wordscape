@@ -1,9 +1,9 @@
 .hot-article-pagination {
   .page-link.material-symbols-outlined {
-    color: #c4cdd5;
     &.disabled {
-      background-color: #919EAB;
-      border-color: #919EAB;
+      color: #c4cdd5;
+      background-color: #fdfbf5;
+      border-color: #dfe3e8;
     }
   }
   .page-link {
