@@ -102,7 +102,7 @@ const ArticleListPage = () => {
 
   //下半部文章列表相關邏輯
   //取得所有文章資料後根據選擇分類篩選資料，用於渲染文章列表
-  const [articleListData, setArticleListData] = useState(null);
+  const [articleListData, setArticleListData] = useState([]);
   const [listSelector, setListSelector] = useState("allArticle");
   const [articleListPageCount, setArticleListPageCount] = useState(1);
 
