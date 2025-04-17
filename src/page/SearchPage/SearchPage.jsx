@@ -2,7 +2,7 @@ import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { useSelector } from "react-redux";
 import axios from 'axios';
-import { useEffect, useState,useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 import Swal from 'sweetalert2';
@@ -44,11 +44,11 @@ const SearchPage = () => {
   // 收藏
   const [isFavorite, setIsFavorite] = useState({});
 
-  const checkIsFavorites = async () => {
+  const checkIsFavorites = useCallback(async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/favorites`);
       const favoriteArticles = res.data.data.map((item) => item.id);
-
+  
       setIsFavorite(() => {
         const updatedFavorites = {};
         searchResults.forEach((post) => {
@@ -59,7 +59,7 @@ const SearchPage = () => {
     } catch (error) {
       logError("取得收藏文章失敗", error);
     }
-  };
+  }, [searchResults]);
 
   const postFavorites = async (id) => {
     try {
@@ -81,7 +81,7 @@ const SearchPage = () => {
     if (isAuthorized) {
       checkIsFavorites();
     }
-  }, [isAuthorized, searchResults]);
+  }, [isAuthorized, searchResults, checkIsFavorites]);
 
   return (
     <>

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import axios from "axios";
 import "../../../node_modules/bootstrap/js/src/dropdown.js";
 import { Link } from "react-router-dom";
@@ -63,7 +63,7 @@ const CommentBox = ({
       logError(error);
     }
   };
-  const getCommentLikeData = async () => {
+  const getCommentLikeData = useCallback(async () => {
     try {
       const res = await axios.get(
         `${API_BASE_URL}/comments/comment_likes/${commentData.id}`
@@ -72,7 +72,7 @@ const CommentBox = ({
     } catch (error) {
       logError(error);
     }
-  };
+  }, [commentData.id]);
   const postCommentLike = async () => {
     try {
       await axios.post(
@@ -89,9 +89,11 @@ const CommentBox = ({
     setIsEdit(false);
     getComment();
   };
+
   useEffect(() => {
     getCommentLikeData();
-  }, []);
+  }, [getCommentLikeData]);
+
   useEffect(() => {
     isEdit && editInputRef?.current?.focus();
   }, [isEdit]);

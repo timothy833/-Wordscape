@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -40,7 +40,7 @@ const CommentReply = ({
       logError(error);
     }
   };
-  const getCommentLikeData = async () => {
+  const getCommentLikeData = useCallback(async () => {
     try {
       const res = await axios.get(
         `${API_BASE_URL}/comments/comment_likes/${commentData.id}`
@@ -49,7 +49,8 @@ const CommentReply = ({
     } catch (error) {
       logError(error);
     }
-  };
+  }, [commentData.id]);
+
   const postCommentLike = async () => {
     try {
       await axios.post(
@@ -66,9 +67,11 @@ const CommentReply = ({
     setIsEdit(false);
     getComment();
   };
+
   useEffect(() => {
     getCommentLikeData();
-  }, []);
+  }, [getCommentLikeData]);
+
   useEffect(() => {
     isEdit && editInputRef?.current?.focus();
   }, [isEdit]);

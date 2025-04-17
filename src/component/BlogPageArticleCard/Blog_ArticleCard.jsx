@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import Blog_CommentReply from "../BlogPageCommentReply/Blog_CommentReply";
 import axios from "axios";
-import { useEffect,useState} from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 import { alertDeletePost, alertMsgForAdminInfo, alertReply } from "../../utils/alertMsg"
@@ -37,7 +37,7 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, token, getBl
   
   //取得文章是否按讚狀態
   // 🔥 檢查登入者是否已按讚
-  const checkLikeStatus = async (postId) => {
+  const checkLikeStatus = useCallback(async (postId) => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/post_likes/${postId}`, {
         headers: {
@@ -50,13 +50,12 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, token, getBl
     } catch (error) {
       logError("檢查按讚狀態失敗", error);
     }
-  };
+  }, [token, userId]);
 
   // 🔥 當組件掛載時，檢查當前使用者是否已按讚
   useEffect(() => {
     checkLikeStatus(article.id);
-  }, [article.id]); 
-
+  }, [article.id, checkLikeStatus]);
 
   //文章內容按讚
   const likePost = async (postId) => {

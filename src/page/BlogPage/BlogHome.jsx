@@ -19,7 +19,7 @@ import SponsorModal from "../../component/SponsorModal/SponsorModal";
 //React方法引用
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { useEffect, useState, useRef, useMemo, Fragment} from "react";
+import { useEffect, useState, useRef, useMemo, Fragment, useCallback} from "react";
 
 //引入Modal方法
 import { Modal } from "bootstrap";
@@ -108,21 +108,18 @@ const BlogHome = () => {
     if (user_id) {
       fetchPinnedArticles();
     }
-  }, [user_id]);
+  }, [user_id, fetchPinnedArticles]);  
 
-  const fetchPinnedArticles = async () => {
+  const fetchPinnedArticles = useCallback(async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/pinned/${user_id}`);
-      setPinnedArticles(res.data.data); // 取得文章 ID 陣列
+      setPinnedArticles(res.data.data);// 取得文章 ID 陣列
     } catch (error) {
       logError("取得釘選文章失敗", error);
       setPinnedArticles([]);
     }
-  };
-
-
-
-
+  }, [user_id]);
+  
 
   // 切換釘選狀態
   const togglePin = async (articleId) => {
@@ -163,36 +160,32 @@ const BlogHome = () => {
 
 
   //加載blog擁有者文章api
-  const getBlogArticle = async ()=>{
+  const getBlogArticle = useCallback(async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/user/${user_id}`);
       // console.log(res.data);
-      if( res.data && Array.isArray(res.data.data)){
+      if (res.data && Array.isArray(res.data.data)) {
         let fetchedArticles = res.data.data;
-
-
+  
         // // ✅ 如果 `userId` 不存在（未登入），或 `user_id !== userId`，則只顯示 `published`
-        if (!userId   || user_id !== userId) {
+        if (!userId || user_id !== userId) {
           fetchedArticles = fetchedArticles.filter((article) => article.status === "published");
         }
-
+  
         // 按照時間排序（最新的文章放最上面）
         fetchedArticles.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
+  
         setArticles(fetchedArticles);
-      }
-      else{
+      } else {
         setArticles([]); // 如果 API 沒有返回正確資料，預設為空陣列
       }
-      
+  
       setIsLoading(false);
     } catch (error) {
       logError("取得blog文章列表失敗", error);
       setArticles([]); // 遇到錯誤時，也設置空陣列，避免 undefined 錯誤
     }
-  }
-
-
+  }, [user_id, userId]);
 
   //加載文章導航區文章地圖
   const categorizedArticles = useMemo(()=>{
@@ -223,10 +216,8 @@ const swiperArticles = useMemo(() => {
 }, [articles, pinnedArticles]);
 
 
-
-
   //得到blog擁有者資料
-  const getBlogUser = async () => {
+  const getBlogUser = useCallback(async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/users/${user_id}`);
       // console.log(res.data);
@@ -234,33 +225,28 @@ const swiperArticles = useMemo(() => {
     } catch (error) {
       logError("取得 blog 使用者失敗", error);
     }
-  };
-
-
-    const getBanner = ()=>{
-      if (!user_id) return; // 🔹 確保 `user_id` 存在才執行
+  }, [user_id]);
   
-      axios.get(`${API_BASE_URL}/banners/${user_id}`)
+  const getBanner = useCallback(() => {
+    if (!user_id) return; // 🔹 確保 `user_id` 存在才執行
+  
+    axios.get(`${API_BASE_URL}/banners/${user_id}`)
       .then(res => {
         // console.log(res.data);
-        setBanner(res.data );
-        setTitle(res.data.title  || "預設標題");
-        setSubtitle(res.data.subtitle  || "預設副標題");
-        setImagePreview(res.data.image_url  || "")
-  
+        setBanner(res.data);
+        setTitle(res.data.title || "預設標題");
+        setSubtitle(res.data.subtitle || "預設副標題");
+        setImagePreview(res.data.image_url || "")
       })
       .catch(error => logError("沒有 Banner", error));
-    }
+  }, [user_id]);
   
-
-
 
   useEffect(() => {
     getBlogArticle(); // 重新載入該 BlogHome 的內容
     getBlogUser();    // 重新載入該使用者資訊
     getBanner();
-  }, [user_id]); // 監聽 `user_id` 變更時，重新執行 `useEffect`
-
+  }, [user_id, getBlogArticle, getBlogUser, getBanner]); // 監聽 `user_id` 變更時，重新執行 `useEffect`
 
 
   //載入文章留言資料
