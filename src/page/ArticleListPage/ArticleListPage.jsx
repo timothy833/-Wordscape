@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setFavoriteArticle } from "../../slice/favoriteSlice";
 import { Link } from "react-router-dom";
@@ -18,6 +18,7 @@ const ArticleListPage = () => {
   const { isAuthorized } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const articleListRef = useRef(null);
+  const isFirstLoad = useRef(true);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [allArticleData, setAllArticleData] = useState([]);
@@ -26,7 +27,7 @@ const ArticleListPage = () => {
 
   //取得分類資料
   const [categoriesData, setCategoriesData] = useState(null);
-  const [categoriesSelector, setCategoriesSelector] = useState([]);
+  const [categoriesSelector, setCategoriesSelector] = useState("");
   const getCategories = useCallback(async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/categories`);
@@ -49,48 +50,55 @@ const ArticleListPage = () => {
   }, []);
 
   //熱門文章 推薦文章篩選
-  const filterHotArticleData = useCallback((articleData) => {
-    return articleData
-      .slice(0, 100)
-      .filter((item) => item.views_count > 5)
-      .filter((item) => {
-        if (categoriesSelector && categoriesSelector.length !== 0)
-          return categoriesSelector.some(
-            (catId) => catId === item.category_id
-          );
-        return true;
-      });
-  }, [categoriesSelector]);
-  
-  const filterRecommendArticleData = useCallback((articleData) => {
-    return articleData
-      .slice(0, 100)
-      .filter((item) => item.likes_count > 0)
-      .filter((item) => {
-        if (categoriesSelector && categoriesSelector.length !== 0)
-          return categoriesSelector.some(
-            (catId) => catId === item.category_id
-          );
-        return true;
-      });
-  }, [categoriesSelector]);
-  
-  const toggleCategoriesTag = (id) =>
-    categoriesSelector.includes(id)
-      ? setCategoriesSelector((prev) => prev.filter((item) => item !== id))
-      : setCategoriesSelector((prev) => [...prev, id]);
+  const filterHotArticleData = useCallback(
+    (articleData) => {
+      return articleData
+        .slice(0, 100)
+        .filter((item) => item.views_count > 5)
+        .filter((item) => {
+          if (categoriesSelector)
+            return categoriesSelector === item.category_id;
+          return true;
+        });
+    },
+    [categoriesSelector]
+  );
+
+  const filterRecommendArticleData = useCallback(
+    (articleData) => {
+      return articleData
+        .slice(0, 100)
+        .filter((item) => item.likes_count > 0)
+        .filter((item) => {
+          if (categoriesSelector)
+            return categoriesSelector === item.category_id;
+          return true;
+        });
+    },
+    [categoriesSelector]
+  );
+
+  const toggleCategoriesTag = (id) => {
+    categoriesSelector === id
+      ? setCategoriesSelector("")
+      : setCategoriesSelector(id);
+  };
 
   useEffect(() => {
     setHotArticleData(filterHotArticleData(allArticleData));
     setRecommendArticleData(filterRecommendArticleData(allArticleData));
   }, [allArticleData, filterHotArticleData, filterRecommendArticleData]);
-  
+
   useEffect(() => {
     setHotArticleData(filterHotArticleData(allArticleData));
     setRecommendArticleData(filterRecommendArticleData(allArticleData));
     setCurrentPage(1);
-  }, [categoriesSelector, filterHotArticleData, filterRecommendArticleData, allArticleData]);
-      
+  }, [
+    categoriesSelector,
+    filterHotArticleData,
+    filterRecommendArticleData,
+    allArticleData,
+  ]);
 
   //下半部文章列表相關邏輯
   //取得所有文章資料後根據選擇分類篩選資料，用於渲染文章列表
@@ -109,6 +117,7 @@ const ArticleListPage = () => {
             articleDataItem.status == "published"
         )
       );
+      setArticleListPageCount(1);
     } catch (error) {
       logError(error);
     }
@@ -138,41 +147,26 @@ const ArticleListPage = () => {
       logError(error);
     }
   };
-  //文章列表沒有paganation，用滾動至底部作為新增資料的判斷
-  // useEffect(() => {
-  //   const handleScroll = () => {
-  //     //當滑動到底部，且顯示文章數量少於文章列表資料數量
-  //     window.innerHeight + window.scrollY >=
-  //       document.documentElement.scrollHeight &&
-  //       articleListData?.length > articleListPageCount &&
-  //       setArticleListPageCount((prev) => {
-  //         return prev + 10;
-  //       });
-  //   };
-  //   window.addEventListener("scroll", handleScroll);
-  //   return () => window.removeEventListener("scroll", handleScroll);
-  // }, [articleListData]);
 
   useEffect(() => {
     getCategories();
     getAllArticleData();
     getArticleListData();
   }, [getCategories, getAllArticleData, getArticleListData]);
-  
 
   useEffect(() => {
     if (isAuthorized) getFavoriteArticle();
   }, [isAuthorized, getFavoriteArticle]);
-  
+
   useEffect(() => {
     getArticleListData();
   }, [listSelector, getArticleListData]);
-  
 
   useEffect(() => {
-    if (articleListRef.current) {
+    if (articleListRef.current && !isFirstLoad.current) {
       articleListRef.current.scrollIntoView({ behavior: "smooth" });
     }
+    isFirstLoad.current = false;
   }, [articleListPageCount]);
 
   return (
@@ -187,10 +181,7 @@ const ArticleListPage = () => {
                   <a
                     className={`article-tag pe-open lh-lg fs-8 fs-lg-8 rounded-pill
                     ${
-                      categoriesSelector.some(
-                        (categoriesSelectorItem) =>
-                          categoriesSelectorItem === categoriesDataItem.id
-                      ) && "active"
+                      categoriesSelector === categoriesDataItem.id && "active"
                     }`}
                     onClick={() => toggleCategoriesTag(categoriesDataItem.id)}
                   >
@@ -390,88 +381,97 @@ const ArticleListPage = () => {
               </select>
             </div>
           </div>
-          <ul className="list-unstyled d-flex flex-column gap-5 px-4 px-lg-0">
-            {articleListData
-              ?.slice(
-                (articleListPageCount - 1) * 10,
-                articleListPageCount * 10
-              )
-              .map((articleListDataItem) => {
-                return (
-                  <li key={articleListDataItem.id}>
-                    <Link
-                      to={`/article/${articleListDataItem.id}`}
-                      className="article-list-card d-flex rounded-2 border flex-column-reverse flex-md-row justify-content-between p-5"
-                    >
-                      <div className="d-flex flex-column gap-5 me-md-6">
-                        <h3 className="text-primary fs-7 fw-bold text-truncate-2lines lh-sm">
-                          {articleListDataItem.title}
-                        </h3>
-                        <p className="text-truncate-2lines ">
-                          {articleListDataItem.description}
-                        </p>
-                        <div className="d-flex align-items-center gap-3 mt-auto">
-                          <span className="text-gray">
-                            {new Date(
-                              articleListDataItem.created_at
-                            ).toLocaleDateString()}
-                          </span>
-                          <span className="text-gray d-flex align-items-center gap-1">
-                            <span className="material-icons-outlined">
-                              favorite
-                            </span>
-                            {articleListDataItem.likes_count}
-                          </span>
-                          <span className=" text-gray d-flex align-items-center gap-1">
-                            <span className="material-icons-outlined">
-                              chat_bubble
-                            </span>
-                            {articleListDataItem.comments.length}
-                          </span>
-                          {isAuthorized && (
-                            <span
-                              className={`${
-                                favorite.some(
-                                  (favoriteItem) =>
-                                    favoriteItem.id === articleListDataItem.id
-                                )
-                                  ? "text-primary"
-                                  : "text-gray"
-                              } pb-1 d-flex align-items-center gap-1`}
-                              onClick={(e) => {
-                                e.preventDefault();
-                                postFavorites(articleListDataItem.id);
-                              }}
-                            >
-                              <span className="material-symbols-outlined icon-fill">
-                                bookmark
+          {articleListData.length > 0 ? (
+            <Fragment>
+              <ul className="list-unstyled d-flex flex-column gap-5 px-4 px-lg-0">
+                {articleListData
+                  ?.slice(
+                    (articleListPageCount - 1) * 10,
+                    articleListPageCount * 10
+                  )
+                  .map((articleListDataItem) => {
+                    return (
+                      <li key={articleListDataItem.id}>
+                        <Link
+                          to={`/article/${articleListDataItem.id}`}
+                          className="article-list-card d-flex rounded-2 border flex-column-reverse flex-md-row justify-content-between p-5"
+                        >
+                          <div className="d-flex flex-column gap-5 me-md-6">
+                            <h3 className="text-primary fs-7 fw-bold text-truncate-2lines lh-sm">
+                              {articleListDataItem.title}
+                            </h3>
+                            <p className="text-truncate-2lines ">
+                              {articleListDataItem.description}
+                            </p>
+                            <div className="d-flex align-items-center gap-3 mt-auto">
+                              <span className="text-gray">
+                                {new Date(
+                                  articleListDataItem.created_at
+                                ).toLocaleDateString()}
                               </span>
-                              {articleListDataItem.favorites_count}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      <img
-                        className="card-img object-fit-cover mb-5 mb-md-0 rounded"
-                        src={
-                          articleListDataItem.image_url ||
-                          "https://github.com/wfox5510/wordSapce-imgRepo/blob/main/banner-1.png?raw=true"
-                        }
-                        alt="article-img"
-                      />
-                    </Link>
-                  </li>
-                );
-              })}
-          </ul>
-          {articleListData && (
-            <ArticlePagination
-              totalItems={articleListData.length}
-              itemsPerPage={10}
-              currentPage={articleListPageCount}
-              onPageChange={(page) => setArticleListPageCount(page)}
-              className="hot-article-pagination"
-            />
+                              <span className="text-gray d-flex align-items-center gap-1">
+                                <span className="material-icons-outlined">
+                                  favorite
+                                </span>
+                                {articleListDataItem.likes_count}
+                              </span>
+                              <span className=" text-gray d-flex align-items-center gap-1">
+                                <span className="material-icons-outlined">
+                                  chat_bubble
+                                </span>
+                                {articleListDataItem.comments.length}
+                              </span>
+                              {isAuthorized && (
+                                <span
+                                  className={`${
+                                    favorite.some(
+                                      (favoriteItem) =>
+                                        favoriteItem.id ===
+                                        articleListDataItem.id
+                                    )
+                                      ? "text-primary"
+                                      : "text-gray"
+                                  } pb-1 d-flex align-items-center gap-1`}
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    postFavorites(articleListDataItem.id);
+                                  }}
+                                >
+                                  <span className="material-symbols-outlined icon-fill">
+                                    bookmark
+                                  </span>
+                                  {articleListDataItem.favorites_count}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          <img
+                            className="card-img object-fit-cover mb-5 mb-md-0 rounded"
+                            src={
+                              articleListDataItem.image_url ||
+                              "https://github.com/wfox5510/wordSapce-imgRepo/blob/main/banner-1.png?raw=true"
+                            }
+                            alt="article-img"
+                          />
+                        </Link>
+                      </li>
+                    );
+                  })}
+              </ul>
+              {articleListData && (
+                <ArticlePagination
+                  totalItems={articleListData.length}
+                  itemsPerPage={10}
+                  currentPage={articleListPageCount}
+                  onPageChange={(page) => setArticleListPageCount(page)}
+                  className="hot-article-pagination"
+                />
+              )}
+            </Fragment>
+          ) : (
+            <span className="fs-6 d-block fw-bold text-gray text-center">
+              目前沒有相關的文章喔
+            </span>
           )}
         </div>
       </section>
