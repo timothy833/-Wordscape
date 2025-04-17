@@ -8,7 +8,7 @@ const ReviewCard = ({ reviewStar, avatar, width, content ,user_name }) => {
           <div className="d-flex align-items-center">
             <img
               src={avatar}
-              alt=""
+              alt="avatar"
               className="me-2 object-fit-cover rounded-pill"
               width="40px"
               height="40px"

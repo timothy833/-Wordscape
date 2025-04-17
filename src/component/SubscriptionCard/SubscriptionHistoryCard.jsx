@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 
@@ -7,13 +7,15 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const SubscriptionHistoryCard = ({ payerId, paymentDate, amount }) => {
   const [payerData, setPayerData] = useState(null);
 
-  const getPayerData = async () => {
+  const getPayerData = useCallback(async () => {
     const res = await axios.get(`${API_BASE_URL}/users/${payerId}`);
     setPayerData(res.data);
-  };
+  }, [payerId]);
+  
   useEffect(() => {
     getPayerData();
-  }, []);
+  }, [getPayerData]);
+  
   return (
     <>
       <div className="currentSubscription-card mb-4 d-lg-flex justify-content-between align-items-center">

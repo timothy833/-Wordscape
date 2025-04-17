@@ -4,7 +4,7 @@ import ArticleCard from "../../component/ArticleCard/ArticleCard";
 import CommentBox from "../../component/CommentBox/CommentBox";
 import CommentReply from "../../component/CommentReply/CommentReply";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import DOMParserReact from "dom-parser-react";
@@ -34,15 +34,15 @@ const ArticlePage = () => {
   const [isSubscribed, setIsSubscribed] = useState(null);
 
 
-  const getArticle = async () => {
+  const getArticle = useCallback(async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/${articleId}`);
       setArticleData(res.data.data);
     } catch (error) {
       logError(error);
     }
-  };
-  const getAutherData = async () => {
+  }, [articleId]);
+  const getAutherData = useCallback(async () => {
     try {
       const res = await axios.get(
         `${API_BASE_URL}/users/${articleData?.user_id}`
@@ -51,16 +51,16 @@ const ArticlePage = () => {
     } catch (error) {
       logError(error);
     }
-  };
+  }, [articleData]);
   //留言相關功能(需登入)
-  const getComment = async () => {
+  const getComment = useCallback(async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/comments/${articleId}`);
       setCommentData(res.data.data);
     } catch (error) {
       logError(error);
     }
-  };
+  }, [articleId]);
   const postComment = async () => {
     try {
       await axios.post(`${API_BASE_URL}/comments`, {
@@ -74,7 +74,7 @@ const ArticlePage = () => {
     }
   };
   //訂閱相關功能(需登入)
-  const checkIsSubscribed = async () => {
+  const checkIsSubscribed = useCallback(async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/subscriptions`);
       setIsSubscribed(
@@ -85,7 +85,7 @@ const ArticlePage = () => {
     } catch (error) {
       logError(error);
     }
-  };
+  }, [articleData]);
   const postSubscribed = async () => {
     try {
       const res = await axios.post(
@@ -100,16 +100,15 @@ const ArticlePage = () => {
     }
   };
   //點讚相關功能(需登入)
-  const checkIsLikeArticle = async () => {
+  const checkIsLikeArticle = useCallback(async () => {
     try {
-      const res = await axios.get(
-        `${API_BASE_URL}/posts/post_likes/${articleId}`
-      );
+      const res = await axios.get(`${API_BASE_URL}/posts/post_likes/${articleId}`);
       setIsLike(res.data.data.some((likeData) => likeData.id === userId));
     } catch (error) {
       logError(error);
     }
-  };
+  }, [articleId, userId]);
+
   const postArticleLike = async () => {
     try {
       //可以加入動畫增加使用體驗，次要
@@ -123,18 +122,19 @@ const ArticlePage = () => {
     }
   };
   //收藏相關功能(需登入)
-  const checkIsFavorites = async () => {
-    try {
-      const res = await axios.get(`${API_BASE_URL}/posts/favorites`);
-      setIsFavorite(
-        res.data.data?.some(
-          (favoritesDataItem) => favoritesDataItem.id === articleId
-        )
-      );
-    } catch (error) {
-      logError(error);
-    }
-  };
+const checkIsFavorites = useCallback(async () => {
+  try {
+    const res = await axios.get(`${API_BASE_URL}/posts/favorites`);
+    setIsFavorite(
+      res.data.data?.some(
+        (favoritesDataItem) => favoritesDataItem.id === articleId
+      )
+    );
+  } catch (error) {
+    logError(error);
+  }
+}, [articleId]);
+
   const postFavorites = async () => {
     try {
       const res = await axios.post(
@@ -150,17 +150,17 @@ const ArticlePage = () => {
   };
   //用於處理推薦文章
   const [allArticleData, setAllArticleData] = useState([]);
-  const getAllArticleData = async () => {
+  const getAllArticleData = useCallback(async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/full`);
       const filterArticleData = res.data.data.filter(
-        (item) => item.status == "published"
+        (item) => item.status === "published"
       );
       setAllArticleData(filterArticleData);
     } catch (error) {
       logError(error);
     }
-  };
+  }, []);
   // ✅ 顯示距離現在多久
   const formatTimeAgo = (timestamp) => {
     const now = new Date();
@@ -175,25 +175,34 @@ const ArticlePage = () => {
     getArticle();
     getComment();
     getAllArticleData();
-  }, [articleId]);
+  }, [articleId, getArticle, getComment, getAllArticleData]);
+  
   //判斷訂閱需要取得articleData中作者的資料，用useEffect確保setState的值正確取得
   useEffect(() => {
     if (articleData) {
       getAutherData();
-      isAuthorized && checkIsSubscribed();
+      if (isAuthorized) checkIsSubscribed();
     }
-  }, [articleData]);
+  }, [articleData, isAuthorized, getAutherData, checkIsSubscribed]);
+  
   useEffect(() => {
     if (isAuthorized) {
       checkIsLikeArticle();
       checkIsFavorites();
       checkIsSubscribed();
-    } else if (!isAuthorized) {
+    } else {
       setIsLike(null);
       setIsFavorite(false);
       setIsSubscribed(null);
     }
-  }, [isAuthorized, articleId]);
+  }, [
+    isAuthorized,
+    articleId,
+    checkIsLikeArticle,
+    checkIsFavorites,
+    checkIsSubscribed
+  ]);
+  
 
   return (
     <>

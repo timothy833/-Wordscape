@@ -67,7 +67,7 @@ const Navbar = () => {
         confirmButtonText: "確認"
       });
     }
-  }, [isAuthorized, navigate, location]);
+  }, [isAuthorized, navigate, location, id]);
 
   // Collapse
   const searchCollapseRef = useRef(null);
@@ -199,7 +199,8 @@ const Navbar = () => {
                 ) : (
                   // 已登入狀態：顯示用戶資訊
                   <div className="d-flex ms-3">
-                    <img className="avatar me-2 rounded-circle" src={userAvatar || "https://raw.githubusercontent.com/wfox5510/wordSapce-imgRepo/695229fa8c60c474d3d9dc0d60b25f9539ac74d9/default-avatar.svg"} alt="" />
+                    <img className="avatar me-2 rounded-circle" 
+                    src={userAvatar || "https://raw.githubusercontent.com/wfox5510/wordSapce-imgRepo/695229fa8c60c474d3d9dc0d60b25f9539ac74d9/default-avatar.svg"} alt="avatar" />
                     <div className="dropdown my-auto">
                       <a
                         id="dropdownUserMenu"
@@ -311,7 +312,7 @@ const Navbar = () => {
                     <img
                       className="avatar me-3 rounded-circle"
                       src={userAvatar || "https://raw.githubusercontent.com/wfox5510/wordSapce-imgRepo/695229fa8c60c474d3d9dc0d60b25f9539ac74d9/default-avatar.svg"}
-                      alt=""
+                      alt="avatar"
                     />
                     <p className="m-0 nav-username">{username}</p>
                   </div>

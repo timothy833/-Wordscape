@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import PropTypes from "prop-types";
@@ -6,7 +6,7 @@ import { logError } from "../../utils/sentryHelper";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const ArticleCard = ({ articleData }) => {
   const [autherData , setAutherData] = useState(null)
-  const getAutherData = async () => {
+  const getAutherData = useCallback(async () => {
     try {
       const res = await axios.get(
         `${API_BASE_URL}/users/${articleData?.user_id}`
@@ -15,10 +15,12 @@ const ArticleCard = ({ articleData }) => {
     } catch (error) {
       logError(error);
     }
-  };
-  useEffect(()=>{
+  }, [articleData]);
+
+  useEffect(() => {
     getAutherData();
-  },[])
+  }, [getAutherData]);
+  
   return (
       <Link to={`/article/${articleData?.id}`} className="article-card card p-3 shadow rounded-3">
         <img

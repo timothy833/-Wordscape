@@ -21,7 +21,7 @@ import SponsorModal from "../../component/SponsorModal/SponsorModal";
 //React方法引用
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { useEffect, useState, useRef, useMemo } from "react";
+import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 
 //引入Modal方法
 import { Modal } from "bootstrap";
@@ -46,9 +46,7 @@ import { logError } from "../../utils/sentryHelper";
 
 const BlogHome = () => {
   const { user_id } = useParams(); // URL 參數中的 Blog 擁有者 ID
-  // const [token, setToken] = useState("");
   const [banner, setBanner] = useState(null); //儲存回傳banner的資訊
-  // const [userId, setUerId] = useState(""); //存放傳進來或登入者userId
   const [isAuthor, setIsAuthor] = useState(false); //確認是否為Blog擁有者
   const [filterStatus, setFilterStatus] = useState(""); // 篩選狀態
   const [title, setTitle] = useState(""); //設定傳送Blog Banner標題
@@ -105,17 +103,17 @@ const BlogHome = () => {
     if (user_id) {
       fetchPinnedArticles();
     }
-  }, [user_id]);
+  }, [user_id, fetchPinnedArticles]);  
 
-  const fetchPinnedArticles = async () => {
+  const fetchPinnedArticles = useCallback(async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/pinned/${user_id}`);
-      setPinnedArticles(res.data.data); // 取得文章 ID 陣列
+      setPinnedArticles(res.data.data);// 取得文章 ID 陣列
     } catch (error) {
       logError("取得釘選文章失敗", error);
       setPinnedArticles([]);
     }
-  };
+  }, [user_id]);
 
   // 切換釘選狀態
   const togglePin = async (articleId) => {
@@ -155,36 +153,31 @@ const BlogHome = () => {
   }, [articles, filterStatus, pinnedArticles]);
 
   //加載blog擁有者文章api
-  const getBlogArticle = async () => {
+  const getBlogArticle = useCallback(async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/user/${user_id}`);
-      // console.log(res.data);
       if (res.data && Array.isArray(res.data.data)) {
         let fetchedArticles = res.data.data;
-
-        // // ✅ 如果 `userId` 不存在（未登入），或 `user_id !== userId`，則只顯示 `published`
+  
+        // ✅ 如果 `userId` 不存在（未登入），或 `user_id !== userId`，則只顯示 `published`
         if (!userId || user_id !== userId) {
-          fetchedArticles = fetchedArticles.filter(
-            (article) => article.status === "published"
-          );
+          fetchedArticles = fetchedArticles.filter((article) => article.status === "published");
         }
-
+  
         // 按照時間排序（最新的文章放最上面）
-        fetchedArticles.sort(
-          (a, b) => new Date(b.created_at) - new Date(a.created_at)
-        );
-
+        fetchedArticles.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  
         setArticles(fetchedArticles);
       } else {
         setArticles([]); // 如果 API 沒有返回正確資料，預設為空陣列
       }
-
+  
       setIsLoading(false);
     } catch (error) {
       logError("取得blog文章列表失敗", error);
       setArticles([]); // 遇到錯誤時，也設置空陣列，避免 undefined 錯誤
     }
-  };
+  }, [user_id, userId]);
 
   //加載文章導航區文章地圖
   const categorizedArticles = useMemo(() => {
@@ -213,36 +206,33 @@ const BlogHome = () => {
   }, [articles, pinnedArticles]);
 
   //得到blog擁有者資料
-  const getBlogUser = async () => {
+  const getBlogUser = useCallback(async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/users/${user_id}`);
-      // console.log(res.data);
       setBlogUser(res.data);
     } catch (error) {
       logError("取得 blog 使用者失敗", error);
     }
-  };
-
-  const getBanner = () => {
+  }, [user_id]);
+  
+  const getBanner = useCallback(() => {
     if (!user_id) return; // 🔹 確保 `user_id` 存在才執行
-
-    axios
-      .get(`${API_BASE_URL}/banners/${user_id}`)
-      .then((res) => {
-        // console.log(res.data);
+  
+    axios.get(`${API_BASE_URL}/banners/${user_id}`)
+      .then(res => {
         setBanner(res.data);
         setTitle(res.data.title || "預設標題");
         setSubtitle(res.data.subtitle || "預設副標題");
-        setImagePreview(res.data.image_url || "");
+        setImagePreview(res.data.image_url || "")
       })
-      .catch((error) => logError("沒有 Banner", error));
-  };
+      .catch(error => logError("沒有 Banner", error));
+  }, [user_id]);
 
   useEffect(() => {
     getBlogArticle(); // 重新載入該 BlogHome 的內容
     getBlogUser(); // 重新載入該使用者資訊
     getBanner();
-  }, [user_id]); // 監聽 `user_id` 變更時，重新執行 `useEffect`
+  }, [user_id, getBlogArticle, getBlogUser, getBanner]); // 監聽 `user_id` 變更時，重新執行 `useEffect`
 
   //載入文章留言資料
   useEffect(() => {

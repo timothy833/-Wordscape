@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import {  alertDelete, alertReply } from "../../utils/alertMsg" 
@@ -20,7 +20,7 @@ const Blog_CommentReply = ({comment, getBlogArticle, token, postId, formatTimeAg
 
 
    // 🔥 檢查登入者是否已按讚
-   const checkLikeStatus = async (commentId) => {
+   const checkLikeStatus = useCallback(async (commentId) => {
     try {
       const res = await axios.get(`${API_BASE_URL}/comments/comment_likes/${commentId}`, {
         headers: {
@@ -33,12 +33,12 @@ const Blog_CommentReply = ({comment, getBlogArticle, token, postId, formatTimeAg
     } catch (error) {
       logError("檢查按讚狀態失敗", error);
     }
-  };
+  }, [token, userId]);
 
     // 🔥 當組件掛載時，檢查當前使用者是否已按讚
     useEffect(() => {
       checkLikeStatus(comment.id);
-    }, [comment.id]); 
+    }, [comment.id, checkLikeStatus]); 
   
 
   // 🔥 文章內留言按讚功能
