@@ -7,7 +7,7 @@ const ErrorPage = () => {
     setTimeout(() => {
       navigate(-1);
     }, 5000);
-  }, []);
+  }, [navigate]);
   return (
     <div
       className="container"

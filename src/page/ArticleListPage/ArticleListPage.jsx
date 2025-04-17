@@ -1,4 +1,4 @@
-import { useEffect, useState, Fragment } from "react";
+import { useEffect, useState, Fragment, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setFavoriteArticle } from "../../slice/favoriteSlice";
 import { Link } from "react-router-dom";
@@ -26,54 +26,54 @@ const ArticleListPage = () => {
   //取得分類資料
   const [categoriesData, setCategoriesData] = useState(null);
   const [categoriesSelector, setCategoriesSelector] = useState([]);
-  const getCategories = async () => {
+  const getCategories = useCallback(async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/categories`);
       setCategoriesData(res.data.data);
     } catch (error) {
       logError(error);
     }
-  };
+  }, []);
 
-  const getAllArticleData = async () => {
+  const getAllArticleData = useCallback(async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/full`);
       const filterArticleData = res.data.data.filter(
-        (item) => item.status == "published"
+        (item) => item.status === "published"
       );
       setAllArticleData(filterArticleData);
     } catch (error) {
       logError(error);
     }
-  };
+  }, []);
 
   //熱門文章 推薦文章篩選
-  const filterHotArticleData = (articleData) => {
+  const filterHotArticleData = useCallback((articleData) => {
     return articleData
       .slice(0, 100)
-      .filter((articleDataItem) => articleDataItem.views_count > 5)
-      .filter((articleDataItem) => {
+      .filter((item) => item.views_count > 5)
+      .filter((item) => {
         if (categoriesSelector && categoriesSelector.length !== 0)
           return categoriesSelector.some(
-            (categoriesSelectorItem) =>
-              categoriesSelectorItem === articleDataItem.category_id
+            (catId) => catId === item.category_id
           );
         return true;
       });
-  };
-  const filterRecommendArticleData = (articleData) => {
+  }, [categoriesSelector]);
+  
+  const filterRecommendArticleData = useCallback((articleData) => {
     return articleData
       .slice(0, 100)
-      .filter((articleDataItem) => articleDataItem.likes_count > 0)
-      .filter((articleDataItem) => {
+      .filter((item) => item.likes_count > 0)
+      .filter((item) => {
         if (categoriesSelector && categoriesSelector.length !== 0)
           return categoriesSelector.some(
-            (categoriesSelectorItem) =>
-              categoriesSelectorItem === articleDataItem.category_id
+            (catId) => catId === item.category_id
           );
         return true;
       });
-  };
+  }, [categoriesSelector]);
+  
   const toggleCategoriesTag = (id) =>
     categoriesSelector.includes(id)
       ? setCategoriesSelector((prev) => prev.filter((item) => item !== id))
@@ -82,12 +82,14 @@ const ArticleListPage = () => {
   useEffect(() => {
     setHotArticleData(filterHotArticleData(allArticleData));
     setRecommendArticleData(filterRecommendArticleData(allArticleData));
-  }, [allArticleData]);
+  }, [allArticleData, filterHotArticleData, filterRecommendArticleData]);
+  
   useEffect(() => {
     setHotArticleData(filterHotArticleData(allArticleData));
     setRecommendArticleData(filterRecommendArticleData(allArticleData));
     setCurrentPage(1);
-  }, [categoriesSelector]);
+  }, [categoriesSelector, filterHotArticleData, filterRecommendArticleData, allArticleData]);
+      
 
   //下半部文章列表相關邏輯
   //取得所有文章資料後根據選擇分類篩選資料，用於渲染文章列表
@@ -95,7 +97,7 @@ const ArticleListPage = () => {
   const [listSelector, setListSelector] = useState("allArticle");
   const [articleListPageCount, setArticleListPageCount] = useState(1);
 
-  const getArticleListData = async () => {
+  const getArticleListData = useCallback(async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/full`);
       setArticleListData(
@@ -109,18 +111,19 @@ const ArticleListPage = () => {
     } catch (error) {
       logError(error);
     }
-  };
+  }, [listSelector]);
+
   //取得我的收藏文章，在文章列表提示是否收藏，且可直接點選icon取消
   //！！注意！！favorite資料為登入功能，待登入功能完成後需要加入相關邏輯
   const favorite = useSelector((state) => state.favorite.favoriteArticle);
-  const getFavoriteArticle = async () => {
+  const getFavoriteArticle = useCallback(async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/posts/favorites`);
       dispatch(setFavoriteArticle(res.data.data));
     } catch (error) {
       logError(error);
     }
-  };
+  }, [dispatch]);
 
   const postFavorites = async (id) => {
     try {
@@ -139,14 +142,17 @@ const ArticleListPage = () => {
     getCategories();
     getAllArticleData();
     getArticleListData();
-  }, []);
+  }, [getCategories, getAllArticleData, getArticleListData]);
+  
 
   useEffect(() => {
-    isAuthorized && getFavoriteArticle();
-  }, [isAuthorized]);
+    if (isAuthorized) getFavoriteArticle();
+  }, [isAuthorized, getFavoriteArticle]);
+  
   useEffect(() => {
     getArticleListData();
-  }, [listSelector]);
+  }, [listSelector, getArticleListData]);
+  
 
   return (
     <>

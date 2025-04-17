@@ -32,7 +32,7 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
         return () => {
           if (error) dispatch(clearError());
         };
-      }, [isAuthorized, navigate, error, dispatch]);
+      }, [isAuthorized, navigate, error, dispatch, handleClose]);
 
 
     useEffect(()=>{

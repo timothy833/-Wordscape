@@ -67,7 +67,7 @@ const Navbar = () => {
         confirmButtonText: "確認"
       });
     }
-  }, [isAuthorized, navigate, location]);
+  }, [isAuthorized, navigate, location, id]);
 
   // Collapse
   const searchCollapseRef = useRef(null);
