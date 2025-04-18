@@ -11,6 +11,7 @@ import {
   alertMsgForCancelFavorites,
 } from "../../utils/alertMsg";
 import { logError } from "../../utils/sentryHelper";
+import LoadingSpinner from "../../component/LoadingSpinner/LoadingSpinner";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -19,26 +20,45 @@ const ArticleListPage = () => {
   const dispatch = useDispatch();
   const articleListRef = useRef(null);
   const isFirstLoad = useRef(true);
+  const loadingCount = useRef(0);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [allArticleData, setAllArticleData] = useState([]);
   const [hotArticleData, setHotArticleData] = useState([]);
   const [recommendArticleData, setRecommendArticleData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   //取得分類資料
   const [categoriesData, setCategoriesData] = useState(null);
   const [categoriesSelector, setCategoriesSelector] = useState("");
+
+  const startLoading = () => {
+    loadingCount.current += 1;
+    setIsLoading(true);
+  };
+
+  const endLoading = () => {
+    loadingCount.current -= 1;
+    if (loadingCount.current === 0) {
+      setIsLoading(false);
+    }
+  };
+
   const getCategories = useCallback(async () => {
     try {
+      startLoading();
       const res = await axios.get(`${API_BASE_URL}/categories`);
       setCategoriesData(res.data.data);
     } catch (error) {
       logError(error);
+    } finally {
+      endLoading();
     }
   }, []);
 
   const getAllArticleData = useCallback(async () => {
     try {
+      startLoading();
       const res = await axios.get(`${API_BASE_URL}/posts/full`);
       const filterArticleData = res.data.data.filter(
         (item) => item.status === "published"
@@ -46,6 +66,8 @@ const ArticleListPage = () => {
       setAllArticleData(filterArticleData);
     } catch (error) {
       logError(error);
+    } finally {
+      endLoading();
     }
   }, []);
 
@@ -108,6 +130,7 @@ const ArticleListPage = () => {
 
   const getArticleListData = useCallback(async () => {
     try {
+      startLoading();
       const res = await axios.get(`${API_BASE_URL}/posts/full`);
       setArticleListData(
         res.data.data.filter(
@@ -120,6 +143,8 @@ const ArticleListPage = () => {
       setArticleListPageCount(1);
     } catch (error) {
       logError(error);
+    } finally {
+      endLoading();
     }
   }, [listSelector]);
 
@@ -128,15 +153,19 @@ const ArticleListPage = () => {
   const favorite = useSelector((state) => state.favorite.favoriteArticle);
   const getFavoriteArticle = useCallback(async () => {
     try {
+      startLoading();
       const res = await axios.get(`${API_BASE_URL}/posts/favorites`);
       dispatch(setFavoriteArticle(res.data.data));
     } catch (error) {
       logError(error);
+    } finally {
+      endLoading();
     }
   }, [dispatch]);
 
   const postFavorites = async (id) => {
     try {
+      startLoading();
       const res = await axios.post(`${API_BASE_URL}/posts/favorites/${id}`);
       res.data.favorited
         ? Swal.fire(alertMsgForAddFavorites)
@@ -145,6 +174,8 @@ const ArticleListPage = () => {
       getArticleListData();
     } catch (error) {
       logError(error);
+    } finally {
+      endLoading();
     }
   };
 
@@ -171,6 +202,7 @@ const ArticleListPage = () => {
 
   return (
     <>
+      {isLoading && <LoadingSpinner />}
       <section>
         <div className="container pt-6 pb-3 pt-lg-10 pb-lg-10 bg-light">
           <h2 className="fs-7 fs-md-7 fw-bold text-dark">類別選擇</h2>
