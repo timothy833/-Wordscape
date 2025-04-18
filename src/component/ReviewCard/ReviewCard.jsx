@@ -1,5 +1,4 @@
 import PropTypes from "prop-types";
-import "./ReviewCard.scss";
 const ReviewCard = ({ reviewStar, avatar, width, content ,user_name }) => {
   return (
     <div className="card border-0 shadow bg-light" style={{ width: width }}>
