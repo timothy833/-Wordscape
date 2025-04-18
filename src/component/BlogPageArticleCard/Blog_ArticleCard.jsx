@@ -4,7 +4,7 @@ import axios from "axios";
 import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
-import { alertDeletePost, alertMsgForAdminInfo, alertReply } from "../../utils/alertMsg"
+import { alertDeletePost, alertMsgForAdminInfo, alertReply, alertConfirmDeletePost } from "../../utils/alertMsg"
 import Swal from "sweetalert2";
 import { logError } from "../../utils/sentryHelper";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -101,19 +101,31 @@ const Blog_ArticleCard = ({ article, comments, togglePin, isPinned, token, getBl
 
   // 文章刪除modal功能
   const articleDelete = async(post_id)=> {
-    try {
-      setIsLoading(true);
-      await axios.delete(`${API_BASE_URL}/posts/${post_id}`,{
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }
-      });
-      setIsLoading(false);
-      Swal.fire(alertDeletePost);
-      getBlogArticle();
-      
-    } catch (error) {
-      logError("文章刪除失敗", error);
+
+    const result = await Swal.fire(alertConfirmDeletePost);
+
+    if (result.isConfirmed) {
+      try {
+        setIsLoading(true);
+        await axios.delete(`${API_BASE_URL}/posts/${post_id}`,{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        });
+        setIsLoading(false);
+        Swal.fire(alertDeletePost);
+        getBlogArticle();
+        
+      } catch (error) {
+        logError("文章刪除失敗", error);
+        Swal.fire({
+          title: "刪除失敗",
+          text: "發生錯誤, 無法刪除文章。",
+          icon: "error",
+          confirmButtonColor: "#E77605",
+          confirmButtonText: "確定"
+        });
+      }
     }
   }
 

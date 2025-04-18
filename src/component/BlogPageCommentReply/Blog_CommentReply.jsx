@@ -157,6 +157,7 @@ const deleteComment = async (commentId) => {
           <span
             className="material-symbols-outlined input-group-text border-start-0 bg-light text-primary icon-fill fs-6 rounded-1 "
             onClick={editComment}
+            style={{ cursor: "pointer" }}
           >
             check_circle
           </span>
@@ -167,6 +168,7 @@ const deleteComment = async (commentId) => {
               setIsEditing(false);
               setEditedReply(comment.content); // 取消時恢復原始內容
             }}
+            style={{ cursor: "pointer" }}
           >
             cancel
           </span>
@@ -284,6 +286,7 @@ const deleteComment = async (commentId) => {
                 formatTimeAgo={formatTimeAgo} // ✅ 傳遞時間函式給子回覆
                 isAuthor={isAuthor}  // ✅ 確保 `isAuthor` 被傳遞
                 userId={userId}      // ✅ 傳遞 userId 判斷編輯權限
+                setIsLoading={setIsLoading}
               />
             )
           )}
@@ -311,7 +314,7 @@ Blog_CommentReply.propTypes = {
   formatTimeAgo: PropTypes.func,
   isAuthor:PropTypes.bool,
   userId: PropTypes.string,
-  setIsLoading: PropTypes.func
+  setIsLoading: PropTypes.func.isRequired, // ✅ 標記為必須提供
 };
 
 

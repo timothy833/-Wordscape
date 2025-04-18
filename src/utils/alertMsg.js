@@ -76,3 +76,14 @@ export const alertMsgForSuccess = {
   showConfirmButton: false,
   timer: 1500,
 };
+
+export const alertConfirmDeletePost = {
+  title: "確定要刪除這篇文章嗎？",
+  text: "刪除後將無法復原！",
+  icon: "warning",
+  showCloseButton: true,
+  showCancelButton: true,
+  confirmButtonColor: "#E77605",
+  confirmButtonText: "確定",
+  cancelButtonText: "取消",
+};
