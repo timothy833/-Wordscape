@@ -7,10 +7,10 @@
   font-size: 14px;
 }
 .admin-background_textData-title {
-  @media (min-width: 768px) {
+  @include media-breakpoint-up(md){
     width: 150px;
   }
-  @media (min-width: 992px) {
+  @include media-breakpoint-up(lg){
     width: 176px;
   }
 }
@@ -26,30 +26,30 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  @media (min-width: 768px) {
+  @include media-breakpoint-up(md){
     max-width: 150px;
   }
-  @media (min-width: 1400px) {
+  @include media-breakpoint-up(xxl){
     max-width: 200px;
   }
 }
 .clickCount_header {
   grid-template-columns: 60% 20% 20%;
   gap: 24px;
-  @media (max-width: 992px) {
+  @include media-breakpoint-down(lg){
     grid-template-columns: 50% 25% 25%;
   }
 }
 .clickCount_body li {
   grid-template-columns: 60% 20% 20%;
   gap: 24px;
-  @media (max-width: 992px) {
+  @include media-breakpoint-down(lg){
     grid-template-columns: 50% 25% 25%;
   }
 }
 .clickCount_body-title {
   max-width: 219px;
-  @media (min-width: 768px) {
+  @include media-breakpoint-up(md){
     min-width: 100%;
   }
 }
