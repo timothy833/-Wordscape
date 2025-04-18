@@ -175,16 +175,6 @@ const SignupPage = ({ show, handleClose, handleShowLoginModal }) => {
                     <br />
                     發現更多有趣的事物！
                   </div>
-                  <div className="d-flex flex-column">
-                    <div className="h6 fw-light mb-3">已經有帳戶了？</div>
-                    <a
-                      onClick={guideToLoginHandle}
-                      href="#"
-                      className="h6 text-primary fw-bold mb-0"
-                    >
-                      立即登入
-                    </a>
-                  </div>
                 </div>
 
                 {/* 右側區域 */}
@@ -207,10 +197,19 @@ const SignupPage = ({ show, handleClose, handleShowLoginModal }) => {
                           }}
                           aria-label="Close"
                         ></button>
-                        <h5 className="card-title fs-5 fw-normal mb-10">
+                        <h5 className="card-title fs-5 fw-normal mb-5">
                           建立新帳戶
                         </h5>
-
+                        <div className="d-flex gap-2 mb-3">
+                          <div className="h6 fw-light">已經有帳戶了？</div>
+                          <a
+                            onClick={guideToLoginHandle}
+                            href="#"
+                            className="h6 text-primary fw-bold mb-0"
+                          >
+                            立即登入
+                          </a>
+                        </div>
                         <div className="form-floating mb-4">
                           <input
                             type="email"
@@ -224,7 +223,7 @@ const SignupPage = ({ show, handleClose, handleShowLoginModal }) => {
                             onChange={formInputChange}
                             required
                           />
-                          <label htmlFor="signEmail">Email address</label>
+                          <label htmlFor="signEmail">Email</label>
                           <div className="invalid-feedback">
                             {formErrors.email}
                           </div>
@@ -245,7 +244,7 @@ const SignupPage = ({ show, handleClose, handleShowLoginModal }) => {
                             onChange={formInputChange}
                             required
                           />
-                          <label htmlFor="signUsername">User name</label>
+                          <label htmlFor="signUsername">使用者名稱</label>
                           <div className="invalid-feedback">
                             {formErrors.username}
                           </div>
@@ -268,7 +267,7 @@ const SignupPage = ({ show, handleClose, handleShowLoginModal }) => {
                             ref={passwordRef}
                             data-bs-toggle="popover"
                           />
-                          <label htmlFor="signPassword">Password</label>
+                          <label htmlFor="signPassword">密碼</label>
                           <div className="invalid-feedback">
                             {formErrors.password}
                           </div>
@@ -290,7 +289,7 @@ const SignupPage = ({ show, handleClose, handleShowLoginModal }) => {
                             required
                           />
                           <label htmlFor="signConfirmPassword">
-                            Confirm Password
+                            密碼確認
                           </label>
                           <div className="invalid-feedback">
                             {formErrors.confirmPassword}

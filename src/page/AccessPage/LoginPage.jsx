@@ -183,16 +183,6 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
                   <div className="fs-3 fw-normal mb-4 text-dark">
                     立即探索更多精彩內容
                   </div>
-                  <div className="d-flex flex-column">
-                    <div className="h6 fw-light mb-3">還沒有帳戶嗎？</div>
-                    <a
-                      onClick={guideToSignupHandle}
-                      href="#"
-                      className="h6 text-primary fw-bold mb-0"
-                    >
-                      立即註冊
-                    </a>
-                  </div>
                 </div>
 
                 {/* 右側區域 */}
@@ -236,7 +226,7 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
                               placeholder="name@example.com"
                               onChange={resetEmailInputChange}
                             />
-                            <label htmlFor="resetEmail">Email address</label>
+                            <label htmlFor="resetEmail">Email</label>
                             <div className="invalid-feedback">
                               {formErrors.email}
                             </div>
@@ -281,9 +271,20 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
                             }}
                             aria-label="Close"
                           ></button>
-                          <h5 className="card-title fs-5 fw-normal mb-10">
+                          <h5 className="card-title fs-5 fw-normal mb-5">
                             登入帳戶
                           </h5>
+                          <div className="d-flex gap-2 mb-3">
+                            <div className="h6 fw-light">還沒有帳戶嗎？</div>
+                            <a
+                              onClick={guideToSignupHandle}
+                              href="#"
+                              className="h6 text-primary fw-bold mb-0"
+                            >
+                              立即註冊
+                            </a>
+                          </div>
+
                           <div className="form-floating mb-10">
                             <input
                               type="email"
@@ -298,7 +299,7 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
                               placeholder="name@example.com"
                               onChange={formInputChange}
                             />
-                            <label htmlFor="loginEmail">Email address</label>
+                            <label htmlFor="loginEmail">Email</label>
                             <div className="invalid-feedback">
                               {formErrors.email}
                             </div>
@@ -317,7 +318,7 @@ const LoginPage = ({ show, handleClose, handleShowSignupModal }) => {
                               placeholder="Password"
                               onChange={formInputChange}
                             />
-                            <label htmlFor="loginPassword">Password</label>
+                            <label htmlFor="loginPassword">密碼</label>
                             <div className="invalid-feedback">
                               {formErrors.password}
                             </div>

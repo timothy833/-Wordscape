@@ -150,7 +150,9 @@ const SearchPage = () => {
           </ul>
         </>
       ) : (
-        <p className='text-primary fs-6 fs-lg-4 fw-bold mb-3 p-0 p-lg-2'>未找到相關文章</p>
+        <div className="mx-auto mt-5 text-center">
+            <p className='text-primary fs-6 fs-lg-4 fw-bold mb-3 p-0 p-lg-2'>未找到相關文章</p>
+        </div>
       )}
     </div>
     </>
