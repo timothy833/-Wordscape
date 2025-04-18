@@ -21,7 +21,6 @@ const CommentReply = ({
   const [currentComment, setCurrentComment] = useState(commentData.content);
   const [isEdit, setIsEdit] = useState(false);
   const editInputRef = useRef(null);
-
   const delComment = async () => {
     try {
       await axios.delete(`${API_BASE_URL}/comments/${commentData.id}`);
@@ -192,17 +191,17 @@ const CommentReply = ({
 CommentReply.propTypes = {
   commentData: PropTypes.shape({
     id: PropTypes.string.isRequired,
-    user_id: PropTypes.string,
+    user_id: PropTypes.string.isRequired,
     content: PropTypes.string.isRequired,
     user_name: PropTypes.string.isRequired,
     profile_picture: PropTypes.string,
-    likes_count: PropTypes.number,
+    likes_count: PropTypes.string.isRequired,
     created_at: PropTypes.string.isRequired,
   }).isRequired,
   isAuther: PropTypes.bool.isRequired,
   isCurrentUser: PropTypes.bool.isRequired,
   getComment: PropTypes.func.isRequired,
-  loginUserId: PropTypes.string.isRequired,
+  loginUserId: PropTypes.string,
   isAuthorized: PropTypes.bool.isRequired,
   formatTimeAgo: PropTypes.func.isRequired,
 };
