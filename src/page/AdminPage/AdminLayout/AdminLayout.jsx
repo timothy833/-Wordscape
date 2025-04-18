@@ -1,10 +1,13 @@
 import { Outlet, NavLink,Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import Navbar from "../../../component/Navbar/Navbar";
+import Footer from "../../../component/Footer/Footer";
 
 const AdminLayout = () => {
   const { id, username,  userAvatar } = useSelector(state => state.auth);
   return (
     <>
+      <Navbar />
       <main className="bg-secondary py-10">
         <div className="container">
           <div className="row">
@@ -44,6 +47,7 @@ const AdminLayout = () => {
           </div>
         </div>
       </main>
+      <Footer />
     </>
   );
 };

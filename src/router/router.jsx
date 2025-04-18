@@ -12,64 +12,67 @@ import AdminSubscription from "../page/AdminPage/AdminSubscription";
 import ResetPassword from "../page/AccessPage/ResetPassword";
 import ErrorPage from "../page/ErrorPage/ErrorPage";
 import SearchPage from "../page/SearchPage/SearchPage";
-const router = [
-  {
-    path: "/",
-    element: <FrontLayout />,
+
+const frontendRouter = {
+  path: "/",
+  element: <FrontLayout />,
+  children: [
+    {
+      path: "/",
+      element: <HomePage />,
+    },
+    {
+      path: "/search",
+      element: <SearchPage />
+    },
+    {
+      path: "/article/:id",
+      element: <ArticlePage />,
+    },
+    {
+      path: "/blog/:user_id",
+      element: <BlogHome />,
+    },
+    {
+      path: "/reset-password",
+      element: <ResetPassword />,
+    },
+    { path: "/articleList", 
+      element: <ArticleListPage /> 
+    },
+    {
+      path:"*",
+      element: <ErrorPage />,
+    }
+  ]
+}
+
+const adminRouter = {
+    path: "/admin",
+    element: <AdminLayout />,
     children: [
       {
-        path: "/",
-        element: <HomePage />,
+        index: true,
+        element: <Navigate to="info" replace />,
       },
       {
-        path: "/search",
-        element: <SearchPage />
+        path: "info",
+        element: <AdminInfo />,
       },
       {
-        path: "/article/:id",
-        element: <ArticlePage />,
+        path: "collection",
+        element: <AdminCollection />,
       },
       {
-        path: "/blog/:user_id",
-        element: <BlogHome />,
+        path: "subscription",
+        element: <AdminSubscription />,
       },
       {
-        path: "/admin",
-        element: <AdminLayout />,
-        children: [
-          {
-            index: true,
-            element: <Navigate to="info" replace />,
-          },
-          {
-            path: "info",
-            element: <AdminInfo />,
-          },
-          {
-            path: "collection",
-            element: <AdminCollection />,
-          },
-          {
-            path: "subscription",
-            element: <AdminSubscription />,
-          },
-          {
-            path: "background",
-            element: <AdminBackground />,
-          },
-        ],
+        path: "background",
+        element: <AdminBackground />,
       },
-      {
-        path: "/reset-password",
-        element: <ResetPassword />,
-      },
-      { path: "/articleList", element: <ArticleListPage /> },
-      {
-        path:"*",
-        element: <ErrorPage />,
-      }
     ],
-  },
-];
+};
 
+const router = [frontendRouter,adminRouter];
 export default router;
