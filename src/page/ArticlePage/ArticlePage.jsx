@@ -19,7 +19,7 @@ import { Link } from "react-router-dom";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 import SponsorModal from "../../component/SponsorModal/SponsorModal";
 import { logError } from "../../utils/sentryHelper";
-
+import LoadingSpinner from "../../component/LoadingSpinner/LoadingSpinner";
 const ArticlePage = () => {
   const { id: articleId } = useParams();
   const { isAuthorized, id: userId } = useSelector((state) => state.auth);
@@ -28,41 +28,59 @@ const ArticlePage = () => {
   const [autherData, setAutherData] = useState(null);
   const [commentData, setCommentData] = useState(null);
   const [commentInput, setCommentInput] = useState("");
+  const [loadingCount, setLoadingCount] = useState(0);
   // 登入相關狀態
   const [isLike, setIsLike] = useState(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(null);
 
+  const startLoading = () => {
+    setLoadingCount(prev => prev + 1);
+  };
+
+  const endLoading = () => {
+    setLoadingCount(prev => prev - 1);
+  };
 
   const getArticle = useCallback(async () => {
     try {
+      startLoading();
       const res = await axios.get(`${API_BASE_URL}/posts/${articleId}`);
       setArticleData(res.data.data);
     } catch (error) {
       logError(error);
+    } finally {
+      endLoading();
     }
   }, [articleId]);
   const getAutherData = useCallback(async () => {
     try {
+      startLoading();
       const res = await axios.get(
         `${API_BASE_URL}/users/${articleData?.user_id}`
       );
       setAutherData(res.data);
     } catch (error) {
       logError(error);
+    } finally {
+      endLoading();
     }
   }, [articleData]);
   //留言相關功能(需登入)
   const getComment = useCallback(async () => {
     try {
+      startLoading();
       const res = await axios.get(`${API_BASE_URL}/comments/${articleId}`);
       setCommentData(res.data.data);
     } catch (error) {
       logError(error);
+    } finally {
+      endLoading();
     }
   }, [articleId]);
   const postComment = async () => {
     try {
+      startLoading();
       await axios.post(`${API_BASE_URL}/comments`, {
         post_id: articleId,
         content: commentInput,
@@ -71,11 +89,14 @@ const ArticlePage = () => {
       getComment();
     } catch (error) {
       logError(error);
+    } finally {
+      endLoading();
     }
   };
   //訂閱相關功能(需登入)
   const checkIsSubscribed = useCallback(async () => {
     try {
+      startLoading();
       const res = await axios.get(`${API_BASE_URL}/subscriptions`);
       setIsSubscribed(
         res.data.data.some(
@@ -84,10 +105,13 @@ const ArticlePage = () => {
       );
     } catch (error) {
       logError(error);
+    } finally {
+      endLoading();
     }
   }, [articleData]);
   const postSubscribed = async () => {
     try {
+      startLoading();
       const res = await axios.post(
         `${API_BASE_URL}/subscriptions/${articleData.user_id}`
       );
@@ -97,33 +121,41 @@ const ArticlePage = () => {
       checkIsSubscribed();
     } catch (error) {
       logError(error);
+    } finally {
+      endLoading();
     }
   };
   //點讚相關功能(需登入)
   const checkIsLikeArticle = useCallback(async () => {
     try {
+      startLoading();
       const res = await axios.get(`${API_BASE_URL}/posts/post_likes/${articleId}`);
       setIsLike(res.data.data.some((likeData) => likeData.id === userId));
     } catch (error) {
       logError(error);
+    } finally {
+      endLoading();
     }
   }, [articleId, userId]);
 
   const postArticleLike = async () => {
     try {
-      //可以加入動畫增加使用體驗，次要
+      startLoading();
       await axios.post(
         `${API_BASE_URL}/posts/post_likes/${articleId}`
       );
-      getArticle(); //為了取得讚數在進行一次get文章資料，是否可以進行優化
+      getArticle();
       checkIsLikeArticle();
     } catch (error) {
       logError(error);
+    } finally {
+      endLoading();
     }
   };
   //收藏相關功能(需登入)
 const checkIsFavorites = useCallback(async () => {
   try {
+    startLoading();
     const res = await axios.get(`${API_BASE_URL}/posts/favorites`);
     setIsFavorite(
       res.data.data?.some(
@@ -132,11 +164,14 @@ const checkIsFavorites = useCallback(async () => {
     );
   } catch (error) {
     logError(error);
+  } finally {
+    endLoading();
   }
 }, [articleId]);
 
   const postFavorites = async () => {
     try {
+      startLoading();
       const res = await axios.post(
         `${API_BASE_URL}/posts/favorites/${articleId}`
       );
@@ -146,12 +181,15 @@ const checkIsFavorites = useCallback(async () => {
       checkIsFavorites();
     } catch (error) {
       logError(error);
+    } finally {
+      endLoading();
     }
   };
   //用於處理推薦文章
   const [allArticleData, setAllArticleData] = useState([]);
   const getAllArticleData = useCallback(async () => {
     try {
+      startLoading();
       const res = await axios.get(`${API_BASE_URL}/posts/full`);
       const filterArticleData = res.data.data.filter(
         (item) => item.status === "published"
@@ -159,6 +197,8 @@ const checkIsFavorites = useCallback(async () => {
       setAllArticleData(filterArticleData);
     } catch (error) {
       logError(error);
+    } finally {
+      endLoading();
     }
   }, []);
   // ✅ 顯示距離現在多久
@@ -203,9 +243,9 @@ const checkIsFavorites = useCallback(async () => {
     checkIsSubscribed
   ]);
   
-
   return (
     <>
+      {loadingCount > 0 && <LoadingSpinner />}
       <header>
         <div className="container">
           <div className="pt-10 pt-lg-15 pb-5 pb-lg-10 z-3">

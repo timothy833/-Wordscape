@@ -19,18 +19,22 @@ import commentData from "./HomePageCommentData";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { logError } from "../../utils/sentryHelper";
-
+import LoadingSpinner from "../../component/LoadingSpinner/LoadingSpinner";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const HomePage = () => {
   const [allArticleData, setAllArticleData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const getAllArticleData = async () => {
     try {
+      setIsLoading(true);
       const res = await axios.get(`${API_BASE_URL}/posts/full`);
       const filterArticleData = res.data.data.filter((item)=>item.status=="published");
       setAllArticleData(filterArticleData);
     } catch (error) {
       logError(error);
+    } finally {
+      setIsLoading(false);
     }
   };
   const [commentCount, setCommentCount] = useState(3);
@@ -209,59 +213,65 @@ const HomePage = () => {
           <span className="d-block fs-7 fw-bold mb-10">
             精選文章，趕快來發掘！
           </span>
-          <div className="d-none d-md-flex row row-cols-2 row-cols-xl-4 g-lg-6 g-3 mb-10">
-            {allArticleData
-              .filter(
-                (allArticleDataItem) => allArticleDataItem.views_count > 5
-              )
-              .slice(0, 4)
-              .map((allArticleDataItem) => {
-                return (
-                  <div className="col" key={allArticleDataItem.id}>
-                    <ArticleCard articleData={allArticleDataItem} />
-                  </div>
-                );
-              })}
-          </div>
-          <div className="d-block d-md-none">
-            <Swiper
-              style={{
-                "--swiper-pagination-color": "#E77605",
-                "--swiper-pagination-bullet-inactive-color": "#EAEAEA",
-                "--swiper-pagination-bullet-inactive-opacity": "1",
-                margin: "-12px",
-                padding: "12px",
-              }}
-              className="mb-6 pb-11"
-              modules={[Pagination, Navigation]}
-              pagination={{
-                clickable: true,
-                bulletClass:
-                  "swiper-pagination-bullet swiper-pagination-bullet-mx-6",
-              }}
-              loop={true}
-              spaceBetween={"24px"}
-            >
-              {allArticleData
-                .filter(
-                  (allArticleDataItem) => allArticleDataItem.views_count > 5
-                )
-                .slice(0, 4)
-                .map((allArticleDataItem) => {
-                  return (
-                    <SwiperSlide key={allArticleDataItem.id}>
-                      <ArticleCard articleData={allArticleDataItem} />
-                    </SwiperSlide>
-                  );
-                })}
-            </Swiper>
-          </div>
-          <Link
-            to="/articleList"
-            className="btn btn-lg btn-primary lh-sm mx-auto hover-shadow btn-click"
-          >
-            點我看更多
-          </Link>
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <>
+              <div className="d-none d-md-flex row row-cols-2 row-cols-xl-4 g-lg-6 g-3 mb-10">
+                {allArticleData
+                  .filter(
+                    (allArticleDataItem) => allArticleDataItem.views_count > 5
+                  )
+                  .slice(0, 4)
+                  .map((allArticleDataItem) => {
+                    return (
+                      <div className="col" key={allArticleDataItem.id}>
+                        <ArticleCard articleData={allArticleDataItem} />
+                      </div>
+                    );
+                  })}
+              </div>
+              <div className="d-block d-md-none">
+                <Swiper
+                  style={{
+                    "--swiper-pagination-color": "#E77605",
+                    "--swiper-pagination-bullet-inactive-color": "#EAEAEA",
+                    "--swiper-pagination-bullet-inactive-opacity": "1",
+                    margin: "-12px",
+                    padding: "12px",
+                  }}
+                  className="mb-6 pb-11"
+                  modules={[Pagination, Navigation]}
+                  pagination={{
+                    clickable: true,
+                    bulletClass:
+                      "swiper-pagination-bullet swiper-pagination-bullet-mx-6",
+                  }}
+                  loop={true}
+                  spaceBetween={"24px"}
+                >
+                  {allArticleData
+                    .filter(
+                      (allArticleDataItem) => allArticleDataItem.views_count > 5
+                    )
+                    .slice(0, 4)
+                    .map((allArticleDataItem) => {
+                      return (
+                        <SwiperSlide key={allArticleDataItem.id}>
+                          <ArticleCard articleData={allArticleDataItem} />
+                        </SwiperSlide>
+                      );
+                    })}
+                </Swiper>
+              </div>
+              <Link
+                to="/articleList"
+                className="btn btn-lg btn-primary lh-sm mx-auto hover-shadow btn-click"
+              >
+                點我看更多
+              </Link>
+            </>
+          )}
         </div>
       </section>
       <section className="homepage-section bg-secondary">
