@@ -98,12 +98,6 @@ const BlogHome = () => {
     }
   }, [user_id, userId]);
 
-  //取得釘選文章api資料
-  useEffect(() => {
-    if (user_id) {
-      fetchPinnedArticles();
-    }
-  }, [user_id, fetchPinnedArticles]);  
 
   const fetchPinnedArticles = useCallback(async () => {
     try {
@@ -114,6 +108,17 @@ const BlogHome = () => {
       setPinnedArticles([]);
     }
   }, [user_id]);
+
+
+  //取得釘選文章api資料
+  useEffect(() => {
+    if (user_id) {
+      fetchPinnedArticles();
+    }
+  }, [user_id, fetchPinnedArticles]);  
+
+
+  
 
   // 切換釘選狀態
   const togglePin = async (articleId) => {
