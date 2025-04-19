@@ -120,8 +120,6 @@ const Navbar = () => {
   }, []);
   
 
-
-
   // Search
   const [searchQuery, setSearchQuery] = useState('');
   
@@ -148,30 +146,12 @@ const Navbar = () => {
 
   const btnWidth = 90;
 
-  // const handleClick = (index) => {
-  //   setActiveIndex(index);
-  //   if (index === 0) {
-  //     handleShowSignupModal();
-  //   } else {
-  //     handleShowLoginModal();
-  //   }
-  // };
-
   const handleHover = (index) => {
     setActiveIndex(index);
     if (indicatorRef.current) {
       indicatorRef.current.style.transform = `translateX(${btnWidth * index}px)`;
     }
   };
-
-  // const resetHover = () => {
-  //   if (indicatorRef.current) {
-  //     indicatorRef.current.style.transform = `translateX(${btnWidth * activeIndex}px)`;
-  //   }
-  // };
-
- 
-
   
   return (
     <>
