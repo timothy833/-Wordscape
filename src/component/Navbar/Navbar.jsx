@@ -146,15 +146,6 @@ const Navbar = () => {
 
   const btnWidth = 90;
 
-  // const handleClick = (index) => {
-  //   setActiveIndex(index);
-  //   if (index === 0) {
-  //     handleShowSignupModal();
-  //   } else {
-  //     handleShowLoginModal();
-  //   }
-  // };
-
   const handleHover = (index) => {
     setActiveIndex(index);
     if (indicatorRef.current) {
