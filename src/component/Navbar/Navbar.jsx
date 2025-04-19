@@ -120,8 +120,6 @@ const Navbar = () => {
   }, []);
   
 
-
-
   // Search
   const [searchQuery, setSearchQuery] = useState('');
   
@@ -143,7 +141,17 @@ const Navbar = () => {
     }
   };
 
+  const [activeIndex, setActiveIndex] = useState(0);
+  const indicatorRef = useRef(null);
 
+  const btnWidth = 90;
+
+  const handleHover = (index) => {
+    setActiveIndex(index);
+    if (indicatorRef.current) {
+      indicatorRef.current.style.transform = `translateX(${btnWidth * index}px)`;
+    }
+  };
   
   return (
     <>
@@ -190,12 +198,33 @@ const Navbar = () => {
                 {/* 根據登入狀態顯示 */}
                 {!isAuthorized ? (
                   // 未登入狀態：顯示註冊和登入按鈕
-                  <div className="btn-group">
-                    <button className="btn btn-register btn-primary rounded-pill px-5 pe-8"
-                      onClick={handleShowSignupModal}>註冊</button>
-                    <button className="btn btn-login btn-primary rounded-pill px-5 ps-8"
-                      onClick={handleShowLoginModal}>登入</button>
-                  </div>
+                <div
+                  className="btn-group with-indicator"
+                  style={{ width: btnWidth * 2 }}
+                  // onMouseLeave={resetHover}
+                >
+                  <div className="track" />
+                  <div
+                    className="indicator"
+                    ref={indicatorRef}
+                    style={{ transform: `translateX(${btnWidth * activeIndex}px)` }}
+                  />
+                  <button
+                    className={`btn btn-register ${activeIndex === 0 ? 'active' : ''}`}
+                    onClick={() => handleShowSignupModal()}
+                    onMouseEnter={() => handleHover(0)}
+                  >
+                    註冊
+                  </button>
+                  <button
+                    className={`btn btn-login ${activeIndex === 1 ? 'active' : ''}`}
+                    onClick={() => handleShowLoginModal()}
+                    onMouseEnter={() => handleHover(1)}
+                  >
+                    登入
+                  </button>
+                </div>
+
                 ) : (
                   // 已登入狀態：顯示用戶資訊
                   <div className="d-flex ms-3">
