@@ -1,8 +1,8 @@
-import { useEffect, useState, Fragment, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setFavoriteArticle } from "../../slice/favoriteSlice";
 import { Link } from "react-router-dom";
-
+import ArticlePagination from "../../component/ArticlePagination/ArticlePagination";
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -11,32 +11,54 @@ import {
   alertMsgForCancelFavorites,
 } from "../../utils/alertMsg";
 import { logError } from "../../utils/sentryHelper";
+import LoadingSpinner from "../../component/LoadingSpinner/LoadingSpinner";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ArticleListPage = () => {
   const { isAuthorized } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+  const articleListRef = useRef(null);
+  const isFirstLoad = useRef(true);
+  const loadingCount = useRef(0);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [allArticleData, setAllArticleData] = useState([]);
   const [hotArticleData, setHotArticleData] = useState([]);
   const [recommendArticleData, setRecommendArticleData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   //取得分類資料
   const [categoriesData, setCategoriesData] = useState(null);
-  const [categoriesSelector, setCategoriesSelector] = useState([]);
+  const [categoriesSelector, setCategoriesSelector] = useState("");
+
+  const startLoading = () => {
+    loadingCount.current += 1;
+    setIsLoading(true);
+  };
+
+  const endLoading = () => {
+    loadingCount.current -= 1;
+    if (loadingCount.current === 0) {
+      setIsLoading(false);
+    }
+  };
+
   const getCategories = useCallback(async () => {
     try {
+      startLoading();
       const res = await axios.get(`${API_BASE_URL}/categories`);
       setCategoriesData(res.data.data);
     } catch (error) {
       logError(error);
+    } finally {
+      endLoading();
     }
   }, []);
 
   const getAllArticleData = useCallback(async () => {
     try {
+      startLoading();
       const res = await axios.get(`${API_BASE_URL}/posts/full`);
       const filterArticleData = res.data.data.filter(
         (item) => item.status === "published"
@@ -44,61 +66,71 @@ const ArticleListPage = () => {
       setAllArticleData(filterArticleData);
     } catch (error) {
       logError(error);
+    } finally {
+      endLoading();
     }
   }, []);
 
   //熱門文章 推薦文章篩選
-  const filterHotArticleData = useCallback((articleData) => {
-    return articleData
-      .slice(0, 100)
-      .filter((item) => item.views_count > 5)
-      .filter((item) => {
-        if (categoriesSelector && categoriesSelector.length !== 0)
-          return categoriesSelector.some(
-            (catId) => catId === item.category_id
-          );
-        return true;
-      });
-  }, [categoriesSelector]);
-  
-  const filterRecommendArticleData = useCallback((articleData) => {
-    return articleData
-      .slice(0, 100)
-      .filter((item) => item.likes_count > 0)
-      .filter((item) => {
-        if (categoriesSelector && categoriesSelector.length !== 0)
-          return categoriesSelector.some(
-            (catId) => catId === item.category_id
-          );
-        return true;
-      });
-  }, [categoriesSelector]);
-  
-  const toggleCategoriesTag = (id) =>
-    categoriesSelector.includes(id)
-      ? setCategoriesSelector((prev) => prev.filter((item) => item !== id))
-      : setCategoriesSelector((prev) => [...prev, id]);
+  const filterHotArticleData = useCallback(
+    (articleData) => {
+      return articleData
+        .slice(0, 100)
+        .filter((item) => item.views_count > 5)
+        .filter((item) => {
+          if (categoriesSelector)
+            return categoriesSelector === item.category_id;
+          return true;
+        });
+    },
+    [categoriesSelector]
+  );
+
+  const filterRecommendArticleData = useCallback(
+    (articleData) => {
+      return articleData
+        .slice(0, 100)
+        .filter((item) => item.likes_count > 0)
+        .filter((item) => {
+          if (categoriesSelector)
+            return categoriesSelector === item.category_id;
+          return true;
+        });
+    },
+    [categoriesSelector]
+  );
+
+  const toggleCategoriesTag = (id) => {
+    categoriesSelector === id
+      ? setCategoriesSelector("")
+      : setCategoriesSelector(id);
+  };
 
   useEffect(() => {
     setHotArticleData(filterHotArticleData(allArticleData));
     setRecommendArticleData(filterRecommendArticleData(allArticleData));
   }, [allArticleData, filterHotArticleData, filterRecommendArticleData]);
-  
+
   useEffect(() => {
     setHotArticleData(filterHotArticleData(allArticleData));
     setRecommendArticleData(filterRecommendArticleData(allArticleData));
     setCurrentPage(1);
-  }, [categoriesSelector, filterHotArticleData, filterRecommendArticleData, allArticleData]);
-      
+  }, [
+    categoriesSelector,
+    filterHotArticleData,
+    filterRecommendArticleData,
+    allArticleData,
+  ]);
 
   //下半部文章列表相關邏輯
   //取得所有文章資料後根據選擇分類篩選資料，用於渲染文章列表
-  const [articleListData, setArticleListData] = useState(null);
+  const [articleListData, setArticleListData] = useState([]);
   const [listSelector, setListSelector] = useState("allArticle");
   const [articleListPageCount, setArticleListPageCount] = useState(1);
 
   const getArticleListData = useCallback(async () => {
     try {
+      startLoading();
       const res = await axios.get(`${API_BASE_URL}/posts/full`);
       setArticleListData(
         res.data.data.filter(
@@ -108,8 +140,11 @@ const ArticleListPage = () => {
             articleDataItem.status == "published"
         )
       );
+      setArticleListPageCount(1);
     } catch (error) {
       logError(error);
+    } finally {
+      endLoading();
     }
   }, [listSelector]);
 
@@ -118,15 +153,19 @@ const ArticleListPage = () => {
   const favorite = useSelector((state) => state.favorite.favoriteArticle);
   const getFavoriteArticle = useCallback(async () => {
     try {
+      startLoading();
       const res = await axios.get(`${API_BASE_URL}/posts/favorites`);
       dispatch(setFavoriteArticle(res.data.data));
     } catch (error) {
       logError(error);
+    } finally {
+      endLoading();
     }
   }, [dispatch]);
 
   const postFavorites = async (id) => {
     try {
+      startLoading();
       const res = await axios.post(`${API_BASE_URL}/posts/favorites/${id}`);
       res.data.favorited
         ? Swal.fire(alertMsgForAddFavorites)
@@ -135,6 +174,8 @@ const ArticleListPage = () => {
       getArticleListData();
     } catch (error) {
       logError(error);
+    } finally {
+      endLoading();
     }
   };
 
@@ -143,19 +184,25 @@ const ArticleListPage = () => {
     getAllArticleData();
     getArticleListData();
   }, [getCategories, getAllArticleData, getArticleListData]);
-  
 
   useEffect(() => {
     if (isAuthorized) getFavoriteArticle();
   }, [isAuthorized, getFavoriteArticle]);
-  
+
   useEffect(() => {
     getArticleListData();
   }, [listSelector, getArticleListData]);
-  
+
+  useEffect(() => {
+    if (articleListRef.current && !isFirstLoad.current) {
+      articleListRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+    isFirstLoad.current = false;
+  }, [articleListPageCount]);
 
   return (
     <>
+      {isLoading && <LoadingSpinner />}
       <section>
         <div className="container pt-6 pb-3 pt-lg-10 pb-lg-10 bg-light">
           <h2 className="fs-7 fs-md-7 fw-bold text-dark">類別選擇</h2>
@@ -166,10 +213,7 @@ const ArticleListPage = () => {
                   <a
                     className={`article-tag pe-open lh-lg fs-8 fs-lg-8 rounded-pill
                     ${
-                      categoriesSelector.some(
-                        (categoriesSelectorItem) =>
-                          categoriesSelectorItem === categoriesDataItem.id
-                      ) && "active"
+                      categoriesSelector === categoriesDataItem.id && "active"
                     }`}
                     onClick={() => toggleCategoriesTag(categoriesDataItem.id)}
                   >
@@ -184,7 +228,7 @@ const ArticleListPage = () => {
       <section className="recommend-article-section">
         <div className="container">
           <div className="row">
-            <div className="col-12 col-lg-7">
+            <div className="col-lg-7">
               <h2 className="text-primary fs-6 fs-lg-3 fw-bold mb-3 mb-lg-7 p-0 p-lg-2">
                 熱門文章
               </h2>
@@ -216,7 +260,7 @@ const ArticleListPage = () => {
                                 alt="..."
                               />
                               <div className="card-body p-0">
-                                <h3 className="card-title fw-bold text-truncate">
+                                <h3 className="card-title text-primary fw-bold text-truncate">
                                   {hotArticleDataItem.title}
                                 </h3>
                                 <p className="card-text text-truncate fs-8 fs-lg-8">
@@ -234,133 +278,18 @@ const ArticleListPage = () => {
                         );
                       })}
                   </ul>
-                  <nav
-                    className="d-none d-lg-block"
-                    aria-label="Page navigation"
-                  >
-                    <ul className="hot-article-pagination pagination justify-content-center gap-2 mb-0">
-                      <li className="page-item">
-                        <a
-                          className={`page-link material-symbols-outlined p-0 ps-1 pt-1 rounded-1 ${
-                            currentPage === 1 && "disabled"
-                          }`}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setCurrentPage(currentPage - 1);
-                          }}
-                        >
-                          arrow_back_ios
-                        </a>
-                      </li>
-                      {Array.from({
-                        length: Math.ceil(hotArticleData.length / 3),
-                      }).map((item, index) => {
-                        const totalPage = Math.ceil(hotArticleData.length / 3);
-                        if (
-                          currentPage - index - 1 <= 2 &&
-                          currentPage - index - 1 >= -2
-                        )
-                          return (
-                            <li className="page-item" key={index}>
-                              <a
-                                className={`page-link rounded-1 p-0 ${
-                                  currentPage === index + 1 && "active"
-                                }`}
-                                href="#"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  setCurrentPage(index + 1);
-                                }}
-                              >
-                                {index + 1}
-                              </a>
-                            </li>
-                          );
-                        else if (
-                          currentPage < totalPage - 2 &&
-                          index + 1 === totalPage
-                        )
-                          return (
-                            <Fragment key={index}>
-                              <li className="page-item">
-                                <a
-                                  className={`page-link rounded-1 p-0`}
-                                  href="#"
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                  }}
-                                >
-                                  ...
-                                </a>
-                              </li>
-                              <li className="page-item">
-                                <a
-                                  className={`page-link rounded-1 p-0 ${
-                                    currentPage === index + 1 && "active"
-                                  }`}
-                                  href="#"
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    setCurrentPage(index + 1);
-                                  }}
-                                >
-                                  {index + 1}
-                                </a>
-                              </li>
-                            </Fragment>
-                          );
-                        else if (currentPage > 3 && index === 0)
-                          return (
-                            <Fragment key={index}>
-                              <li className="page-item">
-                                <a
-                                  className={`page-link rounded-1 p-0 ${
-                                    currentPage === index + 1 && "active"
-                                  }`}
-                                  href="#"
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    setCurrentPage(index + 1);
-                                  }}
-                                >
-                                  {index + 1}
-                                </a>
-                              </li>
-                              <li className="page-item">
-                                <a
-                                  className={`page-link rounded-1 p-0`}
-                                  href="#"
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                  }}
-                                >
-                                  ...
-                                </a>
-                              </li>
-                            </Fragment>
-                          );
-                      })}
-                      <li className="page-item">
-                        <a
-                          className={`page-link material-symbols-outlined rounded-1 p-0 ${
-                            currentPage ===
-                              Math.ceil(hotArticleData.length / 3) && "disabled"
-                          }`}
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setCurrentPage(currentPage + 1);
-                          }}
-                        >
-                          arrow_forward_ios
-                        </a>
-                      </li>
-                    </ul>
-                  </nav>
+
+                  <ArticlePagination
+                    totalItems={hotArticleData.length}
+                    itemsPerPage={3}
+                    currentPage={currentPage}
+                    onPageChange={(page) => setCurrentPage(page)}
+                    className="hot-article-pagination d-none d-lg-flex"
+                  />
                 </>
               )}
             </div>
-            <div className="col-12 col-lg-5">
+            <div className="col-lg-5">
               <h2 className="text-primary fs-6 fs-lg-3 fw-bold mb-3 mb-lg-7 p-0 p-lg-2">
                 推薦專欄
               </h2>
@@ -398,7 +327,7 @@ const ArticleListPage = () => {
                                 </span>
                               </span>
 
-                              <h4 className="card-title text-primary fw-bold text-truncate-2lines lh-sm text-wrap">
+                              <h4 className="card-title fw-bold text-truncate-2lines lh-sm text-wrap">
                                 {recommendArticleDataItem.title}
                               </h4>
                               <p className="card-text text-truncate-2lines fs-8 fs-lg-8">
@@ -454,7 +383,7 @@ const ArticleListPage = () => {
           </div>
         </div>
       </section>
-      <section className="article-list-section">
+      <section className="article-list-section" ref={articleListRef}>
         <div
           className="article-list-wrap container py-8 py-lg-10 px-lg-5 rounded-2"
           style={{ backgroundColor: "#FFFDFB" }}
@@ -484,199 +413,97 @@ const ArticleListPage = () => {
               </select>
             </div>
           </div>
-          <ul className="list-unstyled d-flex flex-column gap-5 px-4 px-lg-0">
-            {articleListData
-              ?.slice(
-                (articleListPageCount - 1) * 10,
-                articleListPageCount * 10
-              )
-              .map((articleListDataItem) => {
-                return (
-                  <li key={articleListDataItem.id}>
-                    <Link
-                      to={`/article/${articleListDataItem.id}`}
-                      className="article-list-card d-flex rounded-2 border flex-column-reverse flex-md-row justify-content-between p-5"
-                    >
-                      <div className="d-flex flex-column gap-5 me-md-6">
-                        <h3 className="text-primary fs-7 fw-bold text-truncate-2lines lh-sm">
-                          {articleListDataItem.title}
-                        </h3>
-                        <p className="text-truncate-2lines ">
-                          {articleListDataItem.description}
-                        </p>
-                        <div className="d-flex align-items-center gap-3 mt-auto">
-                          <span className="text-gray">
-                            {new Date(
-                              articleListDataItem.created_at
-                            ).toLocaleDateString()}
-                          </span>
-                          <span className="text-gray d-flex align-items-center gap-1">
-                            <span className="material-icons-outlined">
-                              favorite
-                            </span>
-                            {articleListDataItem.likes_count}
-                          </span>
-                          <span className=" text-gray d-flex align-items-center gap-1">
-                            <span className="material-icons-outlined">
-                              chat_bubble
-                            </span>
-                            {articleListDataItem.comments.length}
-                          </span>
-                          {isAuthorized && (
-                            <span
-                              className={`${
-                                favorite.some(
-                                  (favoriteItem) =>
-                                    favoriteItem.id === articleListDataItem.id
-                                )
-                                  ? "text-primary"
-                                  : "text-gray"
-                              } pb-1 d-flex align-items-center gap-1`}
-                              onClick={(e) => {
-                                e.preventDefault();
-                                postFavorites(articleListDataItem.id);
-                              }}
-                            >
-                              <span className="material-symbols-outlined icon-fill">
-                                bookmark
+          {articleListData.length > 0 ? (
+            <Fragment>
+              <ul className="list-unstyled d-flex flex-column gap-5 px-4 px-lg-0">
+                {articleListData
+                  ?.slice(
+                    (articleListPageCount - 1) * 10,
+                    articleListPageCount * 10
+                  )
+                  .map((articleListDataItem) => {
+                    return (
+                      <li key={articleListDataItem.id}>
+                        <Link
+                          to={`/article/${articleListDataItem.id}`}
+                          className="article-list-card d-flex rounded-2 border flex-column-reverse flex-md-row justify-content-between p-5"
+                        >
+                          <div className="d-flex flex-column gap-5 me-md-6">
+                            <h3 className="text-primary fs-7 fw-bold text-truncate-2lines lh-sm">
+                              {articleListDataItem.title}
+                            </h3>
+                            <p className="text-truncate-2lines ">
+                              {articleListDataItem.description}
+                            </p>
+                            <div className="d-flex align-items-center gap-3 mt-auto">
+                              <span className="text-gray">
+                                {new Date(
+                                  articleListDataItem.created_at
+                                ).toLocaleDateString()}
                               </span>
-                              {articleListDataItem.favorites_count}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      <img
-                        className="card-img object-fit-cover mb-5 mb-md-0 rounded"
-                        src={
-                          articleListDataItem.image_url ||
-                          "https://github.com/wfox5510/wordSapce-imgRepo/blob/main/banner-1.png?raw=true"
-                        }
-                        alt="article-img"
-                      />
-                    </Link>
-                  </li>
-                );
-              })}
-          </ul>
-          {articleListData && (
-            <ul className="hot-article-pagination pagination justify-content-center gap-2 mb-0">
-              <li className="page-item">
-                <a
-                  className={`page-link material-symbols-outlined p-0 ps-1 pt-1 rounded-1 ${
-                    currentPage === 1 && "disabled"
-                  }`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setArticleListPageCount(articleListPageCount - 1);
-                  }}
-                >
-                  arrow_back_ios
-                </a>
-              </li>
-              {Array.from({
-                length: Math.ceil(articleListData.length / 10),
-              }).map((item, index) => {
-                const totalPage = Math.ceil(articleListData.length / 10);
-                if (
-                  articleListPageCount - index - 1 <= 2 &&
-                  articleListPageCount - index - 1 >= -2
-                )
-                  return (
-                    <li className="page-item" key={index}>
-                      <a
-                        className={`page-link rounded-1 p-0 ${
-                          articleListPageCount === index + 1 && "active"
-                        }`}
-                        href="#"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setArticleListPageCount(index + 1);
-                        }}
-                      >
-                        {index + 1}
-                      </a>
-                    </li>
-                  );
-                else if (
-                  articleListPageCount < totalPage - 2 &&
-                  index + 1 === totalPage
-                )
-                  return (
-                    <Fragment key={index}>
-                      <li className="page-item">
-                        <a
-                          className={`page-link rounded-1 p-0`}
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault();
-                          }}
-                        >
-                          ...
-                        </a>
+                              <span className="text-gray d-flex align-items-center gap-1">
+                                <span className="material-icons-outlined">
+                                  favorite
+                                </span>
+                                {articleListDataItem.likes_count}
+                              </span>
+                              <span className=" text-gray d-flex align-items-center gap-1">
+                                <span className="material-icons-outlined">
+                                  chat_bubble
+                                </span>
+                                {articleListDataItem.comments.length}
+                              </span>
+                              {isAuthorized && (
+                                <span
+                                  className={`${
+                                    favorite.some(
+                                      (favoriteItem) =>
+                                        favoriteItem.id ===
+                                        articleListDataItem.id
+                                    )
+                                      ? "text-primary"
+                                      : "text-gray"
+                                  } pb-1 d-flex align-items-center gap-1`}
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    postFavorites(articleListDataItem.id);
+                                  }}
+                                >
+                                  <span className="material-symbols-outlined icon-fill">
+                                    bookmark
+                                  </span>
+                                  {articleListDataItem.favorites_count}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          <img
+                            className="card-img object-fit-cover mb-5 mb-md-0 rounded"
+                            src={
+                              articleListDataItem.image_url ||
+                              "https://github.com/wfox5510/wordSapce-imgRepo/blob/main/banner-1.png?raw=true"
+                            }
+                            alt="article-img"
+                          />
+                        </Link>
                       </li>
-                      <li className="page-item">
-                        <a
-                          className={`page-link rounded-1 p-0 ${
-                            articleListPageCount === index + 1 && "active"
-                          }`}
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setArticleListPageCount(index + 1);
-                          }}
-                        >
-                          {index + 1}
-                        </a>
-                      </li>
-                    </Fragment>
-                  );
-                else if (articleListPageCount > 3 && index === 0)
-                  return (
-                    <Fragment key={index}>
-                      <li className="page-item">
-                        <a
-                          className={`page-link rounded-1 p-0 ${
-                            articleListPageCount === index + 1 && "active"
-                          }`}
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setArticleListPageCount(index + 1);
-                          }}
-                        >
-                          {index + 1}
-                        </a>
-                      </li>
-                      <li className="page-item">
-                        <a
-                          className={`page-link rounded-1 p-0`}
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault();
-                          }}
-                        >
-                          ...
-                        </a>
-                      </li>
-                    </Fragment>
-                  );
-              })}
-              <li className="page-item">
-                <a
-                  className={`page-link material-symbols-outlined rounded-1 p-0 ${
-                    articleListPageCount ===
-                      Math.ceil(articleListData.length / 10) && "disabled"
-                  }`}
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setArticleListPageCount(articleListPageCount + 1);
-                  }}
-                >
-                  arrow_forward_ios
-                </a>
-              </li>
-            </ul>
+                    );
+                  })}
+              </ul>
+              {articleListData && (
+                <ArticlePagination
+                  totalItems={articleListData.length}
+                  itemsPerPage={10}
+                  currentPage={articleListPageCount}
+                  onPageChange={(page) => setArticleListPageCount(page)}
+                  className="hot-article-pagination"
+                />
+              )}
+            </Fragment>
+          ) : (
+            <span className="fs-6 d-block fw-bold text-gray text-center">
+              目前沒有相關的文章喔
+            </span>
           )}
         </div>
       </section>

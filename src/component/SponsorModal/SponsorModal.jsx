@@ -1,4 +1,3 @@
-import "./SponsorModal.scss";
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useState, useEffect, useRef } from "react";
